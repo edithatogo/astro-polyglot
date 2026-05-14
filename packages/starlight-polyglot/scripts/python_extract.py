@@ -7,6 +7,7 @@ starlight-polyglot's mdx-generator.ts.
 Usage:
     python3 python_extract.py --entry-points pkg1 pkg2 --output output.json
 """
+
 import argparse
 import json
 import sys
@@ -14,7 +15,7 @@ from typing import Any
 
 try:
     from griffe import load
-    from griffe.dataclasses import Module, Class, Function, ParameterKind
+    from griffe.dataclasses import Class, Function, Module, ParameterKind
 except ImportError:
     print(json.dumps({"error": "griffe not installed. Run: pip install griffe"}))
     sys.exit(1)
@@ -78,7 +79,9 @@ def extract_function(griffe_fn: Function) -> dict[str, Any]:
         params.append(str(param))
 
     if griffe_fn.returns:
-        result["signature"] = f"{griffe_fn.name}({', '.join(params)}) -> {griffe_fn.returns}"
+        result["signature"] = (
+            f"{griffe_fn.name}({', '.join(params)}) -> {griffe_fn.returns}"
+        )
         result["return_type"] = str(griffe_fn.returns)
     else:
         result["signature"] = f"{griffe_fn.name}({', '.join(params)})"

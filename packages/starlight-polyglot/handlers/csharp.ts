@@ -254,4 +254,3 @@ function parseXmlDocFile(xmlPath: string): ASTModule[] {
 
   return Array.from(moduleMap.values());
 }
-

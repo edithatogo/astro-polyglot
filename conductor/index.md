@@ -1,5 +1,9 @@
 # Project Context
 
+## Quality Assurance
+- [SOTA Software Development Contract](./sota-contract.md)
+- [Latest Audit Report](./audit/report-2026-05-14.json)
+
 ## Definition
 - [Product Definition](./product.md)
 - [Product Guidelines](./product-guidelines.md)

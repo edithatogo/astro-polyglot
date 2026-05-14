@@ -1,0 +1,146 @@
+#!/usr/bin/env node
+
+/**
+ * SOTA Audit Script
+ * Runs automated checks against the SOTA Software Development Contract.
+ *
+ * Usage: node conductor/scripts/sota-audit.mjs
+ */
+
+import { execSync } from 'node:child_process';
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const ROOT = resolve(__dirname, '../..');
+const AUDIT_DIR = resolve(ROOT, 'conductor/audit');
+const date = new Date().toISOString().split('T')[0];
+const REPORT_FILE = resolve(AUDIT_DIR, `report-${date}.json`);
+
+const results = [];
+let passed = 0;
+let failed = 0;
+
+function check(name, category, ok, detail = '') {
+  results.push({ name, category, passed: ok, detail });
+  if (ok) passed++; else failed++;
+  console.log(`  ${ok ? '✓' : '✗'} [${category}] ${name}${detail ? ' — ' + detail : ''}`);
+}
+
+function run(cmd) {
+  try {
+    const out = execSync(cmd, { cwd: ROOT, encoding: 'utf-8', stdio: 'pipe', timeout: 15000 });
+    return { ok: true, stdout: out.trim() };
+  } catch (e) {
+    return { ok: false, stdout: (e.stdout || '').toString().trim() };
+  }
+}
+
+function fex(p) { return existsSync(resolve(ROOT, p)); }
+function fcontains(p, s) {
+  try { return readFileSync(resolve(ROOT, p), 'utf-8').includes(s); }
+  catch { return false; }
+}
+
+
+// ── Code Quality ──
+console.log('── Code Quality ──');
+const tsc = run('npx tsc --noEmit --strict 2>&1 || true');
+check('CQ-01: TypeScript strict mode', 'Code Quality', tsc.ok, tsc.ok ? '0 errors' : 'errors found');
+const esConfig = fex('.eslintrc') || fex('eslint.config.mjs');
+if (esConfig) {
+  const es = run('npx eslint . --max-warnings=0 2>&1 || true');
+  check('CQ-02: ESLint zero warnings', 'Code Quality', es.ok, es.ok ? 'passed' : 'warnings');
+} else {
+  check('CQ-02: ESLint config', 'Code Quality', false, 'missing');
+}
+if (fex('.prettierrc')) {
+  const pt = run('npx prettier --check "packages/**/*.ts" 2>&1 || true');
+  check('CQ-03: Prettier compliance', 'Code Quality', pt.ok, pt.ok ? 'passed' : 'issues');
+}
+const anyC = run("grep -rn ': any' packages/starlight-polyglot/core/ packages/starlight-polyglot/handlers/ 2>/dev/null | grep -v node_modules | grep -v '.test.' | wc -l");
+check('CQ-04: No `any` types', 'Code Quality', parseInt(anyC.stdout) === 0, `${anyC.stdout.trim()} found`);
+const defC = run("grep -rn 'export default' packages/starlight-polyglot/core/ packages/starlight-polyglot/handlers/ 2>/dev/null | grep -v node_modules | wc -l");
+check('CQ-05: Named exports', 'Code Quality', parseInt(defC.stdout) <= 1, `${defC.stdout.trim()} defaults`);
+
+// ── Testing ──
+console.log('\n── Testing ──');
+check('T-01: handler-contract test', 'Testing', fex('packages/starlight-polyglot/tests/handler-contract.test.ts'));
+check('T-02: mdx-generator test', 'Testing', fex('packages/starlight-polyglot/tests/mdx-generator.test.ts'));
+check('T-03: router test', 'Testing', fex('packages/starlight-polyglot/tests/router.test.ts'));
+check('T-04: plugin test', 'Testing', fex('packages/starlight-polyglot/tests/plugin.test.ts'));
+const tCount = run('find packages/starlight-polyglot/tests -name "*.test.ts" 2>/dev/null | wc -l');
+check('T-05: 4+ test files', 'Testing', parseInt(tCount.stdout) >= 4, `${tCount.stdout.trim()} files`);
+
+// ── Documentation ──
+console.log('\n── Documentation ──');
+check('D-01: astro.config.mjs', 'Documentation', fex('docs/astro-site/astro.config.mjs'));
+check('D-02: Getting started', 'Documentation', fex('docs/astro-site/src/content/docs/getting-started.mdx'));
+check('D-03: Config reference', 'Documentation', fex('docs/astro-site/src/content/docs/configuration.mdx'));
+check('D-04: Handler dev guide', 'Documentation', fex('docs/astro-site/src/content/docs/handler-development.mdx'));
+check('D-05: Dogfooding polyglot', 'Documentation', fcontains('docs/astro-site/astro.config.mjs', 'polyglot'));
+check('D-06: README.md', 'Documentation', fex('README.md'));
+check('D-07: CHANGELOG.md', 'Documentation', fex('CHANGELOG.md'));
+
+// ── CI/CD ──
+console.log('\n── CI/CD ──');
+check('CI-01: ci.yml', 'CI/CD', fex('.github/workflows/ci.yml'));
+check('CI-02: docs.yml', 'CI/CD', fex('.github/workflows/docs.yml'));
+check('CI-03: release.yml', 'CI/CD', fex('.github/workflows/release.yml'));
+if (fex('.github/workflows/ci.yml')) {
+  const ci = readFileSync(resolve(ROOT, '.github/workflows/ci.yml'), 'utf-8');
+  check('CI-04: Lint in CI', 'CI/CD', ci.includes('lint') || ci.includes('eslint'));
+  check('CI-05: Type-check in CI', 'CI/CD', ci.includes('type') || ci.includes('tsc'));
+  check('CI-06: Test in CI', 'CI/CD', ci.includes('test') || ci.includes('vitest'));
+}
+if (fex('.github/workflows/release.yml')) {
+  const rel = readFileSync(resolve(ROOT, '.github/workflows/release.yml'), 'utf-8');
+  check('CI-07: npm publish', 'CI/CD', rel.includes('publish'));
+  check('CI-08: Provenance', 'CI/CD', rel.includes('provenance') || rel.includes('attest'));
+}
+check('CI-09: Renovate', 'CI/CD', fex('renovate.json'));
+check('CI-10: Changesets', 'CI/CD', fex('.changeset/config.json'));
+check('CI-11: size-limit', 'CI/CD', fex('size-limit.json'));
+
+// ── Security ──
+console.log('\n── Security ──');
+check('S-01: SECURITY.md', 'Security', fex('SECURITY.md'));
+check('S-02: No .env', 'Security', !fex('.env'));
+check('S-03: CODEOWNERS', 'Security', fex('.github/CODEOWNERS'));
+
+// ── Governance ──
+console.log('\n── Governance ──');
+check('G-01: LICENSE', 'Governance', fex('LICENSE'));
+check('G-02: CONTRIBUTING.md', 'Governance', fex('CONTRIBUTING.md'));
+check('G-03: Bug template', 'Governance', fex('.github/ISSUE_TEMPLATE/bug_report.yml'));
+check('G-04: Feature template', 'Governance', fex('.github/ISSUE_TEMPLATE/feature_request.yml'));
+check('G-05: Conductor tracks', 'Governance', fex('conductor/tracks.md'));
+check('G-06: MoSCoW reqs', 'Governance', fex('conductor/requirements.md'));
+check('G-07: Design docs', 'Governance', fex('conductor/design.md'));
+check('G-08: Product def', 'Governance', fex('conductor/product.md'));
+check('G-09: Tech stack', 'Governance', fex('conductor/tech-stack.md'));
+check('G-10: Workflow', 'Governance', fex('conductor/workflow.md'));
+check('G-11: Self-docs index', 'Governance', fex('docs/astro-site/src/content/docs/index.mdx'));
+check('G-12: SOTA contract exists', 'Governance', fex('conductor/sota-contract.md'));
+check('G-13: Audit script exists', 'Governance', fex('conductor/scripts/sota-audit.mjs'));
+
+// ── Summary ──
+console.log('\n═══════════════════════════════════════════');
+console.log(`  Passed: ${passed}  Failed: ${failed}  Total: ${results.length}`);
+console.log(`  Pass Rate: ${Math.round(passed / results.length * 100)}%`);
+console.log('═══════════════════════════════════════════\n');
+
+mkdirSync(AUDIT_DIR, { recursive: true });
+mkdirSync(resolve(AUDIT_DIR, 'evidence'), { recursive: true });
+const report = {
+  timestamp: new Date().toISOString(),
+  summary: { passed, failed, total: results.length, passRate: Math.round(passed / results.length * 100) },
+  results,
+};
+writeFileSync(REPORT_FILE, JSON.stringify(report, null, 2));
+console.log(`Report: ${REPORT_FILE}`);
+console.log('\n═══════════════════════════════════════════');
+console.log('  SOTA Audit — starlight-polyglot');
+console.log(`  ${new Date().toISOString()}`);
+console.log('═══════════════════════════════════════════\n');

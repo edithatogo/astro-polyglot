@@ -241,4 +241,3 @@ function extractWithRustDoc(cratePath: string): ASTModule[] {
 
   return modules;
 }
-
