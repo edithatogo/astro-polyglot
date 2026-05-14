@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-05-14T06:24:31.271Z",
+  "timestamp": "2026-05-14T06:35:21.378Z",
   "summary": {
-    "passed": 43,
-    "failed": 1,
+    "passed": 44,
+    "failed": 0,
     "total": 44,
-    "passRate": 98
+    "passRate": 100
   },
   "results": [
     {
@@ -250,7 +250,7 @@
     {
       "name": "G-10: Workflow",
       "category": "Governance",
-      "passed": false,
+      "passed": true,
       "detail": ""
     },
     {

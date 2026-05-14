@@ -12,3 +12,4 @@ coverage/
 *.tsbuildinfo
 .changeset/*.md
 !src/**/*.ts
+package-lock.json
