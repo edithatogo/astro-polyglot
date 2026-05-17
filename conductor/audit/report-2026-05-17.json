@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-05-17T03:20:33.650Z",
+  "timestamp": "2026-05-17T03:26:59.572Z",
   "summary": {
-    "passed": 50,
-    "failed": 11,
+    "passed": 59,
+    "failed": 2,
     "total": 61,
-    "passRate": 82
+    "passRate": 97
   },
   "results": [
     {
@@ -274,26 +274,26 @@
     {
       "name": "R-01: innovate docs deployed",
       "category": "Repo Migrations",
-      "passed": false,
-      "detail": "missing"
+      "passed": true,
+      "detail": "docs.yml found"
     },
     {
       "name": "R-05: innovate conductor",
       "category": "Repo Migrations",
-      "passed": false,
-      "detail": "missing"
+      "passed": true,
+      "detail": "tracks.md found"
     },
     {
       "name": "R-06: innovate dogfoods polyglot",
       "category": "Repo Migrations",
-      "passed": false,
-      "detail": "missing"
+      "passed": true,
+      "detail": "configured"
     },
     {
       "name": "R-07: innovate links-validator",
       "category": "Repo Migrations",
-      "passed": false,
-      "detail": "missing"
+      "passed": true,
+      "detail": "configured"
     },
     {
       "name": "R-02: voiage docs deployed",
@@ -310,14 +310,14 @@
     {
       "name": "R-06: voiage dogfoods polyglot",
       "category": "Repo Migrations",
-      "passed": false,
-      "detail": "missing"
+      "passed": true,
+      "detail": "configured"
     },
     {
       "name": "R-07: voiage links-validator",
       "category": "Repo Migrations",
-      "passed": false,
-      "detail": "missing"
+      "passed": true,
+      "detail": "configured"
     },
     {
       "name": "R-03: mars docs deployed",
@@ -334,8 +334,8 @@
     {
       "name": "R-06: mars dogfoods polyglot",
       "category": "Repo Migrations",
-      "passed": false,
-      "detail": "missing"
+      "passed": true,
+      "detail": "configured"
     },
     {
       "name": "R-07: mars links-validator",
@@ -358,14 +358,14 @@
     {
       "name": "R-06: lifecourse dogfoods polyglot",
       "category": "Repo Migrations",
-      "passed": false,
-      "detail": "missing"
+      "passed": true,
+      "detail": "configured"
     },
     {
       "name": "R-07: lifecourse links-validator",
       "category": "Repo Migrations",
-      "passed": false,
-      "detail": "missing"
+      "passed": true,
+      "detail": "configured"
     },
     {
       "name": "R-08: All migration tracks complete",

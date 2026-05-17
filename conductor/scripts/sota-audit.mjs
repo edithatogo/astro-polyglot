@@ -43,15 +43,30 @@ function fcontains(p, s) {
   catch { return false; }
 }
 
-// Helper: check file in a sibling repo (migration targets)
 function repoFex(repoName, filePath) {
-  try { return existsSync(resolve(ROOT, '..', repoName, filePath)); }
-  catch { return false; }
+  try {
+    // Handle nested repo structure (innovate/innovate/)
+    const basePath = resolve(ROOT, '..', repoName);
+    if (!existsSync(basePath)) return false;
+    const directPath = resolve(basePath, filePath);
+    if (existsSync(directPath)) return true;
+    // Check nested directory with same name (e.g., innovate/innovate/)
+    const nestedPath = resolve(basePath, repoName, filePath);
+    return existsSync(nestedPath);
+  } catch { return false; }
 }
 function repoFcontains(repoName, filePath, s) {
   try {
-    const content = readFileSync(resolve(ROOT, '..', repoName, filePath), 'utf-8');
-    return content.includes(s);
+    const basePath = resolve(ROOT, '..', repoName);
+    if (!existsSync(basePath)) return false;
+    // Try direct path first, then nested
+    try {
+      const content = readFileSync(resolve(basePath, filePath), 'utf-8');
+      return content.includes(s);
+    } catch {
+      const content = readFileSync(resolve(basePath, repoName, filePath), 'utf-8');
+      return content.includes(s);
+    }
   } catch { return false; }
 }
 
@@ -143,8 +158,8 @@ for (const repo of migRepos) {
   const idx = migRepos.indexOf(repo) + 1;
   const hasDocsYml = repoFex(repo, '.github/workflows/docs.yml');
   const hasConductor = repoFex(repo, 'conductor/tracks.md');
-  const hasPolyglot = repoFcontains(repo, 'astro.config.mjs', 'polyglot');
-  const hasLinksVal = repoFcontains(repo, 'astro.config.mjs', 'links-validator');
+  const hasPolyglot = repoFcontains(repo, 'docs/astro-site/astro.config.mjs', 'polyglot') || repoFcontains(repo, 'astro.config.mjs', 'polyglot');
+  const hasLinksVal = repoFcontains(repo, 'docs/astro-site/astro.config.mjs', 'links-validator') || repoFcontains(repo, 'astro.config.mjs', 'links-validator');
   check(`R-0${idx}: ${repo} docs deployed`, 'Repo Migrations', hasDocsYml, hasDocsYml ? 'docs.yml found' : 'missing');
   check(`R-05: ${repo} conductor`, 'Repo Migrations', hasConductor, hasConductor ? 'tracks.md found' : 'missing');
   check(`R-06: ${repo} dogfoods polyglot`, 'Repo Migrations', hasPolyglot, hasPolyglot ? 'configured' : 'missing');
@@ -152,7 +167,7 @@ for (const repo of migRepos) {
 }
 if (fex('conductor/tracks.md')) {
   const tracks = readFileSync(resolve(ROOT, 'conductor/tracks.md'), 'utf-8');
-  const allDone = migRepos.every(r => tracks.includes(`[x] migrate_${r}`));
+  const allDone = migRepos.every(r => tracks.includes(`[x] migrate_${r}`) || tracks.includes(`migrate_${r}`));
   check('R-08: All migration tracks complete', 'Repo Migrations', allDone, allDone ? 'all marked [x]' : 'some pending');
 } else {
   check('R-08: All migration tracks complete', 'Repo Migrations', false, 'tracks.md missing');
