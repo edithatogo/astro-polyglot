@@ -1,0 +1,12 @@
+{
+  "id": "handler_swift_20260517",
+  "name": "Swift handler (DocC)",
+  "type": "feature",
+  "status": "in_progress",
+  "phase": 2,
+  "dependsOn": ["core_mdx_generator_20260513", "core_router_plugin_20260513"],
+  "priority": "could",
+  "created": "2026-05-17",
+  "fulfills": ["REQ-PH2-004", "REQ-PH2-012"],
+  "parallel": true
+}

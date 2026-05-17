@@ -49,6 +49,18 @@
 
 - `[x]` [conductor_update_20260517](./tracks/conductor_update_20260517/) — Updated conductor files: requirements.md deduplicated + MIG cross-refs, design.md deduplicated + new DGN-MIG-001 diagram, index.md comprehensive dashboard, sota-contract.md new Repo Migrations section (R-01 through R-08), sota-audit.mjs now checks migration repos (50/61 pass, 82% — pending agent completions)
 
+
+
+---
+
+## Phase 6: Phase 2+ Handlers & Scripts (In Progress)
+
+- `[~]` [handler_java_20260517](./tracks/handler_java_20260517/) — Java handler (javadoc-json)
+- `[~]` [handler_kotlin_20260517](./tracks/handler_kotlin_20260517/) — Kotlin handler (Dokka)
+- `[~]` [handler_cpp_20260517](./tracks/handler_cpp_20260517/) — C++ handler (Doxygen XML)
+- `[~]` [handler_swift_20260517](./tracks/handler_swift_20260517/) — Swift handler (DocC)
+- `[~]` [extraction_scripts_20260517](./tracks/extraction_scripts_20260517/) — Extraction scripts for Rust, TypeScript, Go
+
 ---
 
 ## Cross-Reference

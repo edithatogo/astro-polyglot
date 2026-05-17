@@ -18,7 +18,11 @@ export type Language =
   | 'r'
   | 'julia'
   | 'csharp'
-  | 'go';
+  | 'go'
+  | 'java'
+  | 'kotlin'
+  | 'cpp'
+  | 'swift';
 
 /**
  * A single MDX output page produced by a handler.

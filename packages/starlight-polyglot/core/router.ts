@@ -28,6 +28,10 @@ export interface PolyglotConfig {
   julia?: HandlerConfig;
   csharp?: HandlerConfig;
   go?: HandlerConfig;
+  java?: HandlerConfig;
+  kotlin?: HandlerConfig;
+  cpp?: HandlerConfig;
+  swift?: HandlerConfig;
   [key: string]: HandlerConfig | undefined;
 }
 
@@ -88,6 +92,11 @@ function getHandlerMap(): Partial<Record<Language, Handler>> {
     julia: lazyHandler('julia'),
     csharp: lazyHandler('csharp'),
     go: lazyHandler('go'),
+    // Phase 2 handlers — Java ecosystem, C++, Swift
+    java: lazyHandler('java'),
+    kotlin: lazyHandler('kotlin'),
+    cpp: lazyHandler('cpp'),
+    swift: lazyHandler('swift'),
   };
 }
 

@@ -1,0 +1,12 @@
+{
+  "id": "handler_java_20260517",
+  "name": "Java handler (javadoc-json)",
+  "type": "feature",
+  "status": "in_progress",
+  "phase": 2,
+  "dependsOn": ["core_mdx_generator_20260513", "core_router_plugin_20260513"],
+  "priority": "could",
+  "created": "2026-05-17",
+  "fulfills": ["REQ-PH2-001"],
+  "parallel": true
+}

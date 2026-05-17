@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-05-17T03:26:59.572Z",
+  "timestamp": "2026-05-17T05:04:27.142Z",
   "summary": {
-    "passed": 59,
-    "failed": 2,
+    "passed": 57,
+    "failed": 4,
     "total": 61,
-    "passRate": 97
+    "passRate": 93
   },
   "results": [
     {
@@ -340,38 +340,38 @@
     {
       "name": "R-07: mars links-validator",
       "category": "Repo Migrations",
-      "passed": false,
-      "detail": "missing"
+      "passed": true,
+      "detail": "configured"
     },
     {
       "name": "R-04: lifecourse docs deployed",
       "category": "Repo Migrations",
-      "passed": true,
-      "detail": "docs.yml found"
+      "passed": false,
+      "detail": "missing"
     },
     {
       "name": "R-05: lifecourse conductor",
       "category": "Repo Migrations",
-      "passed": true,
-      "detail": "tracks.md found"
+      "passed": false,
+      "detail": "missing"
     },
     {
       "name": "R-06: lifecourse dogfoods polyglot",
       "category": "Repo Migrations",
-      "passed": true,
-      "detail": "configured"
+      "passed": false,
+      "detail": "missing"
     },
     {
       "name": "R-07: lifecourse links-validator",
       "category": "Repo Migrations",
-      "passed": true,
-      "detail": "configured"
+      "passed": false,
+      "detail": "missing"
     },
     {
       "name": "R-08: All migration tracks complete",
       "category": "Repo Migrations",
-      "passed": false,
-      "detail": "some pending"
+      "passed": true,
+      "detail": "all marked [x]"
     }
   ]
 }
