@@ -3,10 +3,8 @@ import starlight from '@astrojs/starlight';
 import starlightLinksValidator from 'starlight-links-validator';
 import starlightVersions from 'starlight-versions';
 import starlightLlmsTxt from 'starlight-llms-txt';
-import polyglot from 'starlight-polyglot';
-import { sidebarGroup } from 'starlight-polyglot';
+import polyglot, { sidebarGroup } from 'starlight-polyglot';
 
-// https://astro.build/config
 export default defineConfig({
   site: 'https://edithatogo.github.io',
   base: '/starlight-polyglot',
@@ -16,16 +14,16 @@ export default defineConfig({
       title: 'starlight-polyglot',
       logo: {
         alt: 'starlight-polyglot',
+        src: './logo.svg',
         replacesTitle: false,
       },
-      social: {
-        gitHub: 'https://github.com/edithatogo/starlight-polyglot',
-      },
+      social: [
+        { icon: 'gitHub', label: 'GitHub', href: 'https://github.com/edithatogo/starlight-polyglot' },
+      ],
       editLink: {
         baseUrl: 'https://github.com/edithatogo/starlight-polyglot/edit/main/docs/astro-site/',
       },
       plugins: [
-        // Dogfood the starlight-polyglot plugin to generate API docs from its own source
         polyglot({
           typescript: {
             entryPoints: ['../../packages/starlight-polyglot/index.ts'],
@@ -35,9 +33,7 @@ export default defineConfig({
         }),
         starlightLinksValidator(),
         starlightVersions({
-          versions: [
-            { slug: 'latest', label: 'latest' },
-          ],
+          versions: [{ slug: 'latest', label: 'latest' }],
         }),
         starlightLlmsTxt(),
       ],
@@ -51,9 +47,7 @@ export default defineConfig({
         },
         {
           label: 'Configuration',
-          items: [
-            { label: 'Configuration Reference', link: '/configuration/' },
-          ],
+          items: [{ label: 'Configuration Reference', link: '/configuration/' }],
         },
         {
           label: 'Supported Languages',
@@ -71,7 +65,6 @@ export default defineConfig({
           label: 'Handler Development Guide',
           link: '/handler-development/',
         },
-        // Placeholder sidebar group — replaced by polyglot plugin output
         sidebarGroup,
         {
           label: 'Architecture',

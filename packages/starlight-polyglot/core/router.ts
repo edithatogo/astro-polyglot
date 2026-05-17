@@ -95,9 +95,23 @@ function lazyHandler(name: Language): Handler {
   return {
     name,
     async generate(options) {
-      // Dynamic import defers loading of handler-specific dependencies
+      // Dynamic import defers loading of handler-specific dependencies.
+      // Each handler exports a named export in the pattern: { pythonHandler, typescriptHandler, ... }
       const mod = await import(`../handlers/${name}.js`);
-      return mod.default.generate(options);
+      const handlerName = `${name}Handler` as keyof typeof mod;
+      const handler = mod[handlerName] as Handler | undefined;
+      if (!handler) {
+        throw new Error(
+          `Handler "${handlerName}" not found in module "../handlers/${name}.js". ` +
+            `Ensure the module exports a named export called "${handlerName}".`,
+        );
+      }
+      if (typeof handler.generate !== 'function') {
+        throw new Error(
+          `Handler "${handlerName}" does not have a "generate" method.`,
+        );
+      }
+      return handler.generate(options);
     },
   };
 }

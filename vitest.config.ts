@@ -6,8 +6,8 @@ export default defineConfig({
     environment: 'node',
     include: ['packages/starlight-polyglot/tests/**/*.test.ts'],
     exclude: ['node_modules', 'dist'],
-    testTimeout: 30_000,
-    hookTimeout: 30_000,
+    testTimeout: 30000,
+    hookTimeout: 30000,
     pool: 'forks',
     coverage: {
       enabled: true,

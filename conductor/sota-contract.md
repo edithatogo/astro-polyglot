@@ -12,7 +12,7 @@ This document defines the State-of-the-Art (SOTA) criteria that the starlight-po
 | CQ-01 | TypeScript strict mode enabled with zero errors | `tsc --noEmit` passes with strict: true | `tsc --noEmit --strict` |
 | CQ-02 | ESLint flat config with zero warnings | `eslint .` returns exit code 0 | `eslint . --max-warnings=0` |
 | CQ-03 | Prettier formatting compliance | `prettier --check .` passes | `prettier --check .` |
-| CQ-04 | No `any` types in production code | `grep -r ': any' src/` returns no matches | Code search |
+| CQ-04 | No `any` types in production code | `grep -r '': any'' src/` returns no matches | Code search |
 | CQ-05 | Named exports only (no default exports) | No `export default` in `core/` or `handlers/` | Code search |
 | CQ-06 | All public APIs have JSDoc comments | Every exported function has JSDoc | Manual review |
 
@@ -81,6 +81,23 @@ This document defines the State-of-the-Art (SOTA) criteria that the starlight-po
 | G-09 | MoSCoW requirements documented | `conductor/requirements.md` present | File existence |
 | G-10 | Design documentation with Mermaid diagrams | `conductor/design.md` present | File existence |
 
+### 8. Repo Migrations
+
+| # | Criterion | Pass/Fail | Automated Check |
+|---|-----------|-----------|-----------------|
+| R-01 | innovate has Starlight docs deployed to GH Pages | `docs.yml` exists in innovate repo, GH Pages URL accessible | `fex` check + URL probe |
+| R-02 | voiage has Starlight docs deployed to GH Pages | `docs.yml` exists in voiage repo, GH Pages URL accessible | `fex` check + URL probe |
+| R-03 | mars has Starlight docs deployed to GH Pages | `docs.yml` exists in mars repo, GH Pages URL accessible | `fex` check + URL probe |
+| R-04 | lifecourse has Starlight docs deployed to GH Pages | `docs.yml` exists in lifecourse repo, GH Pages URL accessible | `fex` check + URL probe |
+| R-05 | Each migrated repo has conductor directory with tracks.md | `conductor/tracks.md` exists in each repo | File existence per repo |
+| R-06 | Each migrated repo dogfoods polyglot on own source | astro.config.mjs contains polyglot plugin config for repo language(s) | File content check per repo |
+| R-07 | Each migrated repo has starlight-links-validator configured | Plugin present in astro.config.mjs | File content check per repo |
+| R-08 | All 4 migration tracks marked completed in central tracks.md | `conductor/tracks.md` has `[x]` for all 4 migrate_* tracks | File content check |
+
+**Note:** Automated checks for R-01 through R-04 require git clone access to each repo. The sota-audit.mjs script checks file existence locally when repos are co-located at `/Users/doughnut/GitHub/`.
+
+---
+
 ## Audit Repeatability
 This contract is auditable via `node conductor/scripts/sota-audit.mjs`. The script runs all automated checks and produces a JSON report at `conductor/audit/report-<date>.json`. Manual checks are documented in the audit evidence directory.
 
@@ -88,3 +105,4 @@ This contract is auditable via `node conductor/scripts/sota-audit.mjs`. The scri
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
 | 1.0 | 2026-05-13 | AI Agent | Initial SOTA contract definition |
+| 2.0 | 2026-05-17 | Orchestrator | Added Repo Migrations category (R-01 through R-08) |

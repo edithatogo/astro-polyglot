@@ -2,11 +2,20 @@
   "id": "self_docs_20260513",
   "name": "Self-Hosted Documentation",
   "type": "feature",
-  "status": "pending",
+  "status": "completed",
   "phase": 3,
-  "dependsOn": ["ci_cd_20260513"],
+  "dependsOn": [
+    "ci_cd_20260513"
+  ],
   "priority": "must",
   "created": "2026-05-13",
-  "fulfills": ["REQ-DOC-001", "REQ-DOC-002", "REQ-DOC-003", "REQ-DOC-004", "REQ-DOC-005", "REQ-DOC-006"],
+  "fulfills": [
+    "REQ-DOC-001",
+    "REQ-DOC-002",
+    "REQ-DOC-003",
+    "REQ-DOC-004",
+    "REQ-DOC-005",
+    "REQ-DOC-006"
+  ],
   "parallel": false
 }

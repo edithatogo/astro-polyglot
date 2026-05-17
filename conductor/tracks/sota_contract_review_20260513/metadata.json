@@ -2,11 +2,21 @@
   "id": "sota_contract_review_20260513",
   "name": "SOTA Contract Definition & Audit",
   "type": "feature",
-  "status": "pending",
+  "status": "completed",
   "phase": 5,
-  "dependsOn": ["migrate_innovate_20260513", "migrate_voiage_20260513", "migrate_mars_20260513", "migrate_lifecourse_20260513"],
+  "dependsOn": [
+    "migrate_innovate_20260513",
+    "migrate_voiage_20260513",
+    "migrate_mars_20260513",
+    "migrate_lifecourse_20260513"
+  ],
   "priority": "should",
   "created": "2026-05-13",
-  "fulfills": ["REQ-SOTA-001", "REQ-SOTA-002", "REQ-SOTA-003", "REQ-SOTA-004"],
+  "fulfills": [
+    "REQ-SOTA-001",
+    "REQ-SOTA-002",
+    "REQ-SOTA-003",
+    "REQ-SOTA-004"
+  ],
   "parallel": false
 }

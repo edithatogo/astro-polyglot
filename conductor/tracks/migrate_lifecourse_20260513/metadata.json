@@ -1,12 +1,18 @@
 {
   "id": "migrate_lifecourse_20260513",
-  "name": "Create lifecourse Documentation (from scratch → Starlight)",
+  "name": "Create lifecourse Documentation (from scratch \u2192 Starlight)",
   "type": "feature",
-  "status": "pending",
+  "status": "completed",
   "phase": 4,
-  "dependsOn": ["self_docs_20260513"],
+  "dependsOn": [
+    "self_docs_20260513"
+  ],
   "priority": "must",
   "created": "2026-05-13",
-  "fulfills": ["REQ-MIG-004", "REQ-MIG-005", "REQ-MIG-006"],
+  "fulfills": [
+    "REQ-MIG-004",
+    "REQ-MIG-005",
+    "REQ-MIG-006"
+  ],
   "parallel": true
 }

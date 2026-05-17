@@ -2,11 +2,22 @@
   "id": "core_router_plugin_20260513",
   "name": "Core Router and Starlight Plugin Hook",
   "type": "feature",
-  "status": "pending",
+  "status": "completed",
   "phase": 1,
-  "dependsOn": ["plugin_scaffold_20260513"],
+  "dependsOn": [
+    "plugin_scaffold_20260513"
+  ],
   "priority": "must",
   "created": "2026-05-13",
-  "fulfills": ["REQ-CORE-002", "REQ-CORE-003", "REQ-CORE-006", "REQ-CORE-008", "REQ-CORE-009", "REQ-CORE-010", "REQ-CORE-011", "REQ-CORE-012"],
+  "fulfills": [
+    "REQ-CORE-002",
+    "REQ-CORE-003",
+    "REQ-CORE-006",
+    "REQ-CORE-008",
+    "REQ-CORE-009",
+    "REQ-CORE-010",
+    "REQ-CORE-011",
+    "REQ-CORE-012"
+  ],
   "parallel": false
 }

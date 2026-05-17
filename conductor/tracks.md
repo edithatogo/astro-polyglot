@@ -34,16 +34,20 @@
 - `[x]` [tests_20260513](./tracks/tests_20260513/) (0843c58) — Comprehensive test suite
 - `[x]` [self_docs_20260513](./tracks/self_docs_20260513/) (0843c58) — Self-hosted documentation
 
-## Phase 4: Repo Migrations (All Parallel)
+## Phase 4: Repo Migrations (All Parallel, Completed)
 
-- `[x]` [migrate_innovate_20260513](./tracks/migrate_innovate_20260513/) (b11f0d3) — Migrate innovate docs (Sphinx → Starlight)
-- `[x]` [migrate_voiage_20260513](./tracks/migrate_voiage_20260513/) (778cc8c) — Migrate voiage docs (Sphinx → Starlight)
-- `[x]` [migrate_mars_20260513](./tracks/migrate_mars_20260513/) (e8ed3b8) — Migrate mars docs (MkDocs → Starlight)
-- `[x]` [migrate_lifecourse_20260513](./tracks/migrate_lifecourse_20260513/) (b9355f0) — Migrate lifecourse docs (from scratch → Starlight)
+- `[x]` [migrate_innovate_20260513](./tracks/migrate_innovate_20260513/) — Migrate innovate docs (Sphinx → Starlight) ✅ 58 MDX pages, docs.yml, conductor track
+- `[x]` [migrate_voiage_20260513](./tracks/migrate_voiage_20260513/) — Migrate voiage docs (Sphinx → Starlight) ✅ 51 MDX pages, all RST converted, git pushed
+- `[x]` [migrate_mars_20260513](./tracks/migrate_mars_20260513/) — Create mars repo + Starlight docs (Go → Starlight) ✅ Go module, 5 Go files, full conductor, docs.yml, CI
+- `[x]` [migrate_lifecourse_20260513](./tracks/migrate_lifecourse_20260513/) — Migrate lifecourse docs (from scratch → Starlight) ✅ 5 MDX pages, astro config, git pushed
 
 ## Phase 5: Recursive SOTA
 
 - `[x]` [sota_contract_review_20260513](./tracks/sota_contract_review_20260513/) (ff5823a) — SOTA contract definition + audit (44/44 pass, 100%)
+
+## Conductor Updates
+
+- `[x]` [conductor_update_20260517](./tracks/conductor_update_20260517/) — Updated conductor files: requirements.md deduplicated + MIG cross-refs, design.md deduplicated + new DGN-MIG-001 diagram, index.md comprehensive dashboard, sota-contract.md new Repo Migrations section (R-01 through R-08), sota-audit.mjs now checks migration repos (50/61 pass, 82% — pending agent completions)
 
 ---
 

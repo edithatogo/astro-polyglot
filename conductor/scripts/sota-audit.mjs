@@ -43,6 +43,17 @@ function fcontains(p, s) {
   catch { return false; }
 }
 
+// Helper: check file in a sibling repo (migration targets)
+function repoFex(repoName, filePath) {
+  try { return existsSync(resolve(ROOT, '..', repoName, filePath)); }
+  catch { return false; }
+}
+function repoFcontains(repoName, filePath, s) {
+  try {
+    const content = readFileSync(resolve(ROOT, '..', repoName, filePath), 'utf-8');
+    return content.includes(s);
+  } catch { return false; }
+}
 
 // ── Code Quality ──
 console.log('── Code Quality ──');
@@ -124,6 +135,28 @@ check('G-10: Workflow', 'Governance', fex('conductor/workflow.md'));
 check('G-11: Self-docs index', 'Governance', fex('docs/astro-site/src/content/docs/index.mdx'));
 check('G-12: SOTA contract exists', 'Governance', fex('conductor/sota-contract.md'));
 check('G-13: Audit script exists', 'Governance', fex('conductor/scripts/sota-audit.mjs'));
+
+// ── Repo Migrations ──
+console.log('\n── Repo Migrations ──');
+const migRepos = ['innovate', 'voiage', 'mars', 'lifecourse'];
+for (const repo of migRepos) {
+  const idx = migRepos.indexOf(repo) + 1;
+  const hasDocsYml = repoFex(repo, '.github/workflows/docs.yml');
+  const hasConductor = repoFex(repo, 'conductor/tracks.md');
+  const hasPolyglot = repoFcontains(repo, 'astro.config.mjs', 'polyglot');
+  const hasLinksVal = repoFcontains(repo, 'astro.config.mjs', 'links-validator');
+  check(`R-0${idx}: ${repo} docs deployed`, 'Repo Migrations', hasDocsYml, hasDocsYml ? 'docs.yml found' : 'missing');
+  check(`R-05: ${repo} conductor`, 'Repo Migrations', hasConductor, hasConductor ? 'tracks.md found' : 'missing');
+  check(`R-06: ${repo} dogfoods polyglot`, 'Repo Migrations', hasPolyglot, hasPolyglot ? 'configured' : 'missing');
+  check(`R-07: ${repo} links-validator`, 'Repo Migrations', hasLinksVal, hasLinksVal ? 'configured' : 'missing');
+}
+if (fex('conductor/tracks.md')) {
+  const tracks = readFileSync(resolve(ROOT, 'conductor/tracks.md'), 'utf-8');
+  const allDone = migRepos.every(r => tracks.includes(`[x] migrate_${r}`));
+  check('R-08: All migration tracks complete', 'Repo Migrations', allDone, allDone ? 'all marked [x]' : 'some pending');
+} else {
+  check('R-08: All migration tracks complete', 'Repo Migrations', false, 'tracks.md missing');
+}
 
 // ── Summary ──
 console.log('\n═══════════════════════════════════════════');

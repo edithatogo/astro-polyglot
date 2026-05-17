@@ -2,11 +2,17 @@
   "id": "handler_rust_20260513",
   "name": "Rust Handler (rustdoc)",
   "type": "feature",
-  "status": "pending",
+  "status": "completed",
   "phase": 2,
-  "dependsOn": ["core_mdx_generator_20260513", "core_router_plugin_20260513"],
+  "dependsOn": [
+    "core_mdx_generator_20260513",
+    "core_router_plugin_20260513"
+  ],
   "priority": "must",
   "created": "2026-05-13",
-  "fulfills": ["REQ-RS-001", "REQ-RS-002"],
+  "fulfills": [
+    "REQ-RS-001",
+    "REQ-RS-002"
+  ],
   "parallel": true
 }
