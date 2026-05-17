@@ -13,3 +13,4 @@ coverage/
 .changeset/*.md
 !src/**/*.ts
 package-lock.json
+target/
