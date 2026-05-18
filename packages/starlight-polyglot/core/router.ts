@@ -1,5 +1,14 @@
-import type { Logger } from '@astrojs/starlight/types';
 import type { Language, Handler } from './handler';
+
+/**
+ * Minimal logger interface matching what Starlight provides.
+ */
+export interface Logger {
+  warn: (msg: string) => void;
+  info: (msg: string) => void;
+  error: (msg: string) => void;
+  debug: (msg: string) => void;
+}
 
 /**
  * Per-language handler configuration.
