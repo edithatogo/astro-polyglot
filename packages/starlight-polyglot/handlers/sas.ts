@@ -48,7 +48,7 @@ export const sasHandler: Handler = {
     const output = transformToMDX(modules, {
       outputDir: opts.output,
       language: 'sas',
-      pagination: opts.pagination,
+      ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
     return output;

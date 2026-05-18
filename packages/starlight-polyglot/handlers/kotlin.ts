@@ -73,7 +73,7 @@ export const kotlinHandler: Handler = {
     const output = transformToMDX(modules, {
       outputDir: opts.output,
       language: 'kotlin',
-      pagination: opts.pagination,
+      ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
     return output;

@@ -69,7 +69,7 @@ export const scalaHandler: Handler = {
     const output = transformToMDX(modules, {
       outputDir: opts.output,
       language: 'scala',
-      pagination: opts.pagination,
+      ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
     return output;

@@ -70,7 +70,7 @@ export const dartHandler: Handler = {
     const output = transformToMDX(modules, {
       outputDir: opts.output,
       language: 'dart',
-      pagination: opts.pagination,
+      ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
     return output;

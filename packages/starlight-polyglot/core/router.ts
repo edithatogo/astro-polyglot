@@ -137,13 +137,13 @@ function lazyHandler(name: Language): Handler {
       const handler = mod[handlerName] as Handler | undefined;
       if (!handler) {
         throw new Error(
-          `Handler "${handlerName}" not found in module "../handlers/${name}.js". ` +
-            `Ensure the module exports a named export called "${handlerName}".`,
+          `Handler "${String(handlerName)}" not found in module "../handlers/${name}.js". ` +
+            `Ensure the module exports a named export called "${String(handlerName)}".`,
         );
       }
       if (typeof handler.generate !== 'function') {
         throw new Error(
-          `Handler "${handlerName}" does not have a "generate" method.`,
+          `Handler "${String(handlerName)}" does not have a "generate" method.`,
         );
       }
       return handler.generate(options);

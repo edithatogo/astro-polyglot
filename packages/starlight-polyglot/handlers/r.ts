@@ -35,7 +35,7 @@ export const rHandler: Handler = {
     const output = transformToMDX(modules, {
       outputDir: opts.output,
       language: 'r',
-      pagination: opts.pagination,
+      ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
     return output;

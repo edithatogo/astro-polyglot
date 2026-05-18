@@ -77,7 +77,7 @@ export const swiftHandler: Handler = {
     const output = transformToMDX(modules, {
       outputDir: opts.output,
       language: 'swift',
-      pagination: opts.pagination,
+      ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
     return output;

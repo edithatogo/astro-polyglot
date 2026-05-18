@@ -31,7 +31,7 @@ export const typescriptHandler: Handler = {
     const output = transformToMDX(modules, {
       outputDir: opts.output,
       language: 'typescript',
-      pagination: opts.pagination,
+      ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
     return output;

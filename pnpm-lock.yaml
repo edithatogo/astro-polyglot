@@ -27,8 +27,8 @@ importers:
         specifier: latest
         version: 0.9.0(@astrojs/starlight@0.39.2(astro@6.3.2(@types/node@24.12.4)(jiti@2.7.0)(rollup@4.60.3)(yaml@2.9.0))(typescript@5.9.3))(astro@6.3.2(@types/node@24.12.4)(jiti@2.7.0)(rollup@4.60.3)(yaml@2.9.0))
       starlight-polyglot:
-        specifier: workspace:*
-        version: link:../../packages/starlight-polyglot
+        specifier: file:../../packages/starlight-polyglot
+        version: file:packages/starlight-polyglot(@astrojs/starlight@0.39.2(astro@6.3.2(@types/node@24.12.4)(jiti@2.7.0)(rollup@4.60.3)(yaml@2.9.0))(typescript@5.9.3))(astro@6.3.2(@types/node@24.12.4)(jiti@2.7.0)(rollup@4.60.3)(yaml@2.9.0))(typedoc-plugin-markdown@4.11.0(typedoc@0.28.19(typescript@5.9.3)))(typedoc@0.28.19(typescript@5.9.3))
       starlight-versions:
         specifier: latest
         version: 0.9.0(@astrojs/starlight@0.39.2(astro@6.3.2(@types/node@24.12.4)(jiti@2.7.0)(rollup@4.60.3)(yaml@2.9.0))(typescript@5.9.3))
@@ -2514,6 +2514,20 @@ packages:
     peerDependencies:
       '@astrojs/starlight': '>=0.38.0'
       astro: ^6.0.0
+
+  starlight-polyglot@file:packages/starlight-polyglot:
+    resolution: {directory: packages/starlight-polyglot, type: directory}
+    engines: {node: '>=22.12.0'}
+    peerDependencies:
+      '@astrojs/starlight': '>=0.39.0'
+      astro: '>=6.0.0'
+      typedoc: '>=0.28.0'
+      typedoc-plugin-markdown: '>=4.6.0'
+    peerDependenciesMeta:
+      typedoc:
+        optional: true
+      typedoc-plugin-markdown:
+        optional: true
 
   starlight-versions@0.9.0:
     resolution: {integrity: sha512-x3R9PODRVWuRWk0EDVgMO8OEttiKlGUUY22QMk9XehY8o3nxSkwyMpvapXgFyZQvpbBLgW5/xCvnoJlb87N5og==}
@@ -6207,6 +6221,15 @@ snapshots:
       unist-util-remove: 4.0.0
     transitivePeerDependencies:
       - supports-color
+
+  starlight-polyglot@file:packages/starlight-polyglot(@astrojs/starlight@0.39.2(astro@6.3.2(@types/node@24.12.4)(jiti@2.7.0)(rollup@4.60.3)(yaml@2.9.0))(typescript@5.9.3))(astro@6.3.2(@types/node@24.12.4)(jiti@2.7.0)(rollup@4.60.3)(yaml@2.9.0))(typedoc-plugin-markdown@4.11.0(typedoc@0.28.19(typescript@5.9.3)))(typedoc@0.28.19(typescript@5.9.3)):
+    dependencies:
+      '@astrojs/starlight': 0.39.2(astro@6.3.2(@types/node@24.12.4)(jiti@2.7.0)(rollup@4.60.3)(yaml@2.9.0))(typescript@5.9.3)
+      astro: 6.3.2(@types/node@24.12.4)(jiti@2.7.0)(rollup@4.60.3)(yaml@2.9.0)
+      github-slugger: 2.0.0
+    optionalDependencies:
+      typedoc: 0.28.19(typescript@5.9.3)
+      typedoc-plugin-markdown: 4.11.0(typedoc@0.28.19(typescript@5.9.3))
 
   starlight-versions@0.9.0(@astrojs/starlight@0.39.2(astro@6.3.2(@types/node@24.12.4)(jiti@2.7.0)(rollup@4.60.3)(yaml@2.9.0))(typescript@5.9.3)):
     dependencies:

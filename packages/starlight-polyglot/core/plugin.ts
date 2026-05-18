@@ -11,7 +11,7 @@ export type { Handler as HandlerContract, HandlerOptions, Language } from './han
  * A symbol-based key used to identify the placeholder sidebar group.
  */
 export interface SidebarGroup {
-  _key: symbol;
+  _key?: symbol;
   label: string;
   items: SidebarItem[];
 }

@@ -38,7 +38,7 @@ export const csharpHandler: Handler = {
     const output = transformToMDX(modules, {
       outputDir: opts.output,
       language: 'csharp',
-      pagination: opts.pagination,
+      ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
     return output;

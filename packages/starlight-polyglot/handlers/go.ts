@@ -36,7 +36,7 @@ export const goHandler: Handler = {
     const output = transformToMDX(modules, {
       outputDir: opts.output,
       language: 'go',
-      pagination: opts.pagination,
+      ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
     return output;

@@ -36,7 +36,7 @@ export const rustHandler: Handler = {
     const output = transformToMDX(modules, {
       outputDir: opts.output,
       language: 'rust',
-      pagination: opts.pagination,
+      ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
     return output;
