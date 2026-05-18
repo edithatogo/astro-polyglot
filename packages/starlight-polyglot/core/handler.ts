@@ -32,7 +32,8 @@ export type Language =
   | 'elixir';
 
 /**
- * A single MDX output page produced by a handler.
+ * A single MDX output page produced by a handler, used internally
+ * when writing files to disk. This is the per-page representation.
  */
 export interface MDXOutput {
   /** Raw MDX content (frontmatter + body) */
@@ -41,6 +42,36 @@ export interface MDXOutput {
   frontmatter: Record<string, unknown>;
   /** Relative output path under the Starlight content directory, e.g. "api/python/io.mdx" */
   outputPath: string;
+}
+
+/**
+ * A sidebar item linking to a generated page.
+ */
+export interface SidebarItem {
+  label: string;
+  link: string;
+}
+
+/**
+ * A handler page with minimal frontmatter properties needed for
+ * sidebar integration. The full MDX frontmatter is generated
+ * during the MDX writing phase.
+ */
+export interface HandlerPage {
+  path: string;
+  frontmatter: Record<string, unknown>;
+  body: string;
+}
+
+/**
+ * Aggregate output from a handler, containing pages and sidebar.
+ * This is what handlers actually return (from transformToMDX).
+ * The pages array contains per-page data, and the sidebar
+ * provides navigation structure for Starlight.
+ */
+export interface HandlerAggregateOutput {
+  pages: HandlerPage[];
+  sidebar: { label: string; items: SidebarItem[] };
 }
 
 /**
@@ -81,9 +112,9 @@ export interface Handler {
    * Generate MDX documentation pages from source code.
    *
    * @param options - Handler-specific configuration and output settings
-   * @returns An array of MDXOutput pages ready for writing to disk
+   * @returns Aggregate output with pages array and sidebar configuration
    */
-  generate(options: HandlerOptions): Promise<MDXOutput[]>;
+  generate(options: HandlerOptions): Promise<HandlerAggregateOutput>;
   /**
    * Optional pre-flight validation to check that the handler's
    * runtime environment (e.g., CLI tools, SDKs) is available.

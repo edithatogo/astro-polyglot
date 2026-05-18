@@ -5,7 +5,7 @@ import {
   type SidebarGroup,
 } from './core/plugin';
 import { type PolyglotConfig, resolveHandlers } from './core/router';
-import { type MDXOutput } from './core/mdx-generator';
+import type { HandlerAggregateOutput } from './core/handler';
 
 // ─── Canonical type re-exports ───────────────────────────────────────
 export type {
@@ -13,10 +13,13 @@ export type {
   Handler,
   HandlerOptions,
   MDXOutput as HandlerMDXOutput,
+  HandlerAggregateOutput,
+  HandlerPage,
   ValidationResult,
+  SidebarItem,
 } from './core/handler';
 export type { PolyglotConfig } from './core/router';
-export type { SidebarGroup, SidebarItem, HandlerOutput, HandlerPage, MDXFrontmatter, BaseHandlerOptions } from './core/plugin';
+export type { SidebarGroup, HandlerOutput, HandlerPage as PluginHandlerPage, MDXFrontmatter, BaseHandlerOptions } from './core/plugin';
 
 // ─── Plugin entry point ──────────────────────────────────────────────
 
@@ -40,7 +43,7 @@ function makePolyglotPlugin(sidebarGroup: SidebarGroup) {
           if (command === 'preview') return;
 
           const handlers = resolveHandlers(options, logger);
-          const outputs: MDXOutput[] = [];
+          const outputs: HandlerAggregateOutput[] = [];
 
           for (const handler of handlers) {
             try {
@@ -67,7 +70,7 @@ function makePolyglotPlugin(sidebarGroup: SidebarGroup) {
 function mergeSidebars(
   existingSidebar: unknown,
   group: SidebarGroup,
-  outputs: MDXOutput[],
+  outputs: HandlerAggregateOutput[],
 ): unknown[] {
   const sidebar = Array.isArray(existingSidebar) ? [...existingSidebar] : [];
   const apiGroups = outputs
