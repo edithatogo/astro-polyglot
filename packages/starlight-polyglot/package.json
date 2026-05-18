@@ -1,5 +1,5 @@
 {
-  "name": "starlight-polyglot",
+  "name": "@edithatogo/starlight-polyglot",
   "version": "0.1.0",
   "license": "MIT",
   "description": "Starlight plugin to generate documentation from any programming language using its native toolchain.",
