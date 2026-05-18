@@ -32,7 +32,9 @@ jobs:
       - run: pnpm --filter starlight-polyglot build
 
       - name: Publish to npm
-        run: npm publish --access public --tag ${{ github.event.inputs.tag }}
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          npm publish --access public --tag ${{ github.event.inputs.tag }}
         working-directory: packages/starlight-polyglot
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
