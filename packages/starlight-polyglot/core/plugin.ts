@@ -5,7 +5,7 @@ import type { Handler as HandlerContract, HandlerOptions, Language } from './han
  * Re-export the canonical handler types so consumers can import everything
  * from a single path.
  */
-export type { HandlerContract, HandlerOptions, Language } from './handler';
+export type { Handler as HandlerContract, HandlerOptions, Language } from './handler';
 
 /**
  * A symbol-based key used to identify the placeholder sidebar group.
