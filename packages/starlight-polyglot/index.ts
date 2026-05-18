@@ -61,11 +61,6 @@ function makePolyglotPlugin(sidebarGroup: SidebarGroup) {
           updateConfig({
             sidebar: mergeSidebars(config.sidebar, sidebarGroup, outputs) as any,
           });
-
-          // Merge sidebars from all handlers
-          updateConfig({
-            sidebar: mergeSidebars(config.sidebar, sidebarGroup, outputs),
-          });
         },
       },
     };
