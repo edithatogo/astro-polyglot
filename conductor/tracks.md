@@ -105,3 +105,6 @@
 | migrate_mars_20260513 | 4 | must | self_docs_20260513 | REQ-MIG-003, REQ-MIG-005, REQ-MIG-006 |
 | migrate_lifecourse_20260513 | 4 | must | self_docs_20260513 | REQ-MIG-004, REQ-MIG-005, REQ-MIG-006 |
 | sota_contract_review_20260513 | 5 | should | All Phase 4 migrations | REQ-SOTA-001..004 |
+## Phase 7: Bleeding-Edge Testing (In Progress)
+
+- `[~]` [testing_bleeding_edge_20260519](./tracks/testing_bleeding_edge_20260519/) — Property, mutation, fuzz, security, edge-case tests

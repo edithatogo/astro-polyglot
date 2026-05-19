@@ -1,0 +1,12 @@
+{
+  "id": "testing_bleeding_edge_20260519",
+  "name": "Bleeding-edge testing infrastructure",
+  "type": "feature",
+  "status": "in_progress",
+  "phase": 3,
+  "dependsOn": ["tests_20260513"],
+  "priority": "should",
+  "created": "2026-05-19",
+  "fulfills": ["REQ-QA-001", "REQ-QA-005", "REQ-QA-006", "REQ-QA-007"],
+  "parallel": false
+}
