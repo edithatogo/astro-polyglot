@@ -38,7 +38,6 @@
 - **GitHub Actions**: ci.yml, docs.yml, release.yml
 - **Renovate**: Automated dependency updates (grouped, auto-merge patch)
 - **changesets**: Version management + changelog automation
-- **semantic-release**: Conventional commit → version bump → npm publish
 
 ## Release
 - **npm**: With SLSA Level 3 provenance attestation
