@@ -2,7 +2,7 @@
   "id": "extraction_scripts_2_20260517",
   "name": "Extraction scripts for Stata, SAS, Scala, Ruby, Dart, PHP, Elixir",
   "type": "feature",
-  "status": "in_progress",
+  "status": "completed",
   "phase": 2,
   "dependsOn": ["handler_stata_20260517", "handler_sas_20260517", "handler_scala_20260517", "handler_ruby_20260517", "handler_dart_20260517", "handler_php_20260517", "handler_elixir_20260517"],
   "priority": "could",

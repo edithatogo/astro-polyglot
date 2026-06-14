@@ -2,7 +2,7 @@
   "id": "extraction_scripts_20260517",
   "name": "Extraction scripts for Rust, TypeScript, Go",
   "type": "feature",
-  "status": "in_progress",
+  "status": "completed",
   "phase": 2,
   "dependsOn": ["handler_rust_20260513", "handler_typescript_20260513", "handler_go_20260513"],
   "priority": "should",

@@ -53,31 +53,21 @@
 
 ---
 
+## Phase 6: Phase 2+ Handlers & Scripts (Completed)
 
-## Phase 6: Phase 2+ Handlers & Scripts (Mostly In Progress)
-
-- `[~]` [handler_java_20260517](./tracks/handler_java_20260517/) — Java handler (javadoc-json)
-- `[~]` [handler_kotlin_20260517](./tracks/handler_kotlin_20260517/) — Kotlin handler (Dokka)
-- `[~]` [handler_cpp_20260517](./tracks/handler_cpp_20260517/) — C++ handler (Doxygen XML)
-- `[~]` [handler_swift_20260517](./tracks/handler_swift_20260517/) — Swift handler (DocC)
-- `[~]` [handler_stata_20260517](./tracks/handler_stata_20260517/) — Stata handler (help system)
-- `[~]` [handler_sas_20260517](./tracks/handler_sas_20260517/) — SAS handler (documentation macros)
-- `[~]` [handler_scala_20260517](./tracks/handler_scala_20260517/) — Scala handler (Scaladoc)
-- `[~]` [handler_ruby_20260517](./tracks/handler_ruby_20260517/) — Ruby handler (YARD)
-- `[~]` [handler_dart_20260517](./tracks/handler_dart_20260517/) — Dart handler (dartdoc)
-- `[~]` [handler_php_20260517](./tracks/handler_php_20260517/) — PHP handler (phpDocumentor)
-- `[~]` [handler_elixir_20260517](./tracks/handler_elixir_20260517/) — Elixir handler (ExDoc)
-- `[~]` [extraction_scripts_20260517](./tracks/extraction_scripts_20260517/) — Extraction scripts for Rust, TypeScript, Go
-- `[~]` [extraction_scripts_2_20260517](./tracks/extraction_scripts_2_20260517/) — Extraction scripts for Stata, SAS, Scala, Ruby, Dart, PHP, Elixir
-
-
-## Phase 6: Phase 2+ Handlers & Scripts (In Progress)
-
-- `[~]` [handler_java_20260517](./tracks/handler_java_20260517/) — Java handler (javadoc-json)
-- `[~]` [handler_kotlin_20260517](./tracks/handler_kotlin_20260517/) — Kotlin handler (Dokka)
-- `[~]` [handler_cpp_20260517](./tracks/handler_cpp_20260517/) — C++ handler (Doxygen XML)
-- `[~]` [handler_swift_20260517](./tracks/handler_swift_20260517/) — Swift handler (DocC)
-- `[~]` [extraction_scripts_20260517](./tracks/extraction_scripts_20260517/) — Extraction scripts for Rust, TypeScript, Go
+- `[x]` [handler_java_20260517](./tracks/handler_java_20260517/) (d3d2219) — Java handler (javadoc-json)
+- `[x]` [handler_kotlin_20260517](./tracks/handler_kotlin_20260517/) (d3d2219) — Kotlin handler (Dokka)
+- `[x]` [handler_cpp_20260517](./tracks/handler_cpp_20260517/) (d3d2219) — C++ handler (Doxygen XML)
+- `[x]` [handler_swift_20260517](./tracks/handler_swift_20260517/) (d3d2219) — Swift handler (DocC)
+- `[x]` [handler_stata_20260517](./tracks/handler_stata_20260517/) (d3d2219) — Stata handler (help system)
+- `[x]` [handler_sas_20260517](./tracks/handler_sas_20260517/) (d3d2219) — SAS handler (documentation macros)
+- `[x]` [handler_scala_20260517](./tracks/handler_scala_20260517/) (d3d2219) — Scala handler (Scaladoc)
+- `[x]` [handler_ruby_20260517](./tracks/handler_ruby_20260517/) (d3d2219) — Ruby handler (YARD)
+- `[x]` [handler_dart_20260517](./tracks/handler_dart_20260517/) (d3d2219) — Dart handler (dartdoc)
+- `[x]` [handler_php_20260517](./tracks/handler_php_20260517/) (d3d2219) — PHP handler (phpDocumentor)
+- `[x]` [handler_elixir_20260517](./tracks/handler_elixir_20260517/) (d3d2219) — Elixir handler (ExDoc)
+- `[x]` [extraction_scripts_20260517](./tracks/extraction_scripts_20260517/) (d3d2219) — Extraction scripts for Rust, TypeScript, Go
+- `[x]` [extraction_scripts_2_20260517](./tracks/extraction_scripts_2_20260517/) (d3d2219) — Extraction scripts for Stata, SAS, Scala, Ruby, Dart, PHP, Elixir
 
 ---
 
@@ -105,6 +95,6 @@
 | migrate_mars_20260513 | 4 | must | self_docs_20260513 | REQ-MIG-003, REQ-MIG-005, REQ-MIG-006 |
 | migrate_lifecourse_20260513 | 4 | must | self_docs_20260513 | REQ-MIG-004, REQ-MIG-005, REQ-MIG-006 |
 | sota_contract_review_20260513 | 5 | should | All Phase 4 migrations | REQ-SOTA-001..004 |
-## Phase 7: Bleeding-Edge Testing (In Progress)
+## Phase 7: Bleeding-Edge Testing (Completed)
 
-- `[~]` [testing_bleeding_edge_20260519](./tracks/testing_bleeding_edge_20260519/) — Property, mutation, fuzz, security, edge-case tests
+- `[x]` [testing_bleeding_edge_20260519](./tracks/testing_bleeding_edge_20260519/) (d3d2219) — Property, mutation, fuzz, security, edge-case tests

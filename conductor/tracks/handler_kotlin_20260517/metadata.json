@@ -2,7 +2,7 @@
   "id": "handler_kotlin_20260517",
   "name": "Kotlin handler (Dokka)",
   "type": "feature",
-  "status": "in_progress",
+  "status": "completed",
   "phase": 2,
   "dependsOn": ["core_mdx_generator_20260513", "core_router_plugin_20260513"],
   "priority": "could",
