@@ -52,6 +52,7 @@ describe.each(validLanguages.map(l => [l, l]))('Handler: %s', (_name, language) 
     try {
       const p = handler!.generate({ output: 'test' } as any);
       expect(p).toBeInstanceOf(Promise);
+      p.catch(() => undefined);
     } catch { /* sync validation throws acceptable */ }
   });
 

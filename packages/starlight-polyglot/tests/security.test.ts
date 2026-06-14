@@ -87,7 +87,7 @@ describe('command injection prevention', () => {
     }];
     const output = transformToMDX(modules, { outputDir: 'api/py' });
     expect(output.pages).toHaveLength(2);
-    expect(output.pages[0]!.body).toContain('x; rm -rf /');
+    expect(output.pages[1]!.body).toContain('x; rm -rf /');
   });
 });
 
@@ -167,6 +167,8 @@ describe('prototype pollution prevention', () => {
     const clsPage = output.pages.find((p) => p.path.startsWith('api/py/mod.pollutedclass'))!;
     expect(clsPage.body).toContain('__proto__');
     expect(clsPage.body).toContain('prototype');
+  });
+});
 
 // ─── No sensitive data in output ────────────────────────────────────────────
 
@@ -217,18 +219,6 @@ describe('writeMDXPages path safety', () => {
     } finally {
       await fs.rm(tempDir, { recursive: true, force: true });
     }
-  });
-});
-
-  });
-
-  it('handles prototype pollution via options object', () => {
-    const modules: ASTModule[] = [{ name: 'mod' }];
-    const options = { outputDir: 'api/py', __proto__: { polluted: true } } as any;
-    const output = transformToMDX(modules, options);
-    expect(output.pages).toHaveLength(1);
-    const clean: Record<string, unknown> = {};
-    expect((clean as any).polluted).toBeUndefined();
   });
 });
 

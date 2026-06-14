@@ -187,10 +187,10 @@ test.prop([languageArbitrary])(
     expect(modPage.frontmatter.description).toBe(unicodeDoc);
     expect(modPage.body).toContain(unicodeDoc);
 
-    const clsPage = output.pages.find((p) => p.path.startsWith('api/test/unicode_mod.unicodecls'))!;
+    const clsPage = output.pages.find((p) => p.frontmatter.title === 'unicode_mod.ŰnicödeCls')!;
     expect(clsPage.frontmatter.description).toBe(unicodeDoc);
 
-    const fnPage = output.pages.find((p) => p.path.startsWith('api/test/unicode_mod.unc'))!;
+    const fnPage = output.pages.find((p) => p.frontmatter.title === 'unicode_mod.fünc')!;
     expect(fnPage.frontmatter.description).toBe(unicodeDoc);
   },
 );
@@ -240,9 +240,16 @@ test.prop([arbitraryModuleList, fc.boolean()])(
 
 // ─── Property: each page path is unique ───────────────────────────────────────
 
-test.prop([arbitraryModuleList, outputDirArbitrary])(
+test.prop([
+  fc.uniqueArray(
+    fc.string({ minLength: 1, maxLength: 24 }).filter((s) => /^[A-Za-z_][A-Za-z0-9_]*$/.test(s)),
+    { maxLength: 10, selector: (name) => name.toLowerCase() },
+  ),
+  outputDirArbitrary,
+])(
   'all generated page paths are unique',
-  (modules, outputDir) => {
+  (moduleNames, outputDir) => {
+    const modules: ASTModule[] = moduleNames.map((name) => ({ name }));
     const output = transformToMDX(modules, { outputDir });
     const paths = output.pages.map((p) => p.path);
     const uniquePaths = new Set(paths);

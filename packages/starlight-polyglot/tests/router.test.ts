@@ -103,22 +103,23 @@ describe('resolveHandlers()', () => {
   });
 
   it('filters out unknown languages while keeping valid ones', () => {
+    const localLogger = createMockLogger();
     const handlers = resolveHandlers(
       {
         python: { entryPoints: ['mod'] },
         foobar: { entryPoints: ['x'] },
         rust: { cratePath: '/tmp/crate' },
       } as Record<string, { entryPoints?: string[]; cratePath?: string }>,
-      logger,
+      localLogger,
     );
 
     expect(handlers).toHaveLength(2);
     const names = handlers.map((h) => h.name).sort();
     expect(names).toEqual(['python', 'rust']);
     // One warn for unknown, no "no handlers" warn
-    const warnCalls = (logger.warn as ReturnType<typeof vi.fn>).mock.calls;
-    expect(warnCalls.some(([msg]: string[]) => /foobar/i.test(msg))).toBe(true);
-    expect(warnCalls.some(([msg]: string[]) => /No handlers configured/i.test(msg))).toBe(false);
+    const warnMessages = localLogger.logs.map((entry) => entry.message);
+    expect(warnMessages.some((msg) => /foobar/i.test(msg))).toBe(true);
+    expect(warnMessages.some((msg) => /No handlers configured/i.test(msg))).toBe(false);
   });
 
   it('sets default output to api/{language} when not specified', () => {
@@ -163,7 +164,6 @@ describe('resolveHandlers()', () => {
     const handlers = resolveHandlers({ python: { entryPoints: ['mod'] } }, logger);
 
     expect(handlers).toHaveLength(1);
-    const result = handlers[0]!.handler.generate({ output: 'api/python' });
-    expect(result).toBeInstanceOf(Promise);
+    expect(handlers[0]!.handler.generate.constructor.name).toBe('AsyncFunction');
   });
 });

@@ -43,7 +43,7 @@ export default defineConfig({
     maxConcurrency: 8,
     maxRetries: 2,
     sequence: {
-      concurrent: true,
+      concurrent: false,
       shuffle: false,
     },
     typecheck: {

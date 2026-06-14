@@ -97,6 +97,7 @@ describe.each(allLanguages.map((l): [LanguageName, LanguageName] => [l, l]))(
       try {
         const p = handler.generate({ output: 'test' } as any);
         expect(p).toBeInstanceOf(Promise);
+        p.catch(() => undefined);
       } catch {
         // Some handlers may throw synchronously for missing options
       }

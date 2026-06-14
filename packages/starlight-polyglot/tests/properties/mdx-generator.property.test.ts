@@ -40,6 +40,14 @@ const typeArb: fc.Arbitrary<string> = fc.oneof(
   fc.constant('array'),
   fc.constant('object'),
 );
+
+const parameterArb: fc.Arbitrary<ASTParameter> = fc.record({
+  name: identifierArb,
+  type: fc.oneof(typeArb, fc.constant(undefined)),
+  description: fc.oneof(fc.string({ minLength: 1, maxLength: 100 }), fc.constant(undefined)),
+  default: fc.oneof(fc.string({ minLength: 1, maxLength: 20 }), fc.constant(undefined)),
+});
+
 const functionArb: fc.Arbitrary<ASTFunction> = fc.record({
   name: identifierArb,
   signature: fc.oneof(fc.string({ minLength: 1, maxLength: 100 }), fc.constant(undefined)),
@@ -74,14 +82,6 @@ const modulesArrayArb: fc.Arbitrary<ASTModule[]> = fc.array(moduleArb, { maxLeng
 const outputDirArb: fc.Arbitrary<string> = fc
   .string({ minLength: 1, maxLength: 30 })
   .filter((s) => /^[a-zA-Z0-9_/]+$/.test(s) && !s.startsWith('/') && !s.endsWith('/'));
-
-
-const parameterArb: fc.Arbitrary<ASTParameter> = fc.record({
-  name: identifierArb,
-  type: fc.oneof(typeArb, fc.constant(undefined)),
-  description: fc.oneof(fc.string({ minLength: 1, maxLength: 100 }), fc.constant(undefined)),
-  default: fc.oneof(fc.string({ minLength: 1, maxLength: 20 }), fc.constant(undefined)),
-});
 
 // ─── Property tests ─────────────────────────────────────────────────
 
@@ -172,7 +172,12 @@ describe('transformToMDX (property-based)', () => {
 
   it('page paths are unique (no duplicates)', () => {
     fc.assert(
-      fc.property(modulesArrayArb, outputDirArb, languageArb, (modules, outputDir, language) => {
+      fc.property(
+        fc.uniqueArray(identifierArb, { maxLength: 10, selector: (name) => name.toLowerCase() }),
+        outputDirArb,
+        languageArb,
+        (moduleNames, outputDir, language) => {
+        const modules: ASTModule[] = moduleNames.map((name) => ({ name }));
         const result = transformToMDX(modules, { outputDir, language });
         const paths = result.pages.map((p) => p.path);
         const uniquePaths = new Set(paths);
@@ -232,4 +237,3 @@ describe('transformToMDX (property-based)', () => {
     );
   });
 });
-

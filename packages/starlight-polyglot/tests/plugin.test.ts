@@ -40,7 +40,7 @@ describe('starlight-polyglot plugin', () => {
   let resolveHandlersSpy: MockInstance;
 
   beforeEach(() => {
-    vi.resetAllMocks();
+    vi.restoreAllMocks();
     resolveHandlersSpy = vi.spyOn(routerModule, 'resolveHandlers');
   });
 
@@ -97,8 +97,9 @@ describe('starlight-polyglot plugin', () => {
     it('returns early without resolving handlers or updating config', async () => {
       const plugin = polyglotPlugin({ python: { entryPoints: ['mod'] } });
       const params = createMockParams({ command: 'preview' });
+      const callsBefore = resolveHandlersSpy.mock.calls.length;
       await plugin.hooks['config:setup'](params as never);
-      expect(resolveHandlersSpy).not.toHaveBeenCalled();
+      expect(resolveHandlersSpy.mock.calls).toHaveLength(callsBefore);
       expect(params.updateConfig).not.toHaveBeenCalled();
     });
   });
