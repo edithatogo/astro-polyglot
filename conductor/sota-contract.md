@@ -94,7 +94,7 @@ This document defines the State-of-the-Art (SOTA) criteria that the starlight-po
 | R-07 | Each migrated repo has starlight-links-validator configured | Plugin present in astro.config.mjs | File content check per repo |
 | R-08 | All 4 migration tracks marked completed in central tracks.md | `conductor/tracks.md` has `[x]` for all 4 migrate_* tracks | File content check |
 
-**Note:** Automated checks for R-01 through R-04 require git clone access to each repo. The sota-audit.mjs script checks file existence locally when repos are co-located at `/Users/doughnut/GitHub/`.
+**Note:** Automated checks for R-01 through R-04 require git clone access to each repo. The sota-audit.mjs script checks sibling checkouts by default (`../innovate`, `../voiage`, `../mars`, `../lifecourse`) and supports `MIGRATION_REPO_ROOT=/path/to/repos` when the repositories live elsewhere.
 
 ---
 

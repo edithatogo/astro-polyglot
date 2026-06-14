@@ -17,6 +17,9 @@ const ROOT = resolve(__dirname, '../..');
 const AUDIT_DIR = resolve(ROOT, 'conductor/audit');
 const date = new Date().toISOString().split('T')[0];
 const REPORT_FILE = resolve(AUDIT_DIR, `report-${date}.json`);
+const MIGRATION_REPO_ROOT = process.env.MIGRATION_REPO_ROOT
+  ? resolve(process.env.MIGRATION_REPO_ROOT)
+  : resolve(ROOT, '..');
 
 const results = [];
 let passed = 0;
@@ -43,10 +46,14 @@ function fcontains(p, s) {
   catch { return false; }
 }
 
+function repoBasePath(repoName) {
+  return resolve(MIGRATION_REPO_ROOT, repoName);
+}
+
 function repoFex(repoName, filePath) {
   try {
     // Handle nested repo structure (innovate/innovate/)
-    const basePath = resolve(ROOT, '..', repoName);
+    const basePath = repoBasePath(repoName);
     if (!existsSync(basePath)) return false;
     const directPath = resolve(basePath, filePath);
     if (existsSync(directPath)) return true;
@@ -57,7 +64,7 @@ function repoFex(repoName, filePath) {
 }
 function repoFcontains(repoName, filePath, s) {
   try {
-    const basePath = resolve(ROOT, '..', repoName);
+    const basePath = repoBasePath(repoName);
     if (!existsSync(basePath)) return false;
     // Try direct path first, then nested
     try {

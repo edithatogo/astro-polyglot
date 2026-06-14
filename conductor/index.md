@@ -48,10 +48,10 @@
 
 | Repo | Path | Languages | Migration Track | Status | Agent |
 |------|------|-----------|-----------------|--------|-------|
-| **innovate** | `/Users/doughnut/GitHub/innovate` | Python | TRK-migrate_innovate | :white_check_mark: Complete | agent_innovate |
-| **voiage** | `/Users/doughnut/GitHub/voiage` | Python, TypeScript | TRK-migrate_voiage | :white_check_mark: Complete | agent_voiage |
-| **mars** | `/Users/doughnut/GitHub/mars` | Go | TRK-migrate_mars | :white_check_mark: Complete | agent_mars |
-| **lifecourse** | `/Users/doughnut/GitHub/lifecourse` | Julia, R, Python | TRK-migrate_lifecourse | :white_check_mark: Complete | agent_lifecourse |
+| **innovate** | `../innovate` | Python | TRK-migrate_innovate | :white_check_mark: Complete | agent_innovate |
+| **voiage** | `../voiage` | Python, TypeScript | TRK-migrate_voiage | :white_check_mark: Complete | agent_voiage |
+| **mars** | `../mars` | Go | TRK-migrate_mars | :white_check_mark: Complete | agent_mars |
+| **lifecourse** | `../lifecourse` | Julia, R, Python | TRK-migrate_lifecourse | :white_check_mark: Complete | agent_lifecourse |
 
 *See [requirements.md MIG section](./requirements.md#MIG---Repo-Migrations) for detailed migration requirements.*
 

@@ -101,10 +101,10 @@ Each migration converts a repo documentation to use starlight-polyglot for gener
 
 | Repo | Path | Languages | Handler Reqs | Migration Track | Agent |
 |------|------|-----------|--------------|-----------------|-------|
-| innovate | /Users/doughnut/GitHub/innovate | Python | REQ-PY-001, REQ-PY-002 | TRK-migrate_innovate | agent_innovate |
-| voiage | /Users/doughnut/GitHub/voiage | Python, TypeScript | REQ-PY-*, REQ-TS-* | TRK-migrate_voiage | agent_voiage |
-| mars | /Users/doughnut/GitHub/mars | Go | REQ-GO-001, REQ-GO-002 | TRK-migrate_mars | agent_mars |
-| lifecourse | /Users/doughnut/GitHub/lifecourse | Julia, R, Python | REQ-JL-*, REQ-R-*, REQ-PY-* | TRK-migrate_lifecourse | agent_lifecourse |
+| innovate | ../innovate | Python | REQ-PY-001, REQ-PY-002 | TRK-migrate_innovate | agent_innovate |
+| voiage | ../voiage | Python, TypeScript | REQ-PY-*, REQ-TS-* | TRK-migrate_voiage | agent_voiage |
+| mars | ../mars | Go | REQ-GO-001, REQ-GO-002 | TRK-migrate_mars | agent_mars |
+| lifecourse | ../lifecourse | Julia, R, Python | REQ-JL-*, REQ-R-*, REQ-PY-* | TRK-migrate_lifecourse | agent_lifecourse |
 
 ### Migration Requirements Traceability
 
