@@ -1,5 +1,5 @@
 import type { StarlightPlugin } from '@astrojs/starlight/types';
-import type { Handler as HandlerContract, HandlerOptions, Language } from './handler';
+import type { Handler as HandlerContract, HandlerAggregateOutput, HandlerOptions, Language } from './handler';
 
 /**
  * Re-export the canonical handler types so consumers can import everything
@@ -38,7 +38,7 @@ export function getSidebarGroupPlaceholder(key?: symbol): SidebarGroup {
 /**
  * Unified frontmatter schema for all generated MDX pages.
  */
-export interface MDXFrontmatter {
+export interface MDXFrontmatter extends Record<string, unknown> {
   title: string;
   description?: string;
   sidebar: {
@@ -55,10 +55,7 @@ export interface MDXFrontmatter {
 /**
  * Output from a single handler
  */
-export interface HandlerOutput {
-  pages: HandlerPage[];
-  sidebar: SidebarGroup;
-}
+export interface HandlerOutput extends HandlerAggregateOutput {}
 
 export interface HandlerPage {
   /** Relative path within output directory, e.g. "python/io.mdx" */
@@ -91,7 +88,7 @@ export interface BaseHandlerOptions extends HandlerOptions {
  *   This type alias is maintained for backward compatibility.
  */
 export interface Handler {
-  name: string;
+  name: Language;
   generate(options: BaseHandlerOptions & Record<string, unknown>): Promise<HandlerOutput>;
   validate?(sourcePath: string): Promise<{ valid: boolean; errors: string[] }>;
 }

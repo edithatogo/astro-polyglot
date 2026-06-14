@@ -6,6 +6,7 @@ import { transformToMDX, writeMDXPages, type ASTModule } from '../core/mdx-gener
 
 interface PythonHandlerOptions extends BaseHandlerOptions {
   entryPoints: string[];
+  pythonExecutable?: string;
 }
 
 /**
@@ -23,7 +24,7 @@ export const pythonHandler: Handler = {
       throw new Error('Python handler requires at least one entryPoint');
     }
 
-    const ast = await extractWithGriffe(entryPoints);
+    const ast = await extractWithGriffe(entryPoints, opts.pythonExecutable);
     const modules = ast.modules ?? [];
 
     if (modules.length === 0 && ast.errors) {
@@ -54,14 +55,14 @@ interface GriffeOutput {
   errors?: Array<{ entry_point: string; error: string }>;
 }
 
-function extractWithGriffe(entryPoints: string[]): GriffeOutput {
+function extractWithGriffe(entryPoints: string[], pythonExecutable = process.env.STARLIGHT_POLYGLOT_PYTHON ?? 'python3'): GriffeOutput {
   const scriptPath = path.resolve(import.meta.dirname, '..', 'scripts', 'python_extract.py');
 
   if (!existsSync(scriptPath)) {
     throw new Error(`Python extraction script not found at ${scriptPath}`);
   }
 
-  const args = ['python3', scriptPath, '--entry-points', ...entryPoints];
+  const args = [pythonExecutable, scriptPath, '--entry-points', ...entryPoints];
   const result = execSync(args.join(' '), {
     encoding: 'utf-8',
     maxBuffer: 10 * 1024 * 1024, // 10MB

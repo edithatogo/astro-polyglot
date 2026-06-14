@@ -1,4 +1,23 @@
-import type { Language, Handler } from './handler';
+import type { Language } from './handler';
+import type { Handler } from './plugin';
+import { cppHandler } from '../handlers/cpp';
+import { csharpHandler } from '../handlers/csharp';
+import { dartHandler } from '../handlers/dart';
+import { elixirHandler } from '../handlers/elixir';
+import { goHandler } from '../handlers/go';
+import { javaHandler } from '../handlers/java';
+import { juliaHandler } from '../handlers/julia';
+import { kotlinHandler } from '../handlers/kotlin';
+import { phpHandler } from '../handlers/php';
+import { pythonHandler } from '../handlers/python';
+import { rHandler } from '../handlers/r';
+import { rubyHandler } from '../handlers/ruby';
+import { rustHandler } from '../handlers/rust';
+import { sasHandler } from '../handlers/sas';
+import { scalaHandler } from '../handlers/scala';
+import { stataHandler } from '../handlers/stata';
+import { swiftHandler } from '../handlers/swift';
+import { typescriptHandler } from '../handlers/typescript';
 
 /**
  * Minimal logger interface matching what Starlight provides.
@@ -94,59 +113,43 @@ export function resolveHandlers(config: PolyglotConfig, logger: Logger): Resolve
 
 /**
  * Returns the map of language → handler instances.
- * Handlers are lazy-loaded (imported) to avoid unnecessary startup cost.
+ * Handlers are imported from source so the package build can bundle them
+ * without relying on generated root-level handler JavaScript files.
  */
 function getHandlerMap(): Partial<Record<Language, Handler>> {
-  // Handlers are imported dynamically so optional dependencies
-  // (like typedoc) don't break users who only need Python/R/etc.
   return {
     // Phase 1 handlers — registered at build time
-    python: lazyHandler('python'),
-    typescript: lazyHandler('typescript'),
-    rust: lazyHandler('rust'),
-    r: lazyHandler('r'),
-    julia: lazyHandler('julia'),
-    csharp: lazyHandler('csharp'),
-    go: lazyHandler('go'),
+    python: registeredHandler('python', pythonHandler),
+    typescript: registeredHandler('typescript', typescriptHandler),
+    rust: registeredHandler('rust', rustHandler),
+    r: registeredHandler('r', rHandler),
+    julia: registeredHandler('julia', juliaHandler),
+    csharp: registeredHandler('csharp', csharpHandler),
+    go: registeredHandler('go', goHandler),
     // Phase 2 handlers — Java ecosystem, C++, Swift
-    java: lazyHandler('java'),
-    kotlin: lazyHandler('kotlin'),
-    cpp: lazyHandler('cpp'),
-    swift: lazyHandler('swift'),
+    java: registeredHandler('java', javaHandler),
+    kotlin: registeredHandler('kotlin', kotlinHandler),
+    cpp: registeredHandler('cpp', cppHandler),
+    swift: registeredHandler('swift', swiftHandler),
     // Phase 3 handlers — Data science & scripting
-    stata: lazyHandler('stata'),
-    sas: lazyHandler('sas'),
+    stata: registeredHandler('stata', stataHandler),
+    sas: registeredHandler('sas', sasHandler),
     // Phase 4 handlers — JVM/CLR ecosystem
-    scala: lazyHandler('scala'),
+    scala: registeredHandler('scala', scalaHandler),
     // Phase 5 handlers — Dynamic & functional languages
-    ruby: lazyHandler('ruby'),
-    dart: lazyHandler('dart'),
-    php: lazyHandler('php'),
-    elixir: lazyHandler('elixir'),
+    ruby: registeredHandler('ruby', rubyHandler),
+    dart: registeredHandler('dart', dartHandler),
+    php: registeredHandler('php', phpHandler),
+    elixir: registeredHandler('elixir', elixirHandler),
   };
 }
 
-function lazyHandler(name: Language): Handler {
+function registeredHandler(name: Language, handler: Handler): Handler {
   return {
     name,
     async generate(options) {
-      // Dynamic import defers loading of handler-specific dependencies.
-      // Each handler exports a named export in the pattern: { pythonHandler, typescriptHandler, ... }
-      const mod = await import(`../handlers/${name}.js`);
-      const handlerName = `${name}Handler` as keyof typeof mod;
-      const handler = mod[handlerName] as Handler | undefined;
-      if (!handler) {
-        throw new Error(
-          `Handler "${String(handlerName)}" not found in module "../handlers/${name}.js". ` +
-            `Ensure the module exports a named export called "${String(handlerName)}".`,
-        );
-      }
-      if (typeof handler.generate !== 'function') {
-        throw new Error(
-          `Handler "${String(handlerName)}" does not have a "generate" method.`,
-        );
-      }
-      return handler.generate(options);
+      return Promise.resolve().then(() => handler.generate(options));
     },
+    ...(handler.validate ? { validate: (sourcePath) => handler.validate!(sourcePath) } : {}),
   };
 }

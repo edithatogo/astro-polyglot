@@ -15,7 +15,10 @@ from typing import Any
 
 try:
     from griffe import load
-    from griffe.dataclasses import Class, Function, Module, ParameterKind
+    try:
+        from griffe.dataclasses import Class, Function, Module
+    except ModuleNotFoundError:
+        from griffe import Class, Function, Module
 except ImportError:
     print(json.dumps({"error": "griffe not installed. Run: pip install griffe"}))
     sys.exit(1)
