@@ -34,7 +34,7 @@ jobs:
       - name: Publish to npm
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-          npm publish --access public --tag ${{ github.event.inputs.tag }}
+          npm publish --access public --provenance --tag ${{ github.event.inputs.tag }}
         working-directory: packages/starlight-polyglot
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

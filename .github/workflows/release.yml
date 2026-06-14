@@ -46,7 +46,7 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm publish -r
+          publish: pnpm publish -r --provenance
           version: pnpm changeset version
           commit: "chore: version packages"
           title: "chore: version packages"

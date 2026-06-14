@@ -130,7 +130,7 @@ Each migration agent must ensure its repo satisfies:
 | REQ-SOTA-005 | SOTA audit covers all 4 migrated repos for Starlight deployment | MUST | TRK-migrate_*, TRK-sota_contract_review |
 | REQ-SOTA-006 | Migrated repos have Starlight docs built and deployed to GH Pages | MUST | TRK-migrate_* |
 
-See: SOTA Contract ./sota-contract.md | Latest Audit ./audit/report-2026-05-14.json
+See: SOTA Contract ./sota-contract.md | Latest Audit ./audit/report-2026-06-14.json
 
 ---
 

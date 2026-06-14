@@ -1,0 +1,377 @@
+{
+  "timestamp": "2026-05-19T14:18:48.362Z",
+  "summary": {
+    "passed": 61,
+    "failed": 0,
+    "total": 61,
+    "passRate": 100
+  },
+  "results": [
+    {
+      "name": "CQ-01: TypeScript strict mode",
+      "category": "Code Quality",
+      "passed": true,
+      "detail": "0 errors"
+    },
+    {
+      "name": "CQ-02: ESLint zero warnings",
+      "category": "Code Quality",
+      "passed": true,
+      "detail": "passed"
+    },
+    {
+      "name": "CQ-03: Prettier compliance",
+      "category": "Code Quality",
+      "passed": true,
+      "detail": "passed"
+    },
+    {
+      "name": "CQ-04: No `any` types",
+      "category": "Code Quality",
+      "passed": true,
+      "detail": "0 found"
+    },
+    {
+      "name": "CQ-05: Named exports",
+      "category": "Code Quality",
+      "passed": true,
+      "detail": "0 defaults"
+    },
+    {
+      "name": "T-01: handler-contract test",
+      "category": "Testing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "T-02: mdx-generator test",
+      "category": "Testing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "T-03: router test",
+      "category": "Testing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "T-04: plugin test",
+      "category": "Testing",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "T-05: 4+ test files",
+      "category": "Testing",
+      "passed": true,
+      "detail": "4 files"
+    },
+    {
+      "name": "D-01: astro.config.mjs",
+      "category": "Documentation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D-02: Getting started",
+      "category": "Documentation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D-03: Config reference",
+      "category": "Documentation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D-04: Handler dev guide",
+      "category": "Documentation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D-05: Dogfooding polyglot",
+      "category": "Documentation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D-06: README.md",
+      "category": "Documentation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "D-07: CHANGELOG.md",
+      "category": "Documentation",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CI-01: ci.yml",
+      "category": "CI/CD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CI-02: docs.yml",
+      "category": "CI/CD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CI-03: release.yml",
+      "category": "CI/CD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CI-04: Lint in CI",
+      "category": "CI/CD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CI-05: Type-check in CI",
+      "category": "CI/CD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CI-06: Test in CI",
+      "category": "CI/CD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CI-07: npm publish",
+      "category": "CI/CD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CI-08: Provenance",
+      "category": "CI/CD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CI-09: Renovate",
+      "category": "CI/CD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CI-10: Changesets",
+      "category": "CI/CD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "CI-11: size-limit",
+      "category": "CI/CD",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "S-01: SECURITY.md",
+      "category": "Security",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "S-02: No .env",
+      "category": "Security",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "S-03: CODEOWNERS",
+      "category": "Security",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "G-01: LICENSE",
+      "category": "Governance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "G-02: CONTRIBUTING.md",
+      "category": "Governance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "G-03: Bug template",
+      "category": "Governance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "G-04: Feature template",
+      "category": "Governance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "G-05: Conductor tracks",
+      "category": "Governance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "G-06: MoSCoW reqs",
+      "category": "Governance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "G-07: Design docs",
+      "category": "Governance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "G-08: Product def",
+      "category": "Governance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "G-09: Tech stack",
+      "category": "Governance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "G-10: Workflow",
+      "category": "Governance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "G-11: Self-docs index",
+      "category": "Governance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "G-12: SOTA contract exists",
+      "category": "Governance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "G-13: Audit script exists",
+      "category": "Governance",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "R-01: innovate docs deployed",
+      "category": "Repo Migrations",
+      "passed": true,
+      "detail": "docs.yml found"
+    },
+    {
+      "name": "R-05: innovate conductor",
+      "category": "Repo Migrations",
+      "passed": true,
+      "detail": "tracks.md found"
+    },
+    {
+      "name": "R-06: innovate dogfoods polyglot",
+      "category": "Repo Migrations",
+      "passed": true,
+      "detail": "configured"
+    },
+    {
+      "name": "R-07: innovate links-validator",
+      "category": "Repo Migrations",
+      "passed": true,
+      "detail": "configured"
+    },
+    {
+      "name": "R-02: voiage docs deployed",
+      "category": "Repo Migrations",
+      "passed": true,
+      "detail": "docs.yml found"
+    },
+    {
+      "name": "R-05: voiage conductor",
+      "category": "Repo Migrations",
+      "passed": true,
+      "detail": "tracks.md found"
+    },
+    {
+      "name": "R-06: voiage dogfoods polyglot",
+      "category": "Repo Migrations",
+      "passed": true,
+      "detail": "configured"
+    },
+    {
+      "name": "R-07: voiage links-validator",
+      "category": "Repo Migrations",
+      "passed": true,
+      "detail": "configured"
+    },
+    {
+      "name": "R-03: mars docs deployed",
+      "category": "Repo Migrations",
+      "passed": true,
+      "detail": "docs.yml found"
+    },
+    {
+      "name": "R-05: mars conductor",
+      "category": "Repo Migrations",
+      "passed": true,
+      "detail": "tracks.md found"
+    },
+    {
+      "name": "R-06: mars dogfoods polyglot",
+      "category": "Repo Migrations",
+      "passed": true,
+      "detail": "configured"
+    },
+    {
+      "name": "R-07: mars links-validator",
+      "category": "Repo Migrations",
+      "passed": true,
+      "detail": "configured"
+    },
+    {
+      "name": "R-04: lifecourse docs deployed",
+      "category": "Repo Migrations",
+      "passed": true,
+      "detail": "docs.yml found"
+    },
+    {
+      "name": "R-05: lifecourse conductor",
+      "category": "Repo Migrations",
+      "passed": true,
+      "detail": "tracks.md found"
+    },
+    {
+      "name": "R-06: lifecourse dogfoods polyglot",
+      "category": "Repo Migrations",
+      "passed": true,
+      "detail": "configured"
+    },
+    {
+      "name": "R-07: lifecourse links-validator",
+      "category": "Repo Migrations",
+      "passed": true,
+      "detail": "configured"
+    },
+    {
+      "name": "R-08: All migration tracks complete",
+      "category": "Repo Migrations",
+      "passed": true,
+      "detail": "all marked [x]"
+    }
+  ]
+}
