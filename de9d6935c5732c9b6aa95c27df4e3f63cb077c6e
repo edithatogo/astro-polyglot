@@ -1,0 +1,1 @@
+Completed Track: astro_migration_20260625. Created polyglotLoader conforming to Astro 7 Content Loader API. Implemented incremental build caching via directory file digests, watch-mode file reload triggers in development, Zod schema validation, and added comprehensive Vitest coverage.
