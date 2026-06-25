@@ -3,7 +3,7 @@ import { z } from "astro/zod";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import * as crypto from "node:crypto";
-import { resolveHandlers, type PolyglotConfig } from "./router";
+import { resolveHandlers, type PolyglotConfig, type ResolvedHandler } from "./router";
 import type { HandlerAggregateOutput } from "./handler";
 
 export interface PolyglotLoaderOptions extends PolyglotConfig {}
@@ -54,7 +54,7 @@ function scanFiles(dirOrFile: string): { path: string; mtime: number; size: numb
   return results;
 }
 
-function calculateDigest(handlers: any[]): string {
+function calculateDigest(handlers: ResolvedHandler[]): string {
   const hash = crypto.createHash("sha256");
   const allFiles: { path: string; mtime: number; size: number }[] = [];
 

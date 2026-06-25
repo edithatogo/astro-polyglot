@@ -1,4 +1,4 @@
-import { type ASTModule, type ASTParameter, transformToMDX } from "../core/mdx-generator";
+import { type ASTClass, type ASTModule, type ASTParameter, transformToMDX } from "../core/mdx-generator";
 import type { BaseHandlerOptions, Handler } from "../core/plugin";
 
 interface TypeScriptHandlerOptions extends BaseHandlerOptions {
@@ -125,7 +125,7 @@ function parseModule(name: string, docstring: string | undefined, children: Type
 
   for (const child of children) {
     if (child.kind === 128) {
-      const cls: any = {
+      const cls: ASTClass = {
         name: child.name,
         docstring: extractCommentText(child.comment),
         methods: child.children
@@ -192,7 +192,7 @@ function convertReflectionToASTModules(reflections: TypeDocReflection[]): ASTMod
 async function extractWithTypeDoc(entryPoints: string[], tsconfig?: string): Promise<ASTModule[]> {
   const { Application, TSConfigReader, normalizePath } = await import("typedoc");
 
-  const bootstrapOptions: any = {
+  const bootstrapOptions: Record<string, unknown> = {
     entryPoints,
     skipErrorChecking: true,
     excludeExternals: true,

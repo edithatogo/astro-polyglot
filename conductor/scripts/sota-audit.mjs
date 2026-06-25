@@ -91,12 +91,14 @@ function repoFcontains(repoName, filePath, s) {
 console.log("── Code Quality ──");
 const tsc = run("npx tsc --noEmit --strict 2>&1 || true");
 check("CQ-01: TypeScript strict mode", "Code Quality", tsc.ok, tsc.ok ? "0 errors" : "errors found");
-const esConfig = fex(".eslintrc") || fex("eslint.config.mjs");
-if (esConfig) {
-  const es = run("npx eslint . --max-warnings=0 2>&1 || true");
-  check("CQ-02: ESLint zero warnings", "Code Quality", es.ok, es.ok ? "passed" : "warnings");
+const linterConfig = fex(".eslintrc") || fex("eslint.config.mjs") || fex("biome.json");
+if (linterConfig) {
+  const hasBiome = fex("biome.json");
+  const lintCmd = hasBiome ? "pnpm lint 2>&1 || true" : "npx eslint . --max-warnings=0 2>&1 || true";
+  const es = run(lintCmd);
+  check(hasBiome ? "CQ-02: Biome compliance" : "CQ-02: ESLint zero warnings", "Code Quality", es.ok, es.ok ? "passed" : "warnings");
 } else {
-  check("CQ-02: ESLint config", "Code Quality", false, "missing");
+  check("CQ-02: Linter config", "Code Quality", false, "missing");
 }
 if (fex(".prettierrc")) {
   const pt = run('npx prettier --check "packages/**/*.ts" 2>&1 || true');
