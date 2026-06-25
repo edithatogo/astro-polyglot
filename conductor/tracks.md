@@ -98,3 +98,9 @@
 ## Phase 7: Bleeding-Edge Testing (Completed)
 
 - `[x]` [testing_bleeding_edge_20260519](./tracks/testing_bleeding_edge_20260519/) (d3d2219) — Property, mutation, fuzz, security, edge-case tests
+
+---
+
+- [ ] **Track: Migrate the package to support the underlying Astro 7 library as an Astro Integration and Content Loader**
+*Link: [./tracks/astro_migration_20260625/](./tracks/astro_migration_20260625/)*
+
