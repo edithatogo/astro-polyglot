@@ -22,6 +22,7 @@
     "docs:preview": "pnpm --filter starlight-polyglot-docs preview"
   },
   "devDependencies": {
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@biomejs/biome": "catalog:"
   }
 }

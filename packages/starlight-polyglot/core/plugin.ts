@@ -1,11 +1,10 @@
-import type { StarlightPlugin } from '@astrojs/starlight/types';
-import type { Handler as HandlerContract, HandlerAggregateOutput, HandlerOptions, Language } from './handler';
+import type { HandlerAggregateOutput, HandlerOptions, Language } from "./handler";
 
 /**
  * Re-export the canonical handler types so consumers can import everything
  * from a single path.
  */
-export type { Handler as HandlerContract, HandlerOptions, Language } from './handler';
+export type { Handler as HandlerContract, HandlerOptions, Language } from "./handler";
 
 /**
  * A symbol-based key used to identify the placeholder sidebar group.
@@ -13,7 +12,8 @@ export type { Handler as HandlerContract, HandlerOptions, Language } from './han
 export interface SidebarGroup {
   _key?: symbol;
   label: string;
-  items: SidebarItem[];
+  items?: SidebarItem[];
+  autogenerate?: { directory: string };
 }
 
 export interface SidebarItem {
@@ -28,11 +28,17 @@ export interface SidebarItem {
  * This allows other plugins to reference the polyglot sidebar group.
  */
 export function getSidebarGroupPlaceholder(key?: symbol): SidebarGroup {
-  return {
-    _key: key ?? Symbol('starlight-polyglot'),
-    label: 'API',
-    items: [],
+  const placeholder: SidebarGroup = {
+    label: "API",
+    items: [{ label: "Placeholder", link: "/getting-started/" }],
   };
+  Object.defineProperty(placeholder, "_key", {
+    value: key ?? Symbol("starlight-polyglot"),
+    enumerable: false,
+    writable: true,
+    configurable: true,
+  });
+  return placeholder;
 }
 
 /**

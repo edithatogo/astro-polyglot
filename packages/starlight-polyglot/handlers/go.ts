@@ -1,8 +1,8 @@
-import { execSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
-import path from 'node:path';
-import type { Handler, BaseHandlerOptions } from '../core/plugin';
-import { transformToMDX, type ASTModule } from '../core/mdx-generator';
+import { execSync } from "node:child_process";
+import { existsSync } from "node:fs";
+import path from "node:path";
+import { type ASTModule, transformToMDX } from "../core/mdx-generator";
+import type { BaseHandlerOptions, Handler } from "../core/plugin";
 
 interface GoHandlerOptions extends BaseHandlerOptions {
   modulePath: string;
@@ -13,14 +13,14 @@ interface GoHandlerOptions extends BaseHandlerOptions {
  * Spawns `gomarkdoc --output json ./...` in the specified module path.
  */
 export const goHandler: Handler = {
-  name: 'go',
+  name: "go",
 
   async generate(options) {
     const opts = options as unknown as GoHandlerOptions;
     const modulePath = opts.modulePath;
 
     if (!modulePath) {
-      throw new Error('Go handler requires a modulePath option');
+      throw new Error("Go handler requires a modulePath option");
     }
 
     if (!existsSync(modulePath)) {
@@ -30,12 +30,12 @@ export const goHandler: Handler = {
     const modules = extractWithGoMarkdoc(modulePath);
 
     if (modules.length === 0) {
-      throw new Error('gomarkdoc extraction produced no modules');
+      throw new Error("gomarkdoc extraction produced no modules");
     }
 
     const output = transformToMDX(modules, {
       outputDir: opts.output,
-      language: 'go',
+      language: "go",
       ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
@@ -44,10 +44,13 @@ export const goHandler: Handler = {
 
   async validate(_sourcePath) {
     try {
-      execSync('gomarkdoc --version', { encoding: 'utf-8', stdio: 'pipe' });
+      execSync("gomarkdoc --version", { encoding: "utf-8", stdio: "pipe" });
       return { valid: true, errors: [] };
     } catch {
-      return { valid: false, errors: ['gomarkdoc not found. Install: go install github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest'] };
+      return {
+        valid: false,
+        errors: ["gomarkdoc not found. Install: go install github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest"],
+      };
     }
   },
 };
@@ -89,7 +92,7 @@ function extractWithGoMarkdoc(modulePath: string): ASTModule[] {
   // Run gomarkdoc in the module path to output JSON
   const cmd = `gomarkdoc --output json ./...`;
   const result = execSync(cmd, {
-    encoding: 'utf-8',
+    encoding: "utf-8",
     cwd: resolvedPath,
     maxBuffer: 10 * 1024 * 1024, // 10MB
     timeout: 120_000,
@@ -102,7 +105,7 @@ function extractWithGoMarkdoc(modulePath: string): ASTModule[] {
   // gomarkdoc outputs a map where keys are package import paths
   for (const [pkgPath, pkgDoc] of Object.entries(parsed)) {
     const mod: ASTModule = {
-      name: pkgDoc.name ?? pkgPath.split('/').pop() ?? pkgPath,
+      name: pkgDoc.name ?? pkgPath.split("/").pop() ?? pkgPath,
       docstring: pkgDoc.description || undefined,
       classes: [],
       functions: [],
@@ -121,7 +124,7 @@ function extractWithGoMarkdoc(modulePath: string): ASTModule[] {
           description: undefined,
           default: undefined,
         })),
-        return_type: fn.returns?.map((r) => r.type).join(', ') || undefined,
+        return_type: fn.returns?.map((r) => r.type).join(", ") || undefined,
       });
     }
 
@@ -140,7 +143,7 @@ function extractWithGoMarkdoc(modulePath: string): ASTModule[] {
             description: undefined,
             default: undefined,
           })),
-          return_type: m.returns?.map((r) => r.type).join(', ') || undefined,
+          return_type: m.returns?.map((r) => r.type).join(", ") || undefined,
         })),
         properties: typ.fields?.map((f) => ({
           name: f.name,

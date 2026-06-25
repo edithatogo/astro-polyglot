@@ -1,0 +1,112 @@
+---
+title: Python Handler
+description: Configure and use the Python documentation handler with starlight-polyglot.
+sidebar:
+  label: Python
+slug: latest/languages/python
+---
+
+The Python handler extracts API documentation from Python source code using [Griffe](https://mkdocstrings.github.io/griffe/), a docstring extraction tool. It parses Python modules, classes, functions, and variables — including their docstrings and type annotations — and transforms them into Starlight MDX pages.
+
+## Prerequisites
+
+* **Python 3.11+** installed and available as `python3` on your PATH
+* **Griffe** installed: `pip install griffe`
+
+To verify your setup:
+
+```bash
+python3 --version
+python3 -c "import griffe; print(griffe.__version__)"
+```
+
+## Configuration
+
+```js
+polyglot({
+  python: {
+    // Required: One or more Python module paths or directories
+    entryPoints: ['src/mylib', 'src/utils'],
+
+    // Optional: Output subdirectory (default: "api/python")
+    output: 'api/python',
+
+    // Optional: Include pagination links between pages
+    pagination: true,
+  },
+})
+```
+
+### Options
+
+| Option         | Type        | Required | Default        | Description                                  |
+|----------------|-------------|----------|----------------|----------------------------------------------|
+| `entryPoints`  | `string[]`  | Yes      | —              | Python module paths or directory names       |
+| `output`       | `string`    | No       | `"api/python"` | Output subdirectory under `src/content/docs/`|
+| `pagination`   | `boolean`   | No       | `false`        | Enable prev/next navigation between pages    |
+
+## How It Works
+
+1. The handler spawns a Python subprocess running the `python_extract.py` script
+2. The script uses Griffe to dump the module AST as JSON
+3. The handler converts the JSON AST into the shared `ASTModule[]` format
+4. The shared MDX generator pipeline transforms the AST into Starlight MDX pages
+
+## What Gets Generated
+
+For each module, the handler generates:
+
+* A **module overview page** listing all classes and functions
+* Individual **class pages** with methods, properties, and docstrings
+* Individual **function pages** with signatures, parameters, return types, and docstrings
+
+### Example: Module Page
+
+```markdown
+---
+title: mylib
+description: My awesome library
+sidebar:
+  label: mylib
+pagefind: true
+language: python
+source: mylib
+---
+
+This library provides utilities for data processing.
+
+## Classes
+
+- [Config](mylib.Config/) Configuration class
+- [Processor](mylib.Processor/) Main data processor
+
+## Functions
+
+- [process_data](mylib.process_data/) Process input data
+```
+
+## Validation
+
+The handler validates that `griffe` is available before generating. Run this check manually:
+
+```bash
+python3 -c "import griffe" && echo "✓ griffe available"
+```
+
+## Troubleshooting
+
+### "Python handler requires at least one entryPoint"
+
+Ensure you've provided at least one entry point in the `entryPoints` array.
+
+### "Python extraction script not found"
+
+The handler expects `scripts/python_extract.py` relative to the plugin package. If you're developing locally, ensure the script exists at `packages/starlight-polyglot/scripts/python_extract.py`.
+
+### "griffe not installed"
+
+Install griffe: `pip install griffe`
+
+### Module produces no documentation
+
+Griffe can only document modules that are importable. Ensure your `entryPoints` are valid Python module paths (e.g., `src/mylib` where `src/mylib/__init__.py` exists).

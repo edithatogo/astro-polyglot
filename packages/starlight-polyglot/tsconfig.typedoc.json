@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["core/router.ts", "core/handler.ts"],
+  "exclude": ["index.ts", "node_modules", "dist", "tests"]
+}

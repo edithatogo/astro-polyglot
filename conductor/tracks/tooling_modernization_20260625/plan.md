@@ -7,13 +7,13 @@
     - [x] Run `pnpm install` and verify lockfile updates
 
 ## Phase 2: Biome Integration
-- [ ] Task: Configure Biome and Replace Legacy Linters
-    - [ ] Install `@biomejs/biome` as a workspace dev dependency
-    - [ ] Create `biome.json` with strict rules
-    - [ ] Delete `.eslintrc`, `.prettierrc`, and remove eslint/prettier devDependencies
-    - [ ] Update `package.json` scripts to run `biome check` and `biome format`
+- [x] Task: Configure Biome and Replace Legacy Linters
+    - [x] Install `@biomejs/biome` as a workspace dev dependency
+    - [x] Create `biome.json` with strict rules
+    - [x] Delete `.eslintrc`, `.prettierrc`, and remove eslint/prettier devDependencies
+    - [x] Update `package.json` scripts to run `biome check` and `biome format`
 
 ## Phase 3: Rolldown Validation
-- [ ] Task: Align Bundling configuration
-    - [ ] Verify `tsup` configuration produces fully tree-shakable ESM modules
-    - [ ] Perform a test build and verify zero module warnings under Vite 8
+- [x] Task: Align Bundling configuration
+    - [x] Verify `tsup` configuration produces fully tree-shakable ESM modules
+    - [x] Perform a test build and verify zero module warnings under Vite 8

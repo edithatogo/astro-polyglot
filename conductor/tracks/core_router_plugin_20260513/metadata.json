@@ -4,9 +4,7 @@
   "type": "feature",
   "status": "completed",
   "phase": 1,
-  "dependsOn": [
-    "plugin_scaffold_20260513"
-  ],
+  "dependsOn": ["plugin_scaffold_20260513"],
   "priority": "must",
   "created": "2026-05-13",
   "fulfills": [

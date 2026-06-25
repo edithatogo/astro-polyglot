@@ -12,24 +12,24 @@
  * Supported programming languages.
  */
 export type Language =
-  | 'python'
-  | 'typescript'
-  | 'rust'
-  | 'r'
-  | 'julia'
-  | 'csharp'
-  | 'go'
-  | 'java'
-  | 'kotlin'
-  | 'cpp'
-  | 'swift'
-  | 'stata'
-  | 'sas'
-  | 'scala'
-  | 'ruby'
-  | 'dart'
-  | 'php'
-  | 'elixir';
+  | "python"
+  | "typescript"
+  | "rust"
+  | "r"
+  | "julia"
+  | "csharp"
+  | "go"
+  | "java"
+  | "kotlin"
+  | "cpp"
+  | "swift"
+  | "stata"
+  | "sas"
+  | "scala"
+  | "ruby"
+  | "dart"
+  | "php"
+  | "elixir";
 
 /**
  * A single MDX output page produced by a handler, used internally

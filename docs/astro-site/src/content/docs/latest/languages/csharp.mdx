@@ -1,0 +1,51 @@
+---
+title: C# Handler
+description: Configure and use the C# documentation handler with starlight-polyglot.
+sidebar:
+  label: C#
+slug: latest/languages/csharp
+---
+
+The C# handler extracts API documentation from .NET projects by building them with XML documentation generation enabled and parsing the resulting XML doc file. It transforms namespaces, types, methods, and properties into Starlight MDX pages.
+
+## Prerequisites
+
+* **.NET SDK** installed and `dotnet` available on PATH
+* Project configured with `<GenerateDocumentationFile>true</GenerateDocumentationFile>`
+
+## Configuration
+
+```js
+polyglot({
+  csharp: {
+    // Required: Path to .csproj file or project directory
+    projectPath: 'dotnet/Api/Api.csproj',
+
+    // Optional: Build configuration (default: "Release")
+    configuration: 'Release',
+
+    // Optional: Explicit path to XML doc file
+    xmlDocPath: 'dotnet/Api/bin/Release/net9.0/Api.xml',
+
+    // Optional: Output subdirectory (default: "api/csharp")
+    output: 'api/csharp',
+
+    // Optional: Include pagination links between pages
+    pagination: false,
+  },
+})
+```
+
+### Options
+
+| Option          | Type      | Required | Default         | Description                                     |
+|-----------------|-----------|----------|-----------------|-------------------------------------------------|
+| `projectPath`   | `string`  | Yes      | —               | Path to `.csproj` or project directory          |
+| `configuration` | `string`  | No       | `"Release"`     | .NET build configuration                        |
+| `xmlDocPath`    | `string`  | No       | auto-detected   | Explicit path to XML doc output                 |
+| `output`        | `string`  | No       | `"api/csharp"`  | Output subdirectory under `src/content/docs/`   |
+| `pagination`    | `boolean` | No       | `false`         | Enable prev/next navigation between pages       |
+
+## Status
+
+🚧 **Planned** — This handler is on the roadmap but not yet implemented. Contributions are welcome!

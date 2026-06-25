@@ -1,0 +1,43 @@
+---
+title: Go Handler
+description: Configure and use the Go documentation handler with starlight-polyglot.
+sidebar:
+  label: Go
+slug: latest/languages/go
+---
+
+The Go handler extracts API documentation from Go modules using [gomarkdoc](https://github.com/princjef/gomarkdoc). It runs `gomarkdoc --output json ./...` in the specified module directory and transforms packages, types, functions, and examples into Starlight MDX pages.
+
+## Prerequisites
+
+* **Go** installed and available on PATH
+* **gomarkdoc** installed: `go install github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest`
+
+## Configuration
+
+```js
+polyglot({
+  go: {
+    // Required: Path to Go module directory (containing go.mod)
+    modulePath: 'services/gateway',
+
+    // Optional: Output subdirectory (default: "api/go")
+    output: 'api/go',
+
+    // Optional: Include pagination links between pages
+    pagination: false,
+  },
+})
+```
+
+### Options
+
+| Option       | Type      | Required | Default     | Description                                  |
+|--------------|-----------|----------|-------------|----------------------------------------------|
+| `modulePath` | `string`  | Yes      | —           | Path to Go module with `go.mod`             |
+| `output`     | `string`  | No       | `"api/go"`  | Output subdirectory under `src/content/docs/`|
+| `pagination` | `boolean` | No       | `false`     | Enable prev/next navigation between pages    |
+
+## Status
+
+🚧 **Planned** — This handler is on the roadmap but not yet implemented. Contributions are welcome!

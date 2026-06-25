@@ -3,35 +3,36 @@
  *
  * Uses @fast-check/vitest to verify invariants over random ASTModule inputs.
  */
-import { test, fc } from '@fast-check/vitest';
-import { describe, expect, beforeEach, afterEach } from 'vitest';
-import path from 'node:path';
-import fs from 'node:fs/promises';
-import os from 'node:os';
+
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import { fc, test } from "@fast-check/vitest";
+import { afterEach, beforeEach, describe, expect } from "vitest";
 import {
-  transformToMDX,
-  writeMDXPages,
-  type ASTModule,
   type ASTClass,
   type ASTFunction,
+  type ASTModule,
   type ASTParameter,
   type ASTVariable,
-} from '../core/mdx-generator';
+  transformToMDX,
+  writeMDXPages,
+} from "../core/mdx-generator";
 
 // ─── Arbitraries ──────────────────────────────────────────────────────────────
 
-const arbitraryIdentifier = fc.string({ minLength: 1, maxLength: 24 }).filter(
-  (s) => s.trim().length > 0 && !s.includes('/'),
-);
+const arbitraryIdentifier = fc
+  .string({ minLength: 1, maxLength: 24 })
+  .filter((s) => s.trim().length > 0 && !s.includes("/"));
 
 const arbitraryDocstring = fc.oneof(
   fc.constant(undefined),
-  fc.constant(''),
+  fc.constant(""),
   fc.string({ minLength: 1, maxLength: 200 }),
   fc.constantFrom(
-    'Short doc.',
-    'A longer docstring that spans multiple\nlines and has some detail.',
-    'Handles edge cases like numbers 42 and symbols ©®™.',
+    "Short doc.",
+    "A longer docstring that spans multiple\nlines and has some detail.",
+    "Handles edge cases like numbers 42 and symbols ©®™.",
   ),
 );
 
@@ -71,45 +72,44 @@ const arbitraryModule: fc.Arbitrary<ASTModule> = fc.record({
   variables: fc.oneof(fc.constant(undefined), fc.array(arbitraryVariable, { maxLength: 5 })),
 });
 
-
 const arbitraryModuleList: fc.Arbitrary<ASTModule[]> = fc.array(arbitraryModule, { maxLength: 10 });
 
-const outputDirArbitrary = fc.constantFrom('api/test', 'api/python', 'docs/sdk', 'api/go');
+const outputDirArbitrary = fc.constantFrom("api/test", "api/python", "docs/sdk", "api/go");
 
 const languageArbitrary = fc.constantFrom(
   undefined as string | undefined,
-  'python',
-  'typescript',
-  'rust',
-  'go',
-  'java',
+  "python",
+  "typescript",
+  "rust",
+  "go",
+  "java",
 );
 
 // ─── Property: every page has valid frontmatter ───────────────────────────────
 
 test.prop([arbitraryModuleList, outputDirArbitrary, languageArbitrary])(
-  'every page has title, description, and sidebar in frontmatter',
+  "every page has title, description, and sidebar in frontmatter",
   (modules, outputDir, language) => {
     const options = { outputDir, ...(language ? { language } : {}) };
     const output = transformToMDX(modules, options);
 
     for (const page of output.pages) {
       const fm = page.frontmatter;
-      expect(fm).toHaveProperty('title');
-      expect(typeof fm.title).toBe('string');
+      expect(fm).toHaveProperty("title");
+      expect(typeof fm.title).toBe("string");
       expect((fm.title as string).length).toBeGreaterThan(0);
 
-      expect(fm).toHaveProperty('description');
-      expect(typeof fm.description).toBe('string');
+      expect(fm).toHaveProperty("description");
+      expect(typeof fm.description).toBe("string");
 
-      expect(fm).toHaveProperty('sidebar');
-      expect((fm.sidebar as Record<string, unknown>)).toHaveProperty('label');
-      expect(typeof ((fm.sidebar as { label: string }).label)).toBe('string');
+      expect(fm).toHaveProperty("sidebar");
+      expect(fm.sidebar as Record<string, unknown>).toHaveProperty("label");
+      expect(typeof (fm.sidebar as { label: string }).label).toBe("string");
 
-      expect(fm).toHaveProperty('pagefind');
+      expect(fm).toHaveProperty("pagefind");
       expect(fm.pagefind).toBe(true);
 
-      expect(typeof page.body).toBe('string');
+      expect(typeof page.body).toBe("string");
     }
   },
 );
@@ -117,7 +117,7 @@ test.prop([arbitraryModuleList, outputDirArbitrary, languageArbitrary])(
 // ─── Property: page count = modules + classes + functions ─────────────────────
 
 test.prop([arbitraryModuleList, outputDirArbitrary])(
-  'page count equals modules + total classes + total functions',
+  "page count equals modules + total classes + total functions",
   (modules, outputDir) => {
     const output = transformToMDX(modules, { outputDir });
 
@@ -135,7 +135,7 @@ test.prop([arbitraryModuleList, outputDirArbitrary])(
 // ─── Property: sidebar items link to existing pages ───────────────────────────
 
 test.prop([arbitraryModuleList, outputDirArbitrary])(
-  'sidebar items always link to existing module pages',
+  "sidebar items always link to existing module pages",
   (modules, outputDir) => {
     const output = transformToMDX(modules, { outputDir });
 
@@ -144,17 +144,16 @@ test.prop([arbitraryModuleList, outputDirArbitrary])(
 
     for (const item of output.sidebar.items) {
       // Every sidebar link should map to a module page path
-      const linkPath = item.link.replace(/\/$/, '.mdx');
+      const linkPath = item.link.replace(/\/$/, ".mdx");
       expect(pagePaths.has(linkPath)).toBe(true);
     }
   },
 );
 
-
 // ─── Property: empty modules produce empty output ─────────────────────────────
 
 test.prop([outputDirArbitrary, languageArbitrary])(
-  'empty module list produces empty pages and sidebar',
+  "empty module list produces empty pages and sidebar",
   (outputDir, language) => {
     const options = { outputDir, ...(language ? { language } : {}) };
     const output = transformToMDX([], options);
@@ -166,66 +165,60 @@ test.prop([outputDirArbitrary, languageArbitrary])(
 
 // ─── Property: Unicode is preserved in docstrings ─────────────────────────────
 
-test.prop([languageArbitrary])(
-  'unicode docstrings are preserved verbatim in output',
-  (language) => {
-    const unicodeDoc = 'Hëllø Wörld 日本語 Русский العربية 🎉✨';
-    const modules: ASTModule[] = [
-      {
-        name: 'unicode_mod',
-        docstring: unicodeDoc,
-        classes: [{ name: 'ŰnicödeCls', docstring: unicodeDoc }],
-        functions: [{ name: 'fünc', docstring: unicodeDoc }],
-      },
-    ];
-    const options = { outputDir: 'api/test', ...(language ? { language } : {}) };
-    const output = transformToMDX(modules, options);
+test.prop([languageArbitrary])("unicode docstrings are preserved verbatim in output", (language) => {
+  const unicodeDoc = "Hëllø Wörld 日本語 Русский العربية 🎉✨";
+  const modules: ASTModule[] = [
+    {
+      name: "unicode_mod",
+      docstring: unicodeDoc,
+      classes: [{ name: "ŰnicödeCls", docstring: unicodeDoc }],
+      functions: [{ name: "fünc", docstring: unicodeDoc }],
+    },
+  ];
+  const options = { outputDir: "api/test", ...(language ? { language } : {}) };
+  const output = transformToMDX(modules, options);
 
-    expect(output.pages).toHaveLength(3);
+  expect(output.pages).toHaveLength(3);
 
-    const modPage = output.pages.find((p) => p.path === 'api/test/unicode_mod.mdx')!;
-    expect(modPage.frontmatter.description).toBe(unicodeDoc);
-    expect(modPage.body).toContain(unicodeDoc);
+  const modPage = output.pages.find((p) => p.path === "api/test/unicode_mod.mdx")!;
+  expect(modPage.frontmatter.description).toBe(unicodeDoc);
+  expect(modPage.body).toContain(unicodeDoc);
 
-    const clsPage = output.pages.find((p) => p.frontmatter.title === 'unicode_mod.ŰnicödeCls')!;
-    expect(clsPage.frontmatter.description).toBe(unicodeDoc);
+  const clsPage = output.pages.find((p) => p.frontmatter.title === "unicode_mod.ŰnicödeCls")!;
+  expect(clsPage.frontmatter.description).toBe(unicodeDoc);
 
-    const fnPage = output.pages.find((p) => p.frontmatter.title === 'unicode_mod.fünc')!;
-    expect(fnPage.frontmatter.description).toBe(unicodeDoc);
-  },
-);
+  const fnPage = output.pages.find((p) => p.frontmatter.title === "unicode_mod.fünc")!;
+  expect(fnPage.frontmatter.description).toBe(unicodeDoc);
+});
 
 // ─── Property: module names are properly slugged ──────────────────────────────
 
-test.prop([languageArbitrary])(
-  'module, class, and function names produce valid URL-safe paths',
-  (language) => {
-    const modules: ASTModule[] = [
-      {
-        name: 'My Module Name',
-        classes: [{ name: 'My Class' }],
-        functions: [{ name: 'my Function' }],
-      },
-    ];
-    const options = { outputDir: 'api/test', ...(language ? { language } : {}) };
-    const output = transformToMDX(modules, options);
+test.prop([languageArbitrary])("module, class, and function names produce valid URL-safe paths", (language) => {
+  const modules: ASTModule[] = [
+    {
+      name: "My Module Name",
+      classes: [{ name: "My Class" }],
+      functions: [{ name: "my Function" }],
+    },
+  ];
+  const options = { outputDir: "api/test", ...(language ? { language } : {}) };
+  const output = transformToMDX(modules, options);
 
-    expect(output.pages).toHaveLength(3);
+  expect(output.pages).toHaveLength(3);
 
-    // All paths should be lowercase and not contain spaces
-    for (const page of output.pages) {
-      expect(page.path).not.toMatch(/\s/);
-      expect(page.path).toEqual(page.path.toLowerCase());
-    }
-  },
-);
+  // All paths should be lowercase and not contain spaces
+  for (const page of output.pages) {
+    expect(page.path).not.toMatch(/\s/);
+    expect(page.path).toEqual(page.path.toLowerCase());
+  }
+});
 
 // ─── Property: pagination option doesn't change page count ────────────────────
 
 test.prop([arbitraryModuleList, fc.boolean()])(
-  'pagination option does not affect the number of generated pages',
+  "pagination option does not affect the number of generated pages",
   (modules, pagination) => {
-    const output = transformToMDX(modules, { outputDir: 'api/test', pagination });
+    const output = transformToMDX(modules, { outputDir: "api/test", pagination });
 
     let expectedPages = 0;
     for (const mod of modules) {
@@ -246,61 +239,49 @@ test.prop([
     { maxLength: 10, selector: (name) => name.toLowerCase() },
   ),
   outputDirArbitrary,
-])(
-  'all generated page paths are unique',
-  (moduleNames, outputDir) => {
-    const modules: ASTModule[] = moduleNames.map((name) => ({ name }));
-    const output = transformToMDX(modules, { outputDir });
-    const paths = output.pages.map((p) => p.path);
-    const uniquePaths = new Set(paths);
-    expect(uniquePaths.size).toBe(paths.length);
-  },
-);
+])("all generated page paths are unique", (moduleNames, outputDir) => {
+  const modules: ASTModule[] = moduleNames.map((name) => ({ name }));
+  const output = transformToMDX(modules, { outputDir });
+  const paths = output.pages.map((p) => p.path);
+  const uniquePaths = new Set(paths);
+  expect(uniquePaths.size).toBe(paths.length);
+});
 
 // ─── Property: sidebar label is capitalized from language ─────────────────────
 
-test.prop([arbitraryModuleList])(
-  'sidebar label is uppercase version of language when provided',
-  (modules) => {
-    const output = transformToMDX(modules, { outputDir: 'api/test', language: 'python' });
-    expect(output.sidebar.label).toBe('PYTHON');
-  },
-);
+test.prop([arbitraryModuleList])("sidebar label is uppercase version of language when provided", (modules) => {
+  const output = transformToMDX(modules, { outputDir: "api/test", language: "python" });
+  expect(output.sidebar.label).toBe("PYTHON");
+});
 
 // ─── writeMDXPages integration properties ─────────────────────────────────────
 
-describe('writeMDXPages property-based integration', () => {
+describe("writeMDXPages property-based integration", () => {
   let tempDir: string;
 
   beforeEach(async () => {
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'starlight-polyglot-prop-'));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "starlight-polyglot-prop-"));
   });
 
   afterEach(async () => {
     await fs.rm(tempDir, { recursive: true, force: true });
   });
 
-  test.prop([arbitraryModuleList])(
-    'written files correspond 1:1 to generated pages',
-    async (modules) => {
-      const output = transformToMDX(modules, { outputDir: 'api/test', language: 'python' });
-      const written = await writeMDXPages(output, tempDir);
-      expect(written).toHaveLength(output.pages.length);
-    },
-  );
+  test.prop([arbitraryModuleList])("written files correspond 1:1 to generated pages", async (modules) => {
+    const output = transformToMDX(modules, { outputDir: "api/test", language: "python" });
+    const written = await writeMDXPages(output, tempDir);
+    expect(written).toHaveLength(output.pages.length);
+  });
 
-  test.prop([arbitraryModuleList])(
-    'every written file contains valid MDX frontmatter delimiters',
-    async (modules) => {
-      const output = transformToMDX(modules, { outputDir: 'api/test', language: 'python' });
-      const written = await writeMDXPages(output, tempDir);
+  test.prop([arbitraryModuleList])("every written file contains valid MDX frontmatter delimiters", async (modules) => {
+    const output = transformToMDX(modules, { outputDir: "api/test", language: "python" });
+    const written = await writeMDXPages(output, tempDir);
 
-      for (const filePath of written) {
-        const content = await fs.readFile(filePath, 'utf-8');
-        expect(content).toMatch(/^---\n/);
-        expect(content).toMatch(/\n---\n\n/);
-        expect(content).toContain('title:');
-      }
-    },
-  );
+    for (const filePath of written) {
+      const content = await fs.readFile(filePath, "utf-8");
+      expect(content).toMatch(/^---\n/);
+      expect(content).toMatch(/\n---\n\n/);
+      expect(content).toContain("title:");
+    }
+  });
 });

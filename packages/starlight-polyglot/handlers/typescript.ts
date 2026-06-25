@@ -1,5 +1,5 @@
-import type { Handler, BaseHandlerOptions } from '../core/plugin';
-import { transformToMDX, type ASTModule, type ASTParameter } from '../core/mdx-generator';
+import { type ASTModule, type ASTParameter, transformToMDX } from "../core/mdx-generator";
+import type { BaseHandlerOptions, Handler } from "../core/plugin";
 
 interface TypeScriptHandlerOptions extends BaseHandlerOptions {
   entryPoints: string[];
@@ -11,7 +11,7 @@ interface TypeScriptHandlerOptions extends BaseHandlerOptions {
  * TypeDoc is an optional peer dependency installed alongside typedoc-plugin-markdown.
  */
 export const typescriptHandler: Handler = {
-  name: 'typescript',
+  name: "typescript",
 
   async generate(options) {
     const opts = options as unknown as TypeScriptHandlerOptions;
@@ -19,18 +19,18 @@ export const typescriptHandler: Handler = {
     const tsconfig = opts.tsconfig;
 
     if (!entryPoints || entryPoints.length === 0) {
-      throw new Error('TypeScript handler requires at least one entryPoint');
+      throw new Error("TypeScript handler requires at least one entryPoint");
     }
 
     const modules = await extractWithTypeDoc(entryPoints, tsconfig);
 
     if (modules.length === 0) {
-      throw new Error('TypeDoc extraction produced no modules');
+      throw new Error("TypeDoc extraction produced no modules");
     }
 
     const output = transformToMDX(modules, {
       outputDir: opts.output,
-      language: 'typescript',
+      language: "typescript",
       ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
@@ -40,17 +40,16 @@ export const typescriptHandler: Handler = {
   async validate(_sourcePath) {
     try {
       // Dynamically import TypeDoc to check availability
-      const typedoc = await import('typedoc');
+      const typedoc = await import("typedoc");
       if (!typedoc.Application) {
-        return { valid: false, errors: ['typedoc module loaded but Application class not found'] };
+        return { valid: false, errors: ["typedoc module loaded but Application class not found"] };
       }
       return { valid: true, errors: [] };
     } catch {
-      return { valid: false, errors: ['typedoc not installed. Run: npm install typedoc typedoc-plugin-markdown'] };
+      return { valid: false, errors: ["typedoc not installed. Run: npm install typedoc typedoc-plugin-markdown"] };
     }
   },
 };
-
 
 interface TypeDocReflection {
   id: number;
@@ -70,7 +69,12 @@ interface TypeDocReflection {
 
 function extractCommentText(comment?: { summary?: Array<{ kind: string; text: string }> }): string | undefined {
   if (!comment?.summary) return undefined;
-  return comment.summary.map((part) => part.text).join('').trim() || undefined;
+  return (
+    comment.summary
+      .map((part) => part.text)
+      .join("")
+      .trim() || undefined
+  );
 }
 
 function extractSignature(reflection: TypeDocReflection): string | undefined {
@@ -80,12 +84,12 @@ function extractSignature(reflection: TypeDocReflection): string | undefined {
 
   const params = (sig.parameters ?? [])
     .map((p) => {
-      const typeName = p.type?.name ?? p.type?.type ?? 'any';
+      const typeName = p.type?.name ?? p.type?.type ?? "any";
       return `${p.name}: ${typeName}`;
     })
-    .join(', ');
+    .join(", ");
 
-  const returnType = sig.type?.name ?? sig.type?.type ?? 'void';
+  const returnType = sig.type?.name ?? sig.type?.type ?? "void";
   return `${reflection.name}(${params}): ${returnType}`;
 }
 
@@ -100,7 +104,7 @@ function extractParameters(reflection: TypeDocReflection): ASTParameter[] | unde
   if (!reflection.signatures || reflection.signatures.length === 0) return undefined;
 
   const sig = reflection.signatures[0];
-  if (!sig || !sig.parameters || sig.parameters.length === 0) return undefined;
+  if (!sig?.parameters || sig.parameters.length === 0) return undefined;
 
   return sig.parameters.map((p) => ({
     name: p.name,
@@ -110,84 +114,93 @@ function extractParameters(reflection: TypeDocReflection): ASTParameter[] | unde
   }));
 }
 
+function parseModule(name: string, docstring: string | undefined, children: TypeDocReflection[]): ASTModule {
+  const mod: ASTModule = {
+    name,
+    docstring,
+    classes: [],
+    functions: [],
+    variables: [],
+  };
+
+  for (const child of children) {
+    if (child.kind === 128) {
+      const cls: any = {
+        name: child.name,
+        docstring: extractCommentText(child.comment),
+        methods: child.children
+          ?.filter((m) => m.kind === 256 || m.kind === 512)
+          .map((m) => ({
+            name: m.name,
+            signature: extractSignature(m),
+            docstring: extractCommentText(m.comment),
+            parameters: extractParameters(m),
+            return_type: extractReturnType(m),
+          })),
+        properties: child.children
+          ?.filter((m) => m.kind === 1024)
+          .map((m) => ({
+            name: m.name,
+            type: m.type?.name ?? m.type?.type ?? undefined,
+            docstring: extractCommentText(m.comment),
+          })),
+      };
+      mod.classes?.push(cls);
+    } else if (child.kind === 64) {
+      mod.functions?.push({
+        name: child.name,
+        signature: extractSignature(child),
+        docstring: extractCommentText(child.comment),
+        parameters: extractParameters(child),
+        return_type: extractReturnType(child),
+      });
+    } else if (child.kind === 1024 || child.kind === 256 || child.kind === 32) {
+      mod.variables?.push({
+        name: child.name,
+        type: child.type?.name ?? child.type?.type ?? undefined,
+        docstring: extractCommentText(child.comment),
+      });
+    }
+  }
+
+  if (mod.classes?.length === 0) delete mod.classes;
+  if (mod.functions?.length === 0) delete mod.functions;
+  if (mod.variables?.length === 0) delete mod.variables;
+
+  return mod;
+}
 
 function convertReflectionToASTModules(reflections: TypeDocReflection[]): ASTModule[] {
   const modules: ASTModule[] = [];
+  const topLevelChildren: TypeDocReflection[] = [];
 
   for (const ref of reflections) {
-    // kind=1 is Module, kind=2 is Namespace, kind=128 is Class, kind=64 is Function
     if (ref.kind === 1 || ref.kind === 2) {
-      const mod: ASTModule = {
-        name: ref.name,
-        docstring: extractCommentText(ref.comment),
-        classes: [],
-        functions: [],
-        variables: [],
-      };
-
-      for (const child of ref.children ?? []) {
-        if (child.kind === 128) {
-          // Class
-          mod.classes?.push({
-            name: child.name,
-            docstring: extractCommentText(child.comment),
-            methods: child.children
-              ?.filter((m) => m.kind === 256 || m.kind === 512) // Method or Constructor
-              .map((m) => ({
-                name: m.name,
-                signature: extractSignature(m),
-                docstring: extractCommentText(m.comment),
-                parameters: extractParameters(m),
-                return_type: extractReturnType(m),
-              })),
-            properties: child.children
-              ?.filter((m) => m.kind === 1024) // Property
-              .map((m) => ({
-                name: m.name,
-                type: m.type?.name ?? m.type?.type ?? undefined,
-                docstring: extractCommentText(m.comment),
-              })),
-          });
-        } else if (child.kind === 64) {
-          // Function
-          mod.functions?.push({
-            name: child.name,
-            signature: extractSignature(child),
-            docstring: extractCommentText(child.comment),
-            parameters: extractParameters(child),
-            return_type: extractReturnType(child),
-          });
-        } else if (child.kind === 1024) {
-          // Variable
-          mod.variables?.push({
-            name: child.name,
-            type: child.type?.name ?? child.type?.type ?? undefined,
-            docstring: extractCommentText(child.comment),
-          });
-        }
-      }
-
-      modules.push(mod);
+      modules.push(parseModule(ref.name, extractCommentText(ref.comment), ref.children ?? []));
+    } else {
+      topLevelChildren.push(ref);
     }
+  }
+
+  if (topLevelChildren.length > 0) {
+    modules.push(parseModule("API", undefined, topLevelChildren));
   }
 
   return modules;
 }
 
-async function extractWithTypeDoc(
-  entryPoints: string[],
-  tsconfig?: string,
-): Promise<ASTModule[]> {
-  const { Application, TSConfigReader, normalizePath } = await import('typedoc');
+async function extractWithTypeDoc(entryPoints: string[], tsconfig?: string): Promise<ASTModule[]> {
+  const { Application, TSConfigReader, normalizePath } = await import("typedoc");
 
   const bootstrapOptions: any = {
     entryPoints,
-    skipErrorChecking: false,
+    skipErrorChecking: true,
     excludeExternals: true,
     excludePrivate: true,
     excludeProtected: false,
     validation: { notExported: false },
     plugin: [],
+    exclude: ["**/node_modules/**"],
   };
   if (tsconfig) {
     bootstrapOptions.tsconfig = tsconfig;
@@ -201,7 +214,7 @@ async function extractWithTypeDoc(
   const project = await app.convert();
 
   if (!project) {
-    throw new Error('TypeDoc conversion returned no project. Check entry points and tsconfig.');
+    throw new Error("TypeDoc conversion returned no project. Check entry points and tsconfig.");
   }
 
   // Serialize the project reflection to plain JSON for processing

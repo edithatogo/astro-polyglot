@@ -8,16 +8,16 @@
  * @module tests/benches/mdx-generator.bench
  */
 
-import { bench, describe, beforeAll } from 'vitest';
-import { transformToMDX } from '../../core/mdx-generator';
-import type { ASTModule, ASTClass, ASTFunction } from '../../core/mdx-generator';
+import { beforeAll, bench, describe } from "vitest";
+import type { ASTFunction, ASTModule } from "../../core/mdx-generator";
+import { transformToMDX } from "../../core/mdx-generator";
 
 // ─── Fixture builder helpers ────────────────────────────────────────
 
 function generateModuleTree(depth: number, breadth: number): ASTModule {
   const mod: ASTModule = {
     name: `bench_${depth}_${breadth}`,
-    docstring: 'A'.repeat(200),
+    docstring: "A".repeat(200),
     classes: [],
     functions: [],
     variables: [],
@@ -29,30 +29,28 @@ function generateModuleTree(depth: number, breadth: number): ASTModule {
       methods.push({
         name: `method_${i}_${j}`,
         signature: `method_${i}_${j}(x: number, y: string): void`,
-        docstring: 'B'.repeat(100),
+        docstring: "B".repeat(100),
         parameters: [
-          { name: 'x', type: 'number', description: 'The X parameter.' },
-          { name: 'y', type: 'string', description: 'The Y parameter.' },
+          { name: "x", type: "number", description: "The X parameter." },
+          { name: "y", type: "string", description: "The Y parameter." },
         ],
-        return_type: 'void',
+        return_type: "void",
       });
     }
 
     mod.classes!.push({
       name: `Class_${i}`,
-      docstring: 'C'.repeat(100),
+      docstring: "C".repeat(100),
       methods,
-      properties: [
-        { name: `prop_${i}`, type: 'string', docstring: 'A property.' },
-      ],
+      properties: [{ name: `prop_${i}`, type: "string", docstring: "A property." }],
     });
 
     mod.functions!.push({
       name: `func_${i}`,
       signature: `func_${i}(x: number): boolean`,
-      docstring: 'D'.repeat(100),
-      parameters: [{ name: 'x', type: 'number', description: 'Param X.' }],
-      return_type: 'boolean',
+      docstring: "D".repeat(100),
+      parameters: [{ name: "x", type: "number", description: "Param X." }],
+      return_type: "boolean",
     });
   }
 
@@ -73,27 +71,27 @@ beforeAll(() => {
 
 // ─── Benchmarks ─────────────────────────────────────────────────────
 
-describe('transformToMDX', () => {
-  bench('small (3 modules, 2 classes/fns each)', () => {
+describe("transformToMDX", () => {
+  bench("small (3 modules, 2 classes/fns each)", () => {
     transformToMDX(smallFixtures, {
-      outputDir: 'api/python',
-      language: 'python',
+      outputDir: "api/python",
+      language: "python",
       pagination: false,
     });
   });
 
-  bench('medium (10 modules, 5 classes/fns each)', () => {
+  bench("medium (10 modules, 5 classes/fns each)", () => {
     transformToMDX(mediumFixtures, {
-      outputDir: 'api/python',
-      language: 'python',
+      outputDir: "api/python",
+      language: "python",
       pagination: false,
     });
   });
 
-  bench('large (50 modules, 10 classes/fns each)', () => {
+  bench("large (50 modules, 10 classes/fns each)", () => {
     transformToMDX(largeFixtures, {
-      outputDir: 'api/python',
-      language: 'python',
+      outputDir: "api/python",
+      language: "python",
       pagination: false,
     });
   });

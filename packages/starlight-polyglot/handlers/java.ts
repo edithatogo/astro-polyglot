@@ -1,9 +1,9 @@
-import { execSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, readdirSync } from 'node:fs';
-import path from 'node:path';
-import { tmpdir } from 'node:os';
-import type { Handler, BaseHandlerOptions } from '../core/plugin';
-import { transformToMDX, type ASTModule } from '../core/mdx-generator';
+import { execSync } from "node:child_process";
+import { existsSync, mkdtempSync, readdirSync, readFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import { type ASTModule, transformToMDX } from "../core/mdx-generator";
+import type { BaseHandlerOptions, Handler } from "../core/plugin";
 
 interface JavaHandlerOptions extends BaseHandlerOptions {
   /** Source directories (packages or .java file paths) to document. */
@@ -43,7 +43,7 @@ interface JavadocJSON {
  * JSON doclet (available in Oracle JDK / OpenJDK with the jdk.javadoc module).
  */
 export const javaHandler: Handler = {
-  name: 'java',
+  name: "java",
 
   async generate(options) {
     const opts = options as unknown as JavaHandlerOptions;
@@ -51,18 +51,18 @@ export const javaHandler: Handler = {
     const classpath = opts.classpath;
 
     if (!entryPoints || entryPoints.length === 0) {
-      throw new Error('Java handler requires at least one entryPoint (source directory or package)');
+      throw new Error("Java handler requires at least one entryPoint (source directory or package)");
     }
 
     const modules = extractWithJavadoc(entryPoints, classpath);
 
     if (modules.length === 0) {
-      throw new Error('javadoc extraction produced no modules');
+      throw new Error("javadoc extraction produced no modules");
     }
 
     const output = transformToMDX(modules, {
       outputDir: opts.output,
-      language: 'java',
+      language: "java",
       ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
@@ -71,14 +71,12 @@ export const javaHandler: Handler = {
 
   async validate(_sourcePath) {
     try {
-      execSync('javadoc --version', { encoding: 'utf-8', stdio: 'pipe' });
+      execSync("javadoc --version", { encoding: "utf-8", stdio: "pipe" });
       return { valid: true, errors: [] };
     } catch {
       return {
         valid: false,
-        errors: [
-          'javadoc not found. Ensure a JDK is installed and javadoc is on your PATH.',
-        ],
+        errors: ["javadoc not found. Ensure a JDK is installed and javadoc is on your PATH."],
       };
     }
   },
@@ -88,19 +86,16 @@ export const javaHandler: Handler = {
  * Runs `javadoc -Xdoclint:none -json` on the given entry points and
  * parses the resulting JSON output into ASTModule structures.
  */
-function extractWithJavadoc(
-  entryPoints: string[],
-  classpath?: string,
-): ASTModule[] {
+function extractWithJavadoc(entryPoints: string[], classpath?: string): ASTModule[] {
   // Create a temporary output directory for javadoc JSON
-  const tmpDir = mkdtempSync(path.join(tmpdir(), 'javadoc-json-'));
+  const tmpDir = mkdtempSync(path.join(tmpdir(), "javadoc-json-"));
 
   try {
     // Build the javadoc command
-    const cmdParts = ['javadoc', '-Xdoclint:none', '-json', '-d', tmpDir];
+    const cmdParts = ["javadoc", "-Xdoclint:none", "-json", "-d", tmpDir];
 
     if (classpath) {
-      cmdParts.push('-classpath', classpath);
+      cmdParts.push("-classpath", classpath);
     }
 
     // Resolve source paths: if an entry point is a directory containing .java files,
@@ -115,22 +110,20 @@ function extractWithJavadoc(
       }
     }
 
-    const cmd = cmdParts.join(' ');
+    const cmd = cmdParts.join(" ");
     execSync(cmd, {
-      encoding: 'utf-8',
-      stdio: 'pipe',
+      encoding: "utf-8",
+      stdio: "pipe",
       maxBuffer: 10 * 1024 * 1024,
       timeout: 120_000,
     });
 
     // Locate the generated JSON file(s) in the temp directory
     const files = readdirSync(tmpDir);
-    const jsonFiles = files.filter((f) => f.endsWith('.json'));
+    const jsonFiles = files.filter((f) => f.endsWith(".json"));
 
     if (jsonFiles.length === 0) {
-      throw new Error(
-        'javadoc did not produce any JSON output. Check that your JDK supports the -json flag.',
-      );
+      throw new Error("javadoc did not produce any JSON output. Check that your JDK supports the -json flag.");
     }
 
     // Parse all JSON files and merge into ASTModule[]
@@ -138,7 +131,7 @@ function extractWithJavadoc(
 
     for (const jsonFile of jsonFiles) {
       const jsonPath = path.join(tmpDir, jsonFile);
-      const raw = readFileSync(jsonPath, 'utf-8');
+      const raw = readFileSync(jsonPath, "utf-8");
       const parsed = JSON.parse(raw) as JavadocJSON;
 
       // Process packages
@@ -162,7 +155,7 @@ function extractWithJavadoc(
   } finally {
     // Clean up temp directory
     try {
-      execSync(`rm -rf "${tmpDir}"`, { stdio: 'pipe' });
+      execSync(`rm -rf "${tmpDir}"`, { stdio: "pipe" });
     } catch {
       // Ignore cleanup errors
     }
@@ -176,7 +169,7 @@ function convertJavadocPackage(pkg: JavadocElement): ASTModule | null {
   if (!pkg.name && !pkg.qualifiedName) return null;
 
   const mod: ASTModule = {
-    name: pkg.qualifiedName ?? pkg.name ?? 'unknown',
+    name: pkg.qualifiedName ?? pkg.name ?? "unknown",
     docstring: pkg.comment?.trim() || undefined,
     classes: [],
     functions: [],
@@ -205,7 +198,7 @@ function convertJavadocClassToModule(cls: JavadocElement): ASTModule | null {
   if (!innerClass) return null;
 
   return {
-    name: cls.qualifiedName ?? cls.name ?? 'unknown',
+    name: cls.qualifiedName ?? cls.name ?? "unknown",
     docstring: cls.comment?.trim() || undefined,
     classes: [innerClass],
     functions: [],
@@ -270,10 +263,7 @@ function convertJavadocClass(element: JavadocElement): {
   for (const member of element.members ?? []) {
     if (!member.name) continue;
 
-    const isMethod =
-      member.signature !== undefined ||
-      member.params !== undefined ||
-      member.return !== undefined;
+    const isMethod = member.signature !== undefined || member.params !== undefined || member.return !== undefined;
 
     if (isMethod) {
       cls.methods.push({
@@ -304,15 +294,11 @@ function convertJavadocClass(element: JavadocElement): {
  * Builds a human-readable Java method signature from the parsed element.
  */
 function buildJavaSignature(element: JavadocElement): string | undefined {
-  const params = (element.params ?? [])
-    .map((p) => `${p.type ?? 'Object'} ${p.name}`)
-    .join(', ');
+  const params = (element.params ?? []).map((p) => `${p.type ?? "Object"} ${p.name}`).join(", ");
 
-  const returnType = element.return?.type ?? 'void';
-  const modifiers = (element.modifiers ?? []).filter(
-    (m) => m !== 'abstract' && m !== 'default',
-  );
+  const returnType = element.return?.type ?? "void";
+  const modifiers = (element.modifiers ?? []).filter((m) => m !== "abstract" && m !== "default");
 
-  const prefix = modifiers.length > 0 ? `${modifiers.join(' ')} ` : '';
+  const prefix = modifiers.length > 0 ? `${modifiers.join(" ")} ` : "";
   return `${prefix}${returnType} ${element.name}(${params})`;
 }

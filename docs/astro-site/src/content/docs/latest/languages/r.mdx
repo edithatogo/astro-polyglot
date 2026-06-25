@@ -1,0 +1,43 @@
+---
+title: R Handler
+description: Configure and use the R documentation handler with starlight-polyglot.
+sidebar:
+  label: R
+slug: latest/languages/r
+---
+
+The R handler extracts API documentation from R packages using `Rscript` with roxygen2-style documentation. It parses R source files and transforms functions and class documentation into Starlight MDX pages.
+
+## Prerequisites
+
+* **R runtime** installed and `Rscript` available on PATH
+* **roxygen2** (`install.packages("roxygen2")`)
+
+## Configuration
+
+```js
+polyglot({
+  r: {
+    // Required: One or more R script files or package paths
+    entryPoints: ['R/stats.R', 'R/plots.R'],
+
+    // Optional: Output subdirectory (default: "api/r")
+    output: 'api/r',
+
+    // Optional: Include pagination links between pages
+    pagination: false,
+  },
+})
+```
+
+### Options
+
+| Option        | Type        | Required | Default     | Description                                  |
+|---------------|-------------|----------|-------------|----------------------------------------------|
+| `entryPoints` | `string[]`  | Yes      | —           | R script or package file paths              |
+| `output`      | `string`    | No       | `"api/r"`   | Output subdirectory under `src/content/docs/`|
+| `pagination`  | `boolean`   | No       | `false`     | Enable prev/next navigation between pages    |
+
+## Status
+
+🚧 **Planned** — This handler is on the roadmap but not yet implemented. Contributions are welcome!

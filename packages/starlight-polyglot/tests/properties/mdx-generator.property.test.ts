@@ -8,16 +8,29 @@
  * @module tests/properties/mdx-generator.property
  */
 
-import { describe, it, expect } from 'vitest';
-import * as fc from 'fast-check';
-import { transformToMDX } from '../../core/mdx-generator';
-import type { ASTModule, ASTClass, ASTFunction, ASTParameter, ASTVariable } from '../../core/mdx-generator';
+import * as fc from "fast-check";
+import { describe, expect, it } from "vitest";
+import type { ASTClass, ASTFunction, ASTModule, ASTParameter, ASTVariable } from "../../core/mdx-generator";
+import { transformToMDX } from "../../core/mdx-generator";
 
 // ─── Arbitraries (fast-check data generators) ──────────────────────
 
 const languageArb: fc.Arbitrary<string> = fc.constantFrom(
-  'python', 'typescript', 'rust', 'r', 'julia', 'csharp', 'go',
-  'java', 'kotlin', 'cpp', 'swift', 'ruby', 'dart', 'php', 'elixir',
+  "python",
+  "typescript",
+  "rust",
+  "r",
+  "julia",
+  "csharp",
+  "go",
+  "java",
+  "kotlin",
+  "cpp",
+  "swift",
+  "ruby",
+  "dart",
+  "php",
+  "elixir",
 );
 
 const identifierArb: fc.Arbitrary<string> = fc
@@ -26,19 +39,19 @@ const identifierArb: fc.Arbitrary<string> = fc
 
 const docstringArb: fc.Arbitrary<string> = fc.oneof(
   fc.constant(undefined),
-  fc.constant(''),
+  fc.constant(""),
   fc.string({ minLength: 1, maxLength: 200 }),
 );
 
 const typeArb: fc.Arbitrary<string> = fc.oneof(
-  fc.constant('int'),
-  fc.constant('string'),
-  fc.constant('float'),
-  fc.constant('boolean'),
-  fc.constant('void'),
-  fc.constant('number'),
-  fc.constant('array'),
-  fc.constant('object'),
+  fc.constant("int"),
+  fc.constant("string"),
+  fc.constant("float"),
+  fc.constant("boolean"),
+  fc.constant("void"),
+  fc.constant("number"),
+  fc.constant("array"),
+  fc.constant("object"),
 );
 
 const parameterArb: fc.Arbitrary<ASTParameter> = fc.record({
@@ -81,27 +94,27 @@ const modulesArrayArb: fc.Arbitrary<ASTModule[]> = fc.array(moduleArb, { maxLeng
 
 const outputDirArb: fc.Arbitrary<string> = fc
   .string({ minLength: 1, maxLength: 30 })
-  .filter((s) => /^[a-zA-Z0-9_/]+$/.test(s) && !s.startsWith('/') && !s.endsWith('/'));
+  .filter((s) => /^[a-zA-Z0-9_/]+$/.test(s) && !s.startsWith("/") && !s.endsWith("/"));
 
 // ─── Property tests ─────────────────────────────────────────────────
 
-describe('transformToMDX (property-based)', () => {
-  it('returns an object with pages array and sidebar', () => {
+describe("transformToMDX (property-based)", () => {
+  it("returns an object with pages array and sidebar", () => {
     fc.assert(
       fc.property(modulesArrayArb, outputDirArb, languageArb, (modules, outputDir, language) => {
         const result = transformToMDX(modules, { outputDir, language });
-        expect(result).toHaveProperty('pages');
+        expect(result).toHaveProperty("pages");
         expect(Array.isArray(result.pages)).toBe(true);
-        expect(result).toHaveProperty('sidebar');
-        expect(result.sidebar).toHaveProperty('label');
-        expect(result.sidebar).toHaveProperty('items');
+        expect(result).toHaveProperty("sidebar");
+        expect(result.sidebar).toHaveProperty("label");
+        expect(result.sidebar).toHaveProperty("items");
         expect(Array.isArray(result.sidebar.items)).toBe(true);
       }),
       { numRuns: 100, seed: 42 },
     );
   });
 
-  it('number of pages equals modules + classes + functions per module', () => {
+  it("number of pages equals modules + classes + functions per module", () => {
     fc.assert(
       fc.property(modulesArrayArb, outputDirArb, languageArb, (modules, outputDir, language) => {
         const result = transformToMDX(modules, { outputDir, language });
@@ -117,22 +130,22 @@ describe('transformToMDX (property-based)', () => {
     );
   });
 
-  it('all pages have non-empty title and string body', () => {
+  it("all pages have non-empty title and string body", () => {
     fc.assert(
       fc.property(modulesArrayArb, outputDirArb, languageArb, (modules, outputDir, language) => {
         const result = transformToMDX(modules, { outputDir, language });
         for (const page of result.pages) {
-          expect(page.frontmatter).toHaveProperty('title');
-          expect(typeof page.frontmatter.title).toBe('string');
+          expect(page.frontmatter).toHaveProperty("title");
+          expect(typeof page.frontmatter.title).toBe("string");
           expect(page.frontmatter.title.length).toBeGreaterThanOrEqual(1);
-          expect(typeof page.body).toBe('string');
+          expect(typeof page.body).toBe("string");
         }
       }),
       { numRuns: 100, seed: 42 },
     );
   });
 
-  it('every page has pagefind: true in frontmatter', () => {
+  it("every page has pagefind: true in frontmatter", () => {
     fc.assert(
       fc.property(modulesArrayArb, outputDirArb, languageArb, (modules, outputDir, language) => {
         const result = transformToMDX(modules, { outputDir, language });
@@ -144,7 +157,7 @@ describe('transformToMDX (property-based)', () => {
     );
   });
 
-  it('sidebar items count equals number of modules', () => {
+  it("sidebar items count equals number of modules", () => {
     fc.assert(
       fc.property(modulesArrayArb, outputDirArb, languageArb, (modules, outputDir, language) => {
         const result = transformToMDX(modules, { outputDir, language });
@@ -154,15 +167,15 @@ describe('transformToMDX (property-based)', () => {
     );
   });
 
-  it('each sidebar item has a label and link (ends with slash)', () => {
+  it("each sidebar item has a label and link (ends with slash)", () => {
     fc.assert(
       fc.property(modulesArrayArb, outputDirArb, languageArb, (modules, outputDir, language) => {
         const result = transformToMDX(modules, { outputDir, language });
         for (const item of result.sidebar.items) {
-          expect(item).toHaveProperty('label');
-          expect(typeof item.label).toBe('string');
-          expect(item).toHaveProperty('link');
-          expect(typeof item.link).toBe('string');
+          expect(item).toHaveProperty("label");
+          expect(typeof item.label).toBe("string");
+          expect(item).toHaveProperty("link");
+          expect(typeof item.link).toBe("string");
           expect(item.link).toMatch(/\/$/);
         }
       }),
@@ -170,36 +183,37 @@ describe('transformToMDX (property-based)', () => {
     );
   });
 
-  it('page paths are unique (no duplicates)', () => {
+  it("page paths are unique (no duplicates)", () => {
     fc.assert(
       fc.property(
         fc.uniqueArray(identifierArb, { maxLength: 10, selector: (name) => name.toLowerCase() }),
         outputDirArb,
         languageArb,
         (moduleNames, outputDir, language) => {
-        const modules: ASTModule[] = moduleNames.map((name) => ({ name }));
-        const result = transformToMDX(modules, { outputDir, language });
-        const paths = result.pages.map((p) => p.path);
-        const uniquePaths = new Set(paths);
-        expect(uniquePaths.size).toBe(paths.length);
-      }),
+          const modules: ASTModule[] = moduleNames.map((name) => ({ name }));
+          const result = transformToMDX(modules, { outputDir, language });
+          const paths = result.pages.map((p) => p.path);
+          const uniquePaths = new Set(paths);
+          expect(uniquePaths.size).toBe(paths.length);
+        },
+      ),
       { numRuns: 100, seed: 42 },
     );
   });
 
-  it('description in frontmatter is always a string', () => {
+  it("description in frontmatter is always a string", () => {
     fc.assert(
       fc.property(modulesArrayArb, outputDirArb, languageArb, (modules, outputDir, language) => {
         const result = transformToMDX(modules, { outputDir, language });
         for (const page of result.pages) {
-          expect(typeof page.frontmatter.description).toBe('string');
+          expect(typeof page.frontmatter.description).toBe("string");
         }
       }),
       { numRuns: 100, seed: 42 },
     );
   });
 
-  it('empty modules array produces empty output', () => {
+  it("empty modules array produces empty output", () => {
     fc.assert(
       fc.property(outputDirArb, languageArb, (outputDir, language) => {
         const result = transformToMDX([], { outputDir, language });
@@ -210,7 +224,7 @@ describe('transformToMDX (property-based)', () => {
     );
   });
 
-  it('modules with only a name (no docstring) still produce valid output', () => {
+  it("modules with only a name (no docstring) still produce valid output", () => {
     fc.assert(
       fc.property(
         fc.array(
@@ -229,7 +243,7 @@ describe('transformToMDX (property-based)', () => {
           const result = transformToMDX(modules, { outputDir, language });
           expect(result.pages.length).toBeGreaterThanOrEqual(modules.length);
           for (const page of result.pages) {
-            expect(typeof page.frontmatter.title).toBe('string');
+            expect(typeof page.frontmatter.title).toBe("string");
           }
         },
       ),

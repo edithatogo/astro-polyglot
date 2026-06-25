@@ -1,8 +1,8 @@
-import { execSync } from 'node:child_process';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import path from 'node:path';
-import type { Handler, BaseHandlerOptions } from '../core/plugin';
-import { transformToMDX, type ASTModule } from '../core/mdx-generator';
+import { execSync } from "node:child_process";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import path from "node:path";
+import { type ASTModule, transformToMDX } from "../core/mdx-generator";
+import type { BaseHandlerOptions, Handler } from "../core/plugin";
 
 interface ElixirHandlerOptions extends BaseHandlerOptions {
   /** Path to the Mix project root (containing mix.exs). */
@@ -64,21 +64,21 @@ interface ExDocOutput {
  * and runs the docs generator with the JSON formatter.
  */
 export const elixirHandler: Handler = {
-  name: 'elixir',
+  name: "elixir",
 
   async generate(options) {
     const opts = options as unknown as ElixirHandlerOptions;
     const projectPath = opts.projectPath;
 
     if (!projectPath) {
-      throw new Error('Elixir handler requires a projectPath option');
+      throw new Error("Elixir handler requires a projectPath option");
     }
 
     if (!existsSync(projectPath)) {
       throw new Error(`Project path does not exist: ${projectPath}`);
     }
 
-    const mixExsPath = path.join(projectPath, 'mix.exs');
+    const mixExsPath = path.join(projectPath, "mix.exs");
     if (!existsSync(mixExsPath)) {
       throw new Error(`No mix.exs found at ${projectPath}. Ensure the path is an Elixir Mix project root.`);
     }
@@ -86,12 +86,12 @@ export const elixirHandler: Handler = {
     const modules = extractWithExDoc(projectPath);
 
     if (modules.length === 0) {
-      throw new Error('ExDoc extraction produced no modules');
+      throw new Error("ExDoc extraction produced no modules");
     }
 
     const output = transformToMDX(modules, {
       outputDir: opts.output,
-      language: 'elixir',
+      language: "elixir",
       ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
@@ -100,15 +100,13 @@ export const elixirHandler: Handler = {
 
   async validate(_sourcePath) {
     try {
-      execSync('elixir --version', { encoding: 'utf-8', stdio: 'pipe' });
-      execSync('mix --version', { encoding: 'utf-8', stdio: 'pipe' });
+      execSync("elixir --version", { encoding: "utf-8", stdio: "pipe" });
+      execSync("mix --version", { encoding: "utf-8", stdio: "pipe" });
       return { valid: true, errors: [] };
     } catch {
       return {
         valid: false,
-        errors: [
-          'Elixir not found. Install from https://elixir-lang.org/install.html',
-        ],
+        errors: ["Elixir not found. Install from https://elixir-lang.org/install.html"],
       };
     }
   },
@@ -122,50 +120,49 @@ function extractWithExDoc(projectPath: string): ASTModule[] {
   const resolvedPath = path.resolve(projectPath);
 
   // Ensure ex_doc is available as a dependency by checking deps
-  execSync('mix deps.get', {
-    encoding: 'utf-8',
+  execSync("mix deps.get", {
+    encoding: "utf-8",
     cwd: resolvedPath,
-    stdio: 'pipe',
+    stdio: "pipe",
     timeout: 120_000,
   });
 
   // Generate docs with JSON formatter
-  const cmd = 'mix docs --formatter json 2>&1';
+  const cmd = "mix docs --formatter json 2>&1";
   execSync(cmd, {
-    encoding: 'utf-8',
+    encoding: "utf-8",
     cwd: resolvedPath,
     maxBuffer: 10 * 1024 * 1024,
     timeout: 180_000,
-    stdio: 'pipe',
+    stdio: "pipe",
   });
 
   // ExDoc JSON output is typically written to doc/ex_doc.json or similar
-  const docDir = path.join(resolvedPath, 'doc');
+  const docDir = path.join(resolvedPath, "doc");
   const jsonPaths = [
-    path.join(docDir, 'ex_doc.json'),
-    path.join(docDir, 'docs.json'),
+    path.join(docDir, "ex_doc.json"),
+    path.join(docDir, "docs.json"),
     ...(existsSync(docDir)
-      ? readdirSync(docDir).filter((f) => f.endsWith('.json')).map((f) => path.join(docDir, f))
+      ? readdirSync(docDir)
+          .filter((f) => f.endsWith(".json"))
+          .map((f) => path.join(docDir, f))
       : []),
   ];
 
   for (const jsonPath of jsonPaths) {
     if (existsSync(jsonPath)) {
-      const raw = readFileSync(jsonPath, 'utf-8');
+      const raw = readFileSync(jsonPath, "utf-8");
       try {
         const exDocData = JSON.parse(raw) as ExDocOutput;
         return convertExDocModules(exDocData.modules ?? []);
-      } catch {
-        continue;
-      }
+      } catch {}
     }
   }
 
   throw new Error(
-    'ExDoc did not produce JSON output. Ensure ex_doc is configured in mix.exs and the project compiles.',
+    "ExDoc did not produce JSON output. Ensure ex_doc is configured in mix.exs and the project compiles.",
   );
 }
-
 
 /**
  * Converts ExDoc module entries into ASTModule[].
@@ -175,7 +172,7 @@ function convertExDocModules(exDocModules: ExDocModule[]): ASTModule[] {
 
   for (const exMod of exDocModules) {
     const mod: ASTModule = {
-      name: exMod.module ?? exMod.id ?? 'Unknown',
+      name: exMod.module ?? exMod.id ?? "Unknown",
       docstring: exMod.moduledoc?.trim() || undefined,
       classes: [],
       functions: [],
@@ -211,7 +208,7 @@ function convertExDocModules(exDocModules: ExDocModule[]): ASTModule[] {
     for (const tp of exMod.types ?? []) {
       mod.variables?.push({
         name: tp.name,
-        type: tp.spec ?? tp.type ?? 'type',
+        type: tp.spec ?? tp.type ?? "type",
         docstring: tp.doc?.trim() || undefined,
       });
     }
@@ -248,10 +245,10 @@ function parseExDocSignature(
   let endIdx = -1;
 
   for (let i = 0; i < sig.length; i++) {
-    if (sig[i] === '(') {
+    if (sig[i] === "(") {
       if (depth === 0) startIdx = i;
       depth++;
-    } else if (sig[i] === ')') {
+    } else if (sig[i] === ")") {
       depth--;
       if (depth === 0 && startIdx >= 0) {
         endIdx = i;
@@ -266,7 +263,7 @@ function parseExDocSignature(
   if (!paramsStr.trim()) return undefined;
 
   // Parse comma-separated params
-  return paramsStr.split(',').map((p) => {
+  return paramsStr.split(",").map((p) => {
     const trimmed = p.trim();
     const parts = trimmed.split(/::|\\s+/);
     return {
@@ -284,7 +281,7 @@ function parseExDocSignature(
  */
 function extractExDocReturnType(sig?: string): string | undefined {
   if (!sig) return undefined;
-  const idx = sig.indexOf('::');
+  const idx = sig.indexOf("::");
   if (idx < 0) return undefined;
   return sig.substring(idx + 2).trim() || undefined;
 }

@@ -1,8 +1,8 @@
-import { execSync } from 'node:child_process';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import path from 'node:path';
-import type { Handler, BaseHandlerOptions } from '../core/plugin';
-import { transformToMDX, type ASTModule } from '../core/mdx-generator';
+import { execSync } from "node:child_process";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import path from "node:path";
+import { type ASTModule, transformToMDX } from "../core/mdx-generator";
+import type { BaseHandlerOptions, Handler } from "../core/plugin";
 
 interface KotlinHandlerOptions extends BaseHandlerOptions {
   /** Path to the Kotlin project root (containing build.gradle.kts or pom.xml). */
@@ -50,14 +50,14 @@ interface DokkaOutput {
  * back to `dokka` CLI if available.
  */
 export const kotlinHandler: Handler = {
-  name: 'kotlin',
+  name: "kotlin",
 
   async generate(options) {
     const opts = options as unknown as KotlinHandlerOptions;
     const projectPath = opts.projectPath;
 
     if (!projectPath) {
-      throw new Error('Kotlin handler requires a projectPath option');
+      throw new Error("Kotlin handler requires a projectPath option");
     }
 
     if (!existsSync(projectPath)) {
@@ -67,12 +67,12 @@ export const kotlinHandler: Handler = {
     const modules = extractWithDokka(projectPath, opts.outputFormat);
 
     if (modules.length === 0) {
-      throw new Error('Dokka extraction produced no modules');
+      throw new Error("Dokka extraction produced no modules");
     }
 
     const output = transformToMDX(modules, {
       outputDir: opts.output,
-      language: 'kotlin',
+      language: "kotlin",
       ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
@@ -81,17 +81,17 @@ export const kotlinHandler: Handler = {
 
   async validate(_sourcePath) {
     try {
-      execSync('dokka --version', { encoding: 'utf-8', stdio: 'pipe' });
+      execSync("dokka --version", { encoding: "utf-8", stdio: "pipe" });
       return { valid: true, errors: [] };
     } catch {
       try {
-        execSync('gradle --version', { encoding: 'utf-8', stdio: 'pipe' });
+        execSync("gradle --version", { encoding: "utf-8", stdio: "pipe" });
         return { valid: true, errors: [] };
       } catch {
         return {
           valid: false,
           errors: [
-            'Neither Dokka CLI nor Gradle found. Install Dokka from https://github.com/Kotlin/dokka or use Gradle.',
+            "Neither Dokka CLI nor Gradle found. Install Dokka from https://github.com/Kotlin/dokka or use Gradle.",
           ],
         };
       }
@@ -102,17 +102,12 @@ export const kotlinHandler: Handler = {
 /**
  * Runs Dokka to produce JSON documentation and parses it into ASTModule[].
  */
-function extractWithDokka(
-  projectPath: string,
-  _outputFormat?: string,
-): ASTModule[] {
+function extractWithDokka(projectPath: string, _outputFormat?: string): ASTModule[] {
   const resolvedPath = path.resolve(projectPath);
-  const outputDir = path.resolve(resolvedPath, 'build', 'dokka', 'json');
+  const outputDir = path.resolve(resolvedPath, "build", "dokka", "json");
 
-  const gradleBuildFiles = ['build.gradle.kts', 'build.gradle', 'pom.xml'];
-  const hasGradle = gradleBuildFiles.some((f) =>
-    existsSync(path.resolve(resolvedPath, f)),
-  );
+  const gradleBuildFiles = ["build.gradle.kts", "build.gradle", "pom.xml"];
+  const hasGradle = gradleBuildFiles.some((f) => existsSync(path.resolve(resolvedPath, f)));
 
   if (hasGradle) {
     runGradleDokka(resolvedPath);
@@ -122,8 +117,7 @@ function extractWithDokka(
 
   if (!existsSync(outputDir)) {
     throw new Error(
-      `Dokka output directory not found at ${outputDir}. ` +
-        'Ensure Dokka is configured to produce JSON output.',
+      `Dokka output directory not found at ${outputDir}. Ensure Dokka is configured to produce JSON output.`,
     );
   }
 
@@ -134,15 +128,13 @@ function extractWithDokka(
  * Runs the Gradle dokkaJson task in the specified project directory.
  */
 function runGradleDokka(projectPath: string): void {
-  const gradleCmd = existsSync(path.join(projectPath, 'gradlew'))
-    ? './gradlew'
-    : 'gradle';
+  const gradleCmd = existsSync(path.join(projectPath, "gradlew")) ? "./gradlew" : "gradle";
 
   const cmd = `${gradleCmd} dokkaJson --no-daemon 2>&1`;
   execSync(cmd, {
-    encoding: 'utf-8',
+    encoding: "utf-8",
     cwd: projectPath,
-    stdio: 'pipe',
+    stdio: "pipe",
     timeout: 300_000,
   });
 }
@@ -156,17 +148,17 @@ function runDokkaCli(projectPath: string, outputDir: string): void {
   if (sourceDirs.length === 0) {
     throw new Error(
       `No Kotlin source directories found under ${projectPath}. ` +
-        'Ensure your project has src/main/kotlin or similar.',
+        "Ensure your project has src/main/kotlin or similar.",
     );
   }
 
-  const sourceArgs = sourceDirs.map((d) => `-src "${d}"`).join(' ');
+  const sourceArgs = sourceDirs.map((d) => `-src "${d}"`).join(" ");
   const cmd = `dokka -outputDir "${outputDir}" -format json ${sourceArgs} 2>&1`;
 
   execSync(cmd, {
-    encoding: 'utf-8',
+    encoding: "utf-8",
     cwd: projectPath,
-    stdio: 'pipe',
+    stdio: "pipe",
     timeout: 180_000,
   });
 }
@@ -175,13 +167,7 @@ function runDokkaCli(projectPath: string, outputDir: string): void {
  * Finds Kotlin source directories under a project path.
  */
 function findKotlinSourceDirs(projectPath: string): string[] {
-  const candidates = [
-    'src/main/kotlin',
-    'src/commonMain/kotlin',
-    'src/jvmMain/kotlin',
-    'src/jsMain/kotlin',
-    'src',
-  ];
+  const candidates = ["src/main/kotlin", "src/commonMain/kotlin", "src/jvmMain/kotlin", "src/jsMain/kotlin", "src"];
 
   const dirs: string[] = [];
   for (const candidate of candidates) {
@@ -198,14 +184,14 @@ function findKotlinSourceDirs(projectPath: string): string[] {
  */
 function parseDokkaOutput(outputDir: string): ASTModule[] {
   const modules: ASTModule[] = [];
-  const files = readdirSync(outputDir).filter((f) => f.endsWith('.json'));
+  const files = readdirSync(outputDir).filter((f) => f.endsWith(".json"));
 
   for (const file of files) {
     const filePath = path.join(outputDir, file);
-    const raw = readFileSync(filePath, 'utf-8');
+    const raw = readFileSync(filePath, "utf-8");
     const data = JSON.parse(raw) as DokkaOutput;
 
-    const moduleName = data.module ?? path.basename(file, '.json');
+    const moduleName = data.module ?? path.basename(file, ".json");
 
     const mod: ASTModule = {
       name: moduleName,
@@ -228,15 +214,12 @@ function parseDokkaOutput(outputDir: string): ASTModule[] {
 /**
  * Recursively converts a Dokka documentation node into ASTModule entries.
  */
-function convertDokkaNode(
-  node: DokkaNode,
-  mod: ASTModule,
-): void {
+function convertDokkaNode(node: DokkaNode, mod: ASTModule): void {
   if (!node.name) return;
 
-  const kind = node.kind ?? '';
+  const kind = node.kind ?? "";
 
-  if (kind === 'class' || kind === 'interface' || kind === 'object' || kind === 'enum') {
+  if (kind === "class" || kind === "interface" || kind === "object" || kind === "enum") {
     const cls: {
       name: string;
       docstring?: string;
@@ -266,9 +249,9 @@ function convertDokkaNode(
 
     for (const child of node.children ?? []) {
       if (!child.name) continue;
-      const childKind = child.kind ?? '';
+      const childKind = child.kind ?? "";
 
-      if (childKind === 'function' || childKind === 'method') {
+      if (childKind === "function" || childKind === "method") {
         cls.methods.push({
           name: child.name,
           signature: buildKotlinSignature(child),
@@ -281,7 +264,7 @@ function convertDokkaNode(
           })),
           return_type: child.returnType ?? undefined,
         });
-      } else if (childKind === 'property' || childKind === 'field') {
+      } else if (childKind === "property" || childKind === "field") {
         cls.properties.push({
           name: child.name,
           type: child.returnType ?? child.parameters?.[0]?.type ?? undefined,
@@ -291,7 +274,7 @@ function convertDokkaNode(
     }
 
     mod.classes?.push(cls);
-  } else if (kind === 'function') {
+  } else if (kind === "function") {
     mod.functions?.push({
       name: node.name,
       signature: buildKotlinSignature(node),
@@ -304,7 +287,7 @@ function convertDokkaNode(
       })),
       return_type: node.returnType ?? undefined,
     });
-  } else if (kind === 'property' || kind === 'field') {
+  } else if (kind === "property" || kind === "field") {
     mod.variables?.push({
       name: node.name,
       type: node.returnType ?? undefined,
@@ -324,15 +307,15 @@ function convertDokkaNode(
 function buildKotlinSignature(node: DokkaNode): string | undefined {
   const params = (node.parameters ?? [])
     .map((p) => {
-      const defaultStr = p.defaultValue ? ` = ${p.defaultValue}` : '';
+      const defaultStr = p.defaultValue ? ` = ${p.defaultValue}` : "";
       return `${p.name}: ${p.type}${defaultStr}`;
     })
-    .join(', ');
+    .join(", ");
 
-  const receiver = node.receiver ? `${node.receiver.type}.` : '';
-  const returnType = node.returnType ? `: ${node.returnType}` : '';
-  const modifiers = (node.modifiers ?? []).join(' ');
+  const receiver = node.receiver ? `${node.receiver.type}.` : "";
+  const returnType = node.returnType ? `: ${node.returnType}` : "";
+  const modifiers = (node.modifiers ?? []).join(" ");
 
-  const prefix = modifiers ? `${modifiers} ` : '';
+  const prefix = modifiers ? `${modifiers} ` : "";
   return `${prefix}${receiver}fun ${node.name}(${params})${returnType}`;
 }

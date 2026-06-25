@@ -6,8 +6,6 @@ catalog:
   typescript: "^5.9.3"
   vitest: "^4.0.18"
   tsup: "^8.3.0"
-  eslint: "^9.0.0"
-  prettier: "^3.4.0"
   fast-check: "^4.8.0"
   "@fast-check/vitest": "^0.4.1"
   "@playwright/test": "^1.58.2"
@@ -17,3 +15,4 @@ catalog:
   "size-limit": "^11.0.0"
   "@changesets/cli": "^2.27.0"
   "@faker-js/faker": "^9.6.0"
+  "@biomejs/biome": "^2.5.0"

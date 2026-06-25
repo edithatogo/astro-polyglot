@@ -1,8 +1,8 @@
-import { execSync } from 'node:child_process';
-import { existsSync } from 'node:fs';
-import path from 'node:path';
-import type { Handler, BaseHandlerOptions } from '../core/plugin';
-import { transformToMDX, type ASTModule } from '../core/mdx-generator';
+import { execSync } from "node:child_process";
+import { existsSync } from "node:fs";
+import path from "node:path";
+import { type ASTModule, transformToMDX } from "../core/mdx-generator";
+import type { BaseHandlerOptions, Handler } from "../core/plugin";
 
 interface SasHandlerOptions extends BaseHandlerOptions {
   /** Paths to SAS program (.sas) files to extract documentation from */
@@ -12,7 +12,7 @@ interface SasHandlerOptions extends BaseHandlerOptions {
 /** Intermediate representation of a SAS macro / function extracted from output. */
 interface SasDocumentedItem {
   name: string;
-  type: 'macro' | 'function' | 'dataset' | 'variable';
+  type: "macro" | "function" | "dataset" | "variable";
   description?: string;
   parameters?: Array<{ name: string; type?: string; description?: string; default?: string }>;
   returns?: string;
@@ -29,25 +29,25 @@ interface SasDocumentedItem {
  * Entry points should be paths to .sas program files.
  */
 export const sasHandler: Handler = {
-  name: 'sas',
+  name: "sas",
 
   async generate(options) {
     const opts = options as unknown as SasHandlerOptions;
     const entryPoints = opts.entryPoints;
 
     if (!entryPoints || entryPoints.length === 0) {
-      throw new Error('SAS handler requires at least one entryPoint');
+      throw new Error("SAS handler requires at least one entryPoint");
     }
 
     const modules = extractWithSas(entryPoints);
 
     if (modules.length === 0) {
-      throw new Error('SAS extraction produced no modules');
+      throw new Error("SAS extraction produced no modules");
     }
 
     const output = transformToMDX(modules, {
       outputDir: opts.output,
-      language: 'sas',
+      language: "sas",
       ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
@@ -56,18 +56,16 @@ export const sasHandler: Handler = {
 
   async validate(_sourcePath) {
     try {
-      execSync('sas -version', { encoding: 'utf-8', stdio: 'pipe' });
+      execSync("sas -version", { encoding: "utf-8", stdio: "pipe" });
       return { valid: true, errors: [] };
     } catch {
       try {
-        execSync('sas --version', { encoding: 'utf-8', stdio: 'pipe' });
+        execSync("sas --version", { encoding: "utf-8", stdio: "pipe" });
         return { valid: true, errors: [] };
       } catch {
         return {
           valid: false,
-          errors: [
-            'SAS not found. Install SAS from https://www.sas.com/ and ensure it is on your PATH.',
-          ],
+          errors: ["SAS not found. Install SAS from https://www.sas.com/ and ensure it is on your PATH."],
         };
       }
     }
@@ -80,7 +78,7 @@ export const sasHandler: Handler = {
  */
 function extractWithSas(entryPoints: string[]): ASTModule[] {
   const modules: ASTModule[] = [];
-  const scriptPath = path.resolve(import.meta.dirname, '..', 'scripts', 'sas_extract.sas');
+  const scriptPath = path.resolve(import.meta.dirname, "..", "scripts", "sas_extract.sas");
 
   if (!existsSync(scriptPath)) {
     throw new Error(`SAS extraction script not found at ${scriptPath}`);
@@ -94,11 +92,11 @@ function extractWithSas(entryPoints: string[]): ASTModule[] {
 
     const cmd = `sas -sysin "${scriptPath}" -set SRC_FILE "${resolvedEntry}" -log /tmp/sas_extract.log -print /tmp/sas_extract.lst 2>&1`;
     const result = execSync(cmd, {
-      encoding: 'utf-8',
+      encoding: "utf-8",
       cwd: path.dirname(scriptPath),
       maxBuffer: 10 * 1024 * 1024,
       timeout: 180_000,
-      stdio: 'pipe',
+      stdio: "pipe",
     });
 
     const mod = parseSasOutput(result, resolvedEntry);
@@ -110,7 +108,6 @@ function extractWithSas(entryPoints: string[]): ASTModule[] {
   return modules;
 }
 
-
 /**
  * Parses SAS log/output to extract documented macros, functions, and datasets.
  * SAS documentation typically appears in comments (* ... ;) or as PROC
@@ -118,7 +115,7 @@ function extractWithSas(entryPoints: string[]): ASTModule[] {
  */
 function parseSasOutput(output: string, entryPath: string): ASTModule | null {
   const name = path.basename(entryPath, path.extname(entryPath));
-  const lines = output.split('\n');
+  const _lines = output.split("\n");
 
   const mod: ASTModule = {
     name,
@@ -141,7 +138,7 @@ function parseSasOutput(output: string, entryPath: string): ASTModule | null {
 
     const paramStrTrimmed = paramStr.trim();
     const params = paramStrTrimmed
-      ? paramStrTrimmed.split(',').map((p) => {
+      ? paramStrTrimmed.split(",").map((p) => {
           const parts = p.trim().split(/\s*=\s*/);
           return {
             name: parts[0]?.trim() || p.trim(),
@@ -154,7 +151,7 @@ function parseSasOutput(output: string, entryPath: string): ASTModule | null {
 
     items.push({
       name: macroName,
-      type: 'macro',
+      type: "macro",
       description: description || undefined,
       parameters: params && params.length > 0 ? params : undefined,
     });
@@ -168,7 +165,7 @@ function parseSasOutput(output: string, entryPath: string): ASTModule | null {
     if (!varName || !varType) continue;
     items.push({
       name: varName,
-      type: 'variable',
+      type: "variable",
       description: undefined,
       parameters: undefined,
       returns: varType,
@@ -178,7 +175,7 @@ function parseSasOutput(output: string, entryPath: string): ASTModule | null {
   // Parse comment-based documentation: * description for function_name;
   const commentDocRegex = /\*\s*@(macro|function|dataset)\s+(\w+)\s*([^*]*)\*;/gi;
   while ((macroMatch = commentDocRegex.exec(output)) !== null) {
-    const itemType = macroMatch[1] as 'macro' | 'function' | 'dataset' | undefined;
+    const itemType = macroMatch[1] as "macro" | "function" | "dataset" | undefined;
     const itemName = macroMatch[2];
     if (!itemType || !itemName) continue;
     const itemDesc = macroMatch[3]?.trim();
@@ -199,7 +196,7 @@ function parseSasOutput(output: string, entryPath: string): ASTModule | null {
   // Populate module from extracted items
 
   for (const item of items) {
-    if (item.type === 'macro' || item.type === 'function') {
+    if (item.type === "macro" || item.type === "function") {
       mod.functions?.push({
         name: item.name,
         docstring: item.description,

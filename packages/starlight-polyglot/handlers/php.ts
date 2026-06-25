@@ -1,8 +1,8 @@
-import { execSync } from 'node:child_process';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import path from 'node:path';
-import type { Handler, BaseHandlerOptions } from '../core/plugin';
-import { transformToMDX, type ASTModule } from '../core/mdx-generator';
+import { execSync } from "node:child_process";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import path from "node:path";
+import { type ASTModule, transformToMDX } from "../core/mdx-generator";
+import type { BaseHandlerOptions, Handler } from "../core/plugin";
 
 interface PhpHandlerOptions extends BaseHandlerOptions {
   /** Paths to PHP source files or directories to document */
@@ -75,25 +75,25 @@ interface PhpDocElement {
  * Entry points should be paths to PHP files or directories containing .php files.
  */
 export const phpHandler: Handler = {
-  name: 'php',
+  name: "php",
 
   async generate(options) {
     const opts = options as unknown as PhpHandlerOptions;
     const entryPoints = opts.entryPoints;
 
     if (!entryPoints || entryPoints.length === 0) {
-      throw new Error('PHP handler requires at least one entryPoint');
+      throw new Error("PHP handler requires at least one entryPoint");
     }
 
     const modules = extractWithPhpDoc(entryPoints);
 
     if (modules.length === 0) {
-      throw new Error('phpDocumentor extraction produced no modules');
+      throw new Error("phpDocumentor extraction produced no modules");
     }
 
     const output = transformToMDX(modules, {
       outputDir: opts.output,
-      language: 'php',
+      language: "php",
       ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
@@ -102,14 +102,12 @@ export const phpHandler: Handler = {
 
   async validate(_sourcePath) {
     try {
-      execSync('phpdoc --version', { encoding: 'utf-8', stdio: 'pipe' });
+      execSync("phpdoc --version", { encoding: "utf-8", stdio: "pipe" });
       return { valid: true, errors: [] };
     } catch {
       return {
         valid: false,
-        errors: [
-          'phpDocumentor not found. Install with: composer global require phpdocumentor/phpdocumentor',
-        ],
+        errors: ["phpDocumentor not found. Install with: composer global require phpdocumentor/phpdocumentor"],
       };
     }
   },
@@ -120,26 +118,26 @@ export const phpHandler: Handler = {
  */
 function extractWithPhpDoc(entryPoints: string[]): ASTModule[] {
   const modules: ASTModule[] = [];
-  const tmpOutput = '/tmp/starlight-polyglot-phpdoc';
+  const tmpOutput = "/tmp/starlight-polyglot-phpdoc";
 
-  const entries = entryPoints.map((e) => `"${path.resolve(e)}"`).join(' ');
+  const entries = entryPoints.map((e) => `"${path.resolve(e)}"`).join(" ");
   const cmd = `phpdoc -t "${tmpOutput}" --template="xml" -f ${entries} -d "" 2>&1`;
 
   execSync(cmd, {
-    encoding: 'utf-8',
+    encoding: "utf-8",
     maxBuffer: 10 * 1024 * 1024,
     timeout: 180_000,
-    stdio: 'pipe',
+    stdio: "pipe",
   });
 
   // phpDocumentor generates structured XML files; we parse the file-level structure
   if (existsSync(tmpOutput)) {
     const xmlFiles = readdirSync(tmpOutput)
-      .filter((f) => f.endsWith('.xml'))
+      .filter((f) => f.endsWith(".xml"))
       .map((f) => path.join(tmpOutput, f));
 
     for (const xmlFile of xmlFiles) {
-      const raw = readFileSync(xmlFile, 'utf-8');
+      const raw = readFileSync(xmlFile, "utf-8");
       const elements = parsePhpDocXml(raw);
       const converted = convertPhpDocElements(elements);
       modules.push(...converted);
@@ -174,7 +172,7 @@ function parsePhpDocXml(xmlContent: string): PhpDocElement[] {
 
       const element: PhpDocElement = {
         name: className,
-        type: 'class',
+        type: "class",
         summary: classSummary,
         description: classDesc,
         methods: [],
@@ -188,7 +186,7 @@ function parsePhpDocXml(xmlContent: string): PhpDocElement[] {
       while ((methodMatch = methodRegex.exec(classBody)) !== null) {
         const methodBody = methodMatch[1];
         if (!methodBody) continue;
-        const mName = methodBody.match(/<name>([^<]*)<\/name>/)?.[1]?.trim() ?? 'unknown';
+        const mName = methodBody.match(/<name>([^<]*)<\/name>/)?.[1]?.trim() ?? "unknown";
         const mSummary = methodBody.match(/<summary>([\s\S]*?)<\/summary>/)?.[1]?.trim();
         const mDesc = methodBody.match(/<description>([\s\S]*?)<\/description>/)?.[1]?.trim();
 
@@ -199,11 +197,16 @@ function parsePhpDocXml(xmlContent: string): PhpDocElement[] {
         while ((argMatch = argRegex.exec(methodBody)) !== null) {
           const argBody = argMatch[1];
           if (!argBody) continue;
-          const aName = argBody.match(/<name>([^<]*)<\/name>/)?.[1]?.trim() ?? 'param';
+          const aName = argBody.match(/<name>([^<]*)<\/name>/)?.[1]?.trim() ?? "param";
           const aType = argBody.match(/<type>([^<]*)<\/type>/)?.[1]?.trim();
           const aDefault = argBody.match(/<default>([^<]*)<\/default>/)?.[1]?.trim();
           const aDesc = argBody.match(/<description>([^<]*)<\/description>/)?.[1]?.trim();
-          args.push({ name: aName, type: aType || undefined, default: aDefault || undefined, description: aDesc || undefined });
+          args.push({
+            name: aName,
+            type: aType || undefined,
+            default: aDefault || undefined,
+            description: aDesc || undefined,
+          });
         }
 
         // Parse return type
@@ -216,7 +219,7 @@ function parsePhpDocXml(xmlContent: string): PhpDocElement[] {
 
         element.methods?.push({
           name: mName,
-          type: 'method',
+          type: "method",
           summary: mSummary,
           description: mDesc,
           arguments: args.length > 0 ? args : undefined,
@@ -230,7 +233,7 @@ function parsePhpDocXml(xmlContent: string): PhpDocElement[] {
       while ((propMatch = propRegex.exec(classBody)) !== null) {
         const propBody = propMatch[1];
         if (!propBody) continue;
-        const pName = propBody.match(/<name>([^<]*)<\/name>/)?.[1]?.trim() ?? 'unknown';
+        const pName = propBody.match(/<name>([^<]*)<\/name>/)?.[1]?.trim() ?? "unknown";
         const pType = propBody.match(/<type>([^<]*)<\/type>/)?.[1]?.trim();
         const pDefault = propBody.match(/<default>([^<]*)<\/default>/)?.[1]?.trim();
         const pSummary = propBody.match(/<summary>([^<]*)<\/summary>/)?.[1]?.trim();
@@ -253,7 +256,7 @@ function parsePhpDocXml(xmlContent: string): PhpDocElement[] {
     while ((funcMatch = funcRegex.exec(fileBody)) !== null) {
       const funcBody = funcMatch[1];
       if (!funcBody) continue;
-      const fName = funcBody.match(/<name>([^<]*)<\/name>/)?.[1]?.trim() ?? 'unknown';
+      const fName = funcBody.match(/<name>([^<]*)<\/name>/)?.[1]?.trim() ?? "unknown";
       const fSummary = funcBody.match(/<summary>([^<]*)<\/summary>/)?.[1]?.trim();
       const fDesc = funcBody.match(/<description>([^<]*)<\/description>/)?.[1]?.trim();
 
@@ -263,7 +266,7 @@ function parsePhpDocXml(xmlContent: string): PhpDocElement[] {
       while ((argMatch = argRegex.exec(funcBody)) !== null) {
         const argBody = argMatch[1];
         if (!argBody) continue;
-        const aName = argBody.match(/<name>([^<]*)<\/name>/)?.[1]?.trim() ?? 'param';
+        const aName = argBody.match(/<name>([^<]*)<\/name>/)?.[1]?.trim() ?? "param";
         const aType = argBody.match(/<type>([^<]*)<\/type>/)?.[1]?.trim();
         const aDefault = argBody.match(/<default>([^<]*)<\/default>/)?.[1]?.trim();
         args.push({ name: aName, type: aType || undefined, default: aDefault || undefined });
@@ -278,7 +281,7 @@ function parsePhpDocXml(xmlContent: string): PhpDocElement[] {
 
       elements.push({
         name: fName,
-        type: 'function',
+        type: "function",
         summary: fSummary,
         description: fDesc,
         arguments: args.length > 0 ? args : undefined,
@@ -290,7 +293,6 @@ function parsePhpDocXml(xmlContent: string): PhpDocElement[] {
   return elements;
 }
 
-
 /**
  * Converts parsed phpDocumentor elements into ASTModule[].
  */
@@ -298,8 +300,8 @@ function convertPhpDocElements(elements: PhpDocElement[]): ASTModule[] {
   const moduleMap = new Map<string, ASTModule>();
 
   for (const el of elements) {
-    const namespace = el.namespace ?? 'Global';
-    const modName = namespace.split('\\').pop() ?? namespace;
+    const namespace = el.namespace ?? "Global";
+    const modName = namespace.split("\\").pop() ?? namespace;
 
     if (!moduleMap.has(modName)) {
       moduleMap.set(modName, {
@@ -313,7 +315,7 @@ function convertPhpDocElements(elements: PhpDocElement[]): ASTModule[] {
 
     const mod = moduleMap.get(modName)!;
 
-    if (el.type === 'class' || el.type === 'interface' || el.type === 'trait') {
+    if (el.type === "class" || el.type === "interface" || el.type === "trait") {
       const cls: {
         name: string;
         docstring?: string;
@@ -326,7 +328,7 @@ function convertPhpDocElements(elements: PhpDocElement[]): ASTModule[] {
         }>;
         properties: Array<{ name: string; type?: string; docstring?: string }>;
       } = {
-        name: el.name ?? 'Unknown',
+        name: el.name ?? "Unknown",
         docstring: el.summary || el.description || undefined,
         methods: [],
         properties: [],
@@ -334,7 +336,7 @@ function convertPhpDocElements(elements: PhpDocElement[]): ASTModule[] {
 
       for (const method of el.methods ?? []) {
         cls.methods.push({
-          name: method.name ?? 'unknown',
+          name: method.name ?? "unknown",
           signature: buildPhpSignature(method),
           docstring: method.summary || method.description || undefined,
           parameters: (method.arguments ?? []).map((a) => ({
@@ -360,9 +362,9 @@ function convertPhpDocElements(elements: PhpDocElement[]): ASTModule[] {
       if (!mod.docstring && cls.docstring) {
         mod.docstring = cls.docstring;
       }
-    } else if (el.type === 'function') {
+    } else if (el.type === "function") {
       mod.functions?.push({
-        name: el.name ?? 'unknown',
+        name: el.name ?? "unknown",
         signature: buildPhpSignature(el),
         docstring: el.summary || el.description || undefined,
         parameters: (el.arguments ?? []).map((a) => ({
@@ -385,12 +387,12 @@ function convertPhpDocElements(elements: PhpDocElement[]): ASTModule[] {
 function buildPhpSignature(el: PhpDocElement): string | undefined {
   const params = (el.arguments ?? [])
     .map((a) => {
-      const typeStr = a.type ? `${a.type} ` : '';
-      const defaultStr = a.default !== undefined ? ` = ${a.default}` : '';
+      const typeStr = a.type ? `${a.type} ` : "";
+      const defaultStr = a.default !== undefined ? ` = ${a.default}` : "";
       return `${typeStr}$${a.name}${defaultStr}`;
     })
-    .join(', ');
+    .join(", ");
 
-  const returnType = el.return?.type ? `: ${el.return.type}` : '';
+  const returnType = el.return?.type ? `: ${el.return.type}` : "";
   return `function ${el.name}(${params})${returnType}`;
 }

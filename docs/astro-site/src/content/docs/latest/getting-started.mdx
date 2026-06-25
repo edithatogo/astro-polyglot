@@ -1,0 +1,190 @@
+---
+title: Installation & Setup
+description: Step-by-step guide to install and configure starlight-polyglot in
+  your Starlight project.
+slug: latest/getting-started
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+This guide walks you through installing and configuring starlight-polyglot in your existing Starlight documentation site.
+
+## Prerequisites
+
+* **Node.js** >= 22.12.0
+* A **Starlight** project (Starlight >= 0.39.0, Astro >= 6.0.0)
+* Language-specific toolchains for each handler you want to use (see [Supported Languages](/latest/languages/python/) for details)
+
+## Step 1: Install the Plugin
+
+<Tabs>
+  <TabItem label="npm">
+    ```bash
+    npm install starlight-polyglot
+    ```
+  </TabItem>
+
+  <TabItem label="pnpm">
+    ```bash
+    pnpm add starlight-polyglot
+    ```
+  </TabItem>
+
+  <TabItem label="yarn">
+    ```bash
+    yarn add starlight-polyglot
+    ```
+  </TabItem>
+</Tabs>
+
+## Step 2: Install Handler Dependencies
+
+Each language handler requires its own toolchain. Install the ones you need:
+
+```bash
+# For TypeScript handler (optional peer dependency)
+npm install typedoc typedoc-plugin-markdown
+
+# For Python handler
+pip install griffe
+```
+
+> Rust, R, Julia, C#, and Go handlers require their respective runtimes and tools. See the individual language pages for details.
+
+## Step 3: Minimum Configuration
+
+Add the plugin to your `astro.config.mjs`:
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+import starlight from '@astrojs/starlight';
+import polyglot from 'starlight-polyglot';
+
+export default defineConfig({
+  integrations: [
+    starlight({
+      title: 'My API Docs',
+      plugins: [
+        polyglot({
+          typescript: {
+            entryPoints: ['src/index.ts'],
+            tsconfig: 'tsconfig.json',
+          },
+        }),
+      ],
+    }),
+  ],
+});
+```
+
+That's it! Run `astro dev` and the plugin will:
+
+1. Extract documentation from your TypeScript source files using TypeDoc
+2. Generate MDX pages under `src/content/docs/api/typescript/`
+3. Auto-register those pages in the Starlight sidebar
+4. Make all pages searchable via Pagefind
+
+## Step 4: Full Configuration Example
+
+Here's a multi-language setup:
+
+```js
+// astro.config.mjs
+import { defineConfig } from 'astro/config';
+import starlight from '@astrojs/starlight';
+import polyglot from 'starlight-polyglot';
+
+export default defineConfig({
+  integrations: [
+    starlight({
+      title: 'Polyglot Project Docs',
+      plugins: [
+        polyglot({
+          // Python handler — uses griffe to extract docstrings
+          python: {
+            entryPoints: ['src/backend'],
+            output: 'api/python',
+            pagination: true,
+          },
+          // TypeScript handler — uses TypeDoc programmatically
+          typescript: {
+            entryPoints: ['src/frontend/index.ts'],
+            tsconfig: 'tsconfig.json',
+            output: 'api/typescript',
+          },
+          // Rust handler — uses cargo +nightly rustdoc JSON
+          rust: {
+            cratePath: 'native/core',
+            output: 'api/rust',
+          },
+        }),
+      ],
+    }),
+  ],
+});
+```
+
+## Step 5: Run Dev Server
+
+```bash
+npm run astro dev
+```
+
+The plugin runs during the `config:setup` hook, which means documentation is generated **before** the dev server starts. Watch mode is supported — changes to source files trigger regeneration during `astro dev`.
+
+## Step 6: Build for Production
+
+```bash
+npm run astro build
+```
+
+The generated MDX pages are included in the build output. The `preview` command skips generation (since files are already on disk from the build).
+
+## Advanced: Multi-Plugin Setup
+
+If you need to reference the polyglot sidebar group from other plugins, use the `createPolyglotPlugin` factory:
+
+```js
+import { defineConfig } from 'astro/config';
+import starlight from '@astrojs/starlight';
+import { createPolyglotPlugin } from 'starlight-polyglot';
+
+const [polyglot, sidebarGroup] = createPolyglotPlugin();
+
+export default defineConfig({
+  integrations: [
+    starlight({
+      title: 'My API Docs',
+      plugins: [
+        polyglot({
+          python: { entryPoints: ['src/backend'] },
+          typescript: { entryPoints: ['src/frontend/index.ts'] },
+        }),
+      ],
+      sidebar: [
+        { label: 'Docs', items: ['/docs'] },
+        sidebarGroup,  // ← polyglot replaces this with generated sidebar items
+      ],
+    }),
+  ],
+});
+```
+
+## Troubleshooting
+
+### "No handlers configured" warning
+
+If you see this warning, ensure at least one language is configured in the polyglot plugin options.
+
+### "TypeDoc conversion produced no project"
+
+Check that your entry points exist and your tsconfig is valid. Run `npx typedoc` manually first to verify.
+
+### "python3 not found"
+
+The Python handler requires Python 3.11+. Make sure `python3` is available on your PATH.
+
+### Generation is slow on first run
+
+The first build runs all configured handlers. Subsequent builds use the Astro cache for unchanged sources. Add `cache: true` to your polyglot config to optimize.

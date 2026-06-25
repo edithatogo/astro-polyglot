@@ -1,0 +1,134 @@
+---
+title: Rust Handler
+description: Configure and use the Rust documentation handler with starlight-polyglot.
+sidebar:
+  label: Rust
+slug: latest/languages/rust
+---
+
+The Rust handler extracts API documentation from Rust crates using `cargo +nightly rustdoc --output-format json`. It parses the JSON-formatted rustdoc output and transforms modules, structs, enums, traits, unions, functions, constants, and statics into Starlight MDX pages.
+
+## Prerequisites
+
+* **Rust nightly toolchain** (`rustup toolchain install nightly`)
+* **Cargo** available on PATH (included with Rust)
+
+## Configuration
+
+```js
+polyglot({
+  rust: {
+    // Required: Path to the crate directory (containing Cargo.toml)
+    cratePath: 'native/core',
+
+    // Optional: Output subdirectory (default: "api/rust")
+    output: 'api/rust',
+
+    // Optional: Include pagination links between pages
+    pagination: false,
+  },
+})
+```
+
+### Options
+
+| Option       | Type      | Required | Default       | Description                                  |
+|--------------|-----------|----------|---------------|----------------------------------------------|
+| `cratePath`  | `string`  | Yes      | —             | Path to crate directory with `Cargo.toml`    |
+| `output`     | `string`  | No       | `"api/rust"`  | Output subdirectory under `src/content/docs/`|
+| `pagination` | `boolean` | No       | `false`       | Enable prev/next navigation between pages    |
+
+## How It Works
+
+1. The handler runs `cargo +nightly rustdoc --output-format json --manifest-path <crate>/Cargo.toml`
+2. rustdoc generates a JSON file at `target/doc/<crate_name>.json`
+3. The handler reads and parses the JSON output
+4. Rustdoc items are converted to the shared `ASTModule[]` format:
+   * **modules** and **crates** → ASTModule
+   * **structs**, **enums**, **unions**, **traits** → ASTClass with fields as properties and impl blocks as methods
+   * **functions** → ASTFunction with signature, parameters, return type
+   * **constants** and **statics** → ASTVariable
+
+## What Gets Generated
+
+For each module or crate, the handler generates:
+
+* A **module overview page** listing all types, functions, and constants
+* Individual **type pages** (structs, enums, traits) with:
+  * Doc comments
+  * Fields (as properties)
+  * Methods with signatures, parameters, and return types
+* Individual **function pages** with full signatures
+
+### Signature Rendering
+
+Rust function signatures include:
+
+* `async` / `unsafe` qualifiers
+* Parameter names and types
+* Return types (omitted when `()` or unit)
+
+```rust
+// Extracted as: "async fn process(data: Vec<u8>) -> Result<String>"
+```
+
+## Validation
+
+The handler verifies that `cargo` is available:
+
+```bash
+cargo --version
+```
+
+## Troubleshooting
+
+### "Rust handler requires a cratePath option"
+
+Ensure you've provided a valid `cratePath` pointing to a Rust crate directory containing `Cargo.toml`.
+
+### "Crate path does not exist"
+
+The specified `cratePath` directory doesn't exist. Verify the path is correct relative to your project root.
+
+### "rustdoc extraction produced no modules"
+
+Common causes:
+
+* The crate has no public items (all functions/types are private)
+* The rustdoc JSON output format has changed (check `cargo +nightly rustdoc --version`)
+* The crate has compilation errors
+
+Test rustdoc directly:
+
+```bash
+cd <crate-path>
+cargo +nightly rustdoc --output-format json 2>&1
+ls target/doc/*.json
+```
+
+### "Could not find rustdoc JSON output"
+
+The handler looks for the JSON output at:
+
+* `target/doc/<crate_name>.json` (relative to crate directory)
+* `../target/doc/<crate_name>.json` (relative to crate directory)
+
+If your crate has a non-standard layout, ensure `target/doc/` is accessible.
+
+### "cargo not found"
+
+Install Rust from [https://rustup.rs/](https://rustup.rs/):
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+rustup toolchain install nightly
+```
+
+### Nightly toolchain required
+
+The `--output-format json` flag requires nightly Rust. Ensure nightly is installed:
+
+```bash
+rustup toolchain install nightly
+rustup run nightly cargo --version
+```

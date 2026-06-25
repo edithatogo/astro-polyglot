@@ -1,0 +1,80 @@
+{
+  "sidebar": [
+    {
+      "label": "Getting Started",
+      "items": [
+        {
+          "label": "Overview",
+          "link": "/"
+        },
+        {
+          "label": "Installation & Setup",
+          "link": "/getting-started/"
+        }
+      ]
+    },
+    {
+      "label": "Configuration",
+      "items": [
+        {
+          "label": "Configuration Reference",
+          "link": "/configuration/"
+        }
+      ]
+    },
+    {
+      "label": "Supported Languages",
+      "items": [
+        {
+          "label": "Python",
+          "link": "/languages/python/"
+        },
+        {
+          "label": "TypeScript",
+          "link": "/languages/typescript/"
+        },
+        {
+          "label": "Rust",
+          "link": "/languages/rust/"
+        },
+        {
+          "label": "R",
+          "link": "/languages/r/"
+        },
+        {
+          "label": "Julia",
+          "link": "/languages/julia/"
+        },
+        {
+          "label": "C#",
+          "link": "/languages/csharp/"
+        },
+        {
+          "label": "Go",
+          "link": "/languages/go/"
+        }
+      ]
+    },
+    {
+      "label": "Handler Development Guide",
+      "link": "/handler-development/"
+    },
+    {
+      "label": "TYPESCRIPT",
+      "items": [
+        {
+          "label": "API",
+          "link": "api/typescript/api/"
+        }
+      ]
+    },
+    {
+      "label": "Architecture",
+      "link": "/architecture/"
+    },
+    {
+      "label": "Contributing",
+      "link": "/contributing/"
+    }
+  ]
+}

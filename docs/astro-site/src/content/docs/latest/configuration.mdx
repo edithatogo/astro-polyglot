@@ -1,0 +1,238 @@
+---
+title: Configuration Reference
+description: Complete reference for all starlight-polyglot configuration
+  options, including PolyglotConfig and per-handler HandlerConfig.
+slug: latest/configuration
+---
+
+This page documents every configuration option available in starlight-polyglot.
+
+## PolyglotConfig (Top Level)
+
+The plugin accepts an object mapping language identifiers to their handler options.
+
+```typescript
+interface PolyglotConfig {
+  python?: HandlerConfig;
+  typescript?: HandlerConfig;
+  rust?: HandlerConfig;
+  r?: HandlerConfig;
+  julia?: HandlerConfig;
+  csharp?: HandlerConfig;
+  go?: HandlerConfig;
+  [key: string]: HandlerConfig | undefined;
+}
+```
+
+| Field        | Type                        | Required | Description                                        |
+|--------------|-----------------------------|----------|----------------------------------------------------|
+| `python`     | `HandlerConfig`             | No       | Python handler configuration                       |
+| `typescript` | `HandlerConfig`             | No       | TypeScript handler configuration                   |
+| `rust`       | `HandlerConfig`             | No       | Rust handler configuration                         |
+| `r`          | `HandlerConfig`             | No       | R handler configuration                            |
+| `julia`      | `HandlerConfig`             | No       | Julia handler configuration                        |
+| `csharp`     | `HandlerConfig`             | No       | C# handler configuration                           |
+| `go`         | `HandlerConfig`             | No       | Go handler configuration                           |
+
+At least one language must be configured, otherwise a warning is emitted.
+
+## HandlerConfig
+
+Each handler accepts common options plus language-specific ones.
+
+```typescript
+interface HandlerConfig {
+  entryPoints?: string[];
+  output?: string;
+  tsconfig?: string;
+  cratePath?: string;
+  modulePath?: string;
+  projectPath?: string;
+  pagination?: boolean;
+  watch?: boolean;
+  [key: string]: unknown;
+}
+```
+
+### Common Options
+
+| Option        | Type      | Default            | Description                                                    |
+|---------------|-----------|--------------------|----------------------------------------------------------------|
+| `output`      | `string`  | `"api/{language}"` | Output subdirectory under `src/content/docs/` for generated MDX |
+| `pagination`  | `boolean` | `false`            | Include previous/next pagination links between generated pages  |
+| `watch`       | `boolean` | `false`            | Watch source files for changes during `astro dev`               |
+
+### Language-Specific Options
+
+| Option         | Type       | Used By               | Description                                      |
+|----------------|------------|-----------------------|--------------------------------------------------|
+| `entryPoints`  | `string[]` | Python, TS, R, Julia  | Source files or module paths to document         |
+| `tsconfig`     | `string`   | TypeScript            | Path to `tsconfig.json` for TypeDoc config       |
+| `cratePath`    | `string`   | Rust                  | Path to Cargo.toml or crate directory            |
+| `modulePath`   | `string`   | Go                    | Path to Go module containing package code        |
+| `projectPath`  | `string`   | C#                    | Path to `.csproj` or solution file               |
+
+## Per-Language Configuration
+
+### Python
+
+```typescript
+{
+  python: {
+    entryPoints: string[];    // Required: Python module paths
+    output?: string;          // Default: "api/python"
+    pagination?: boolean;
+  }
+}
+```
+
+* `entryPoints`: Module names or directory paths passed to `griffe dump`.
+* Prerequisites: Python 3.11+, `pip install griffe`
+
+### TypeScript
+
+```typescript
+{
+  typescript: {
+    entryPoints: string[];    // Required: TS entry files
+    tsconfig?: string;        // Path to tsconfig.json
+    output?: string;          // Default: "api/typescript"
+    pagination?: boolean;
+  }
+}
+```
+
+* `entryPoints`: Paths to TypeScript entry files passed to TypeDoc.
+* `tsconfig`: Optional path to tsconfig.json for TypeDoc.
+* Prerequisites: `npm install typedoc typedoc-plugin-markdown`
+
+### Rust
+
+```typescript
+{
+  rust: {
+    cratePath: string;        // Required: Crate directory
+    output?: string;          // Default: "api/rust"
+    pagination?: boolean;
+  }
+}
+```
+
+* `cratePath`: Path to a crate directory containing `Cargo.toml`.
+* Runs `cargo +nightly rustdoc --output-format json` and parses output.
+* Prerequisites: Rust nightly (`rustup toolchain install nightly`)
+
+### R
+
+```typescript
+{
+  r: {
+    entryPoints: string[];    // Required: R script files
+    output?: string;          // Default: "api/r"
+    pagination?: boolean;
+  }
+}
+```
+
+* `entryPoints`: Paths to R files or package directories.
+* Runs `Rscript scripts/r_extract.R` with entry points.
+* Prerequisites: R runtime (`Rscript` on PATH)
+
+### Julia
+
+```typescript
+{
+  julia: {
+    entryPoints: string[];    // Required: Julia module names
+    output?: string;          // Default: "api/julia"
+    pagination?: boolean;
+  }
+}
+```
+
+* `entryPoints`: Julia module names passed to extraction script.
+* Runs `julia scripts/julia_extract.jl` with entry points.
+* Prerequisites: Julia runtime (`julia` on PATH)
+
+### C\#
+
+```typescript
+{
+  csharp: {
+    projectPath: string;      // Required: .csproj or project dir
+    output?: string;          // Default: "api/csharp"
+    pagination?: boolean;
+    configuration?: string;   // Build config (default: "Release")
+    xmlDocPath?: string;      // Explicit XML doc path
+  }
+}
+```
+
+* `projectPath`: Path to `.csproj` file or project directory.
+* `configuration`: .NET build configuration (default `Release`).
+* `xmlDocPath`: Optional explicit path to XML doc file.
+* Builds project with `GenerateDocumentationFile=true`, parses XML.
+* Prerequisites: .NET SDK (`dotnet` on PATH)
+
+### Go
+
+```typescript
+{
+  go: {
+    modulePath: string;       // Required: Go module directory
+    output?: string;          // Default: "api/go"
+    pagination?: boolean;
+  }
+}
+```
+
+* `modulePath`: Path to a Go module directory (contains `go.mod`).
+* Runs `gomarkdoc --output json ./...` in the module directory.
+* Prerequisites: Go, `go install github.com/princjef/gomarkdoc/cmd/gomarkdoc@latest`
+
+## Default Output Paths
+
+If `output` is omitted, generated files are placed at:
+
+| Language     | Default Output Path                    |
+|--------------|----------------------------------------|
+| Python       | `src/content/docs/api/python/`         |
+| TypeScript   | `src/content/docs/api/typescript/`     |
+| Rust         | `src/content/docs/api/rust/`           |
+| R            | `src/content/docs/api/r/`              |
+| Julia        | `src/content/docs/api/julia/`          |
+| C#           | `src/content/docs/api/csharp/`         |
+| Go           | `src/content/docs/api/go/`             |
+
+## Complete Example
+
+```js
+polyglot({
+  python: {
+    entryPoints: ['src/lib', 'src/utils'],
+    output: 'api/python',
+    pagination: true,
+  },
+  typescript: {
+    entryPoints: ['packages/core/src/index.ts'],
+    tsconfig: 'packages/core/tsconfig.json',
+    output: 'api/typescript',
+  },
+  rust: {
+    cratePath: 'native/engine',
+    output: 'api/rust',
+  },
+  r: {
+    entryPoints: ['R/stats.R'],
+  },
+  julia: {
+    entryPoints: ['MyPackage'],
+  },
+  csharp: {
+    projectPath: 'dotnet/Api/Api.csproj',
+  },
+  go: {
+    modulePath: 'services/gateway',
+  },
+})
+```

@@ -1,47 +1,22 @@
 {
   "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "packageManager": "pnpm",
-  "plugins": [
-    "@stryker-mutator/vitest-runner"
-  ],
+  "plugins": ["@stryker-mutator/vitest-runner"],
   "testRunner": "vitest",
   "testRunner_comment": "Uses vitest as the test runner via the @stryker-mutator/vitest-runner plugin",
   "coverageAnalysis": "perTest",
-  "mutate": [
-    "core/**/*.ts",
-    "handlers/**/*.ts",
-    "index.ts"
-  ],
-  "ignorePatterns": [
-    "tests/**",
-    "scripts/**",
-    "dist/**",
-    "node_modules/**",
-    "coverage/**",
-    ".stryker-tmp/**"
-  ],
-  "excludeMutations": [
-    "StringLiteral",
-    "ObjectLiteral"
-  ],
+  "mutate": ["core/**/*.ts", "handlers/**/*.ts", "index.ts"],
+  "ignorePatterns": ["tests/**", "scripts/**", "dist/**", "node_modules/**", "coverage/**", ".stryker-tmp/**"],
+  "excludeMutations": ["StringLiteral", "ObjectLiteral"],
   "mutator": {
-    "excludedMutations": [
-      "StringLiteral",
-      "ObjectLiteral",
-      "BooleanLiteral"
-    ]
+    "excludedMutations": ["StringLiteral", "ObjectLiteral", "BooleanLiteral"]
   },
   "thresholds": {
     "high": 80,
     "low": 60,
     "break": 50
   },
-  "reporters": [
-    "html",
-    "clear-text",
-    "progress",
-    "dashboard"
-  ],
+  "reporters": ["html", "clear-text", "progress", "dashboard"],
   "concurrency": 4,
   "tempDir": ".stryker-tmp",
   "cleanTempDir": true,

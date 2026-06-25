@@ -1,0 +1,97 @@
+---
+title: Contributing
+description: How to contribute to starlight-polyglot development.
+slug: latest/contributing
+---
+
+Thank you for your interest in contributing to starlight-polyglot! This page summarizes the key information. For the full guide, see the [CONTRIBUTING.md](https://github.com/edithatogo/starlight-polyglot/blob/main/CONTRIBUTING.md) file in the repository.
+
+## Development Setup
+
+### Prerequisites
+
+* **Node.js** >= 22.12.0
+* **pnpm** >= 10.32.1
+
+### Initial Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/edithatogo/starlight-polyglot.git
+cd starlight-polyglot
+
+# Install dependencies
+pnpm install
+
+# Build the plugin
+pnpm build
+
+# Run tests
+pnpm test
+```
+
+### Available Scripts
+
+| Script          | Description                                  |
+|-----------------|----------------------------------------------|
+| `pnpm build`    | Build all packages using tsup                |
+| `pnpm dev`      | Watch mode for development                   |
+| `pnpm test`     | Run Vitest test suite                        |
+| `pnpm lint`     | Run ESLint with zero-warnings policy         |
+| `pnpm format`   | Format code with Prettier                    |
+| `pnpm typecheck`| Run TypeScript type checking                 |
+| `pnpm clean`    | Remove dist/ and build artifacts             |
+
+## How to Add a New Language Handler
+
+1. **Add your language** to the `Language` union type in `core/handler.ts`
+2. **Add config** to `PolyglotConfig` in `core/router.ts`
+3. **Create handler file** at `handlers/<language>.ts` implementing the `Handler` interface
+4. **Register** the handler in `getHandlerMap()` in `core/router.ts`
+5. **Write tests** with >90% coverage
+6. **Update docs** with a language page and sidebar entry
+
+See the [Handler Development Guide](/latest/handler-development/) for detailed instructions.
+
+## Pull Request Process
+
+1. Fork and create a feature branch from `main`
+2. Make your changes following the code style guidelines
+3. Write tests covering your changes
+4. Add a changeset: `pnpm changeset`
+5. Run full validation: `pnpm test && pnpm lint && pnpm typecheck && pnpm format`
+6. Open a pull request with a clear description
+
+### Commit Convention
+
+Use [conventional commits](https://www.conventionalcommits.org/):
+
+```
+feat(python): support package-level __init__ docs
+fix(router): handle missing handler gracefully
+docs: add Swift handler guide
+test(mdx-generator): add tests for edge cases
+```
+
+## Code Style
+
+* **TypeScript**: Strict mode with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `verbatimModuleSyntax`
+* **Formatting**: Prettier with 2-space tabs, single quotes, trailing commas
+* **Linting**: ESLint with `@typescript-eslint/strict-type-checked` — zero warnings
+* **Imports**: Prefer `import type` for type-only imports
+* **Naming**: camelCase for variables/functions, PascalCase for types/interfaces, kebab-case for files
+
+## Testing Requirements
+
+* **Line coverage**: Minimum **90%**
+* All handlers must have unit tests covering normal operation, edge cases, and error handling
+* Core module tests covering handler resolution, MDX generation, and sidebar merging
+* E2E tests using Playwright for full build pipeline validation
+
+## Resources
+
+* [Full CONTRIBUTING.md](https://github.com/edithatogo/starlight-polyglot/blob/main/CONTRIBUTING.md)
+* [Starlight Plugin API](https://starlight.astro.build/reference/plugins/)
+* [Astro Documentation](https://docs.astro.build/)
+* [Project Design Document](https://github.com/edithatogo/starlight-polyglot/blob/main/conductor/design.md)
+* [Issue Tracker](https://github.com/edithatogo/starlight-polyglot/issues)

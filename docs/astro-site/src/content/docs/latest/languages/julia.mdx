@@ -1,0 +1,42 @@
+---
+title: Julia Handler
+description: Configure and use the Julia documentation handler with starlight-polyglot.
+sidebar:
+  label: Julia
+slug: latest/languages/julia
+---
+
+The Julia handler extracts API documentation from Julia packages using `julia` with `Base.Docs`. It parses Julia module documentation and transforms types, functions, and methods into Starlight MDX pages.
+
+## Prerequisites
+
+* **Julia runtime** installed and `julia` available on PATH
+
+## Configuration
+
+```js
+polyglot({
+  julia: {
+    // Required: One or more Julia module names
+    entryPoints: ['MyPackage', 'MyPackage.SubModule'],
+
+    // Optional: Output subdirectory (default: "api/julia")
+    output: 'api/julia',
+
+    // Optional: Include pagination links between pages
+    pagination: false,
+  },
+})
+```
+
+### Options
+
+| Option        | Type        | Required | Default       | Description                                  |
+|---------------|-------------|----------|---------------|----------------------------------------------|
+| `entryPoints` | `string[]`  | Yes      | —             | Julia module names to document               |
+| `output`      | `string`    | No       | `"api/julia"` | Output subdirectory under `src/content/docs/`|
+| `pagination`  | `boolean`   | No       | `false`       | Enable prev/next navigation between pages    |
+
+## Status
+
+🚧 **Planned** — This handler is on the roadmap but not yet implemented. Contributions are welcome!

@@ -15,14 +15,6 @@
   ],
   "priority": "must",
   "created": "2026-05-13",
-  "fulfills": [
-    "REQ-CI-001",
-    "REQ-CI-002",
-    "REQ-CI-003",
-    "REQ-CI-004",
-    "REQ-CI-005",
-    "REQ-CI-006",
-    "REQ-CI-007"
-  ],
+  "fulfills": ["REQ-CI-001", "REQ-CI-002", "REQ-CI-003", "REQ-CI-004", "REQ-CI-005", "REQ-CI-006", "REQ-CI-007"],
   "parallel": false
 }

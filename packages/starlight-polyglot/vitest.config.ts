@@ -1,30 +1,21 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
     globals: true,
-    include: ['tests/**/*.test.ts', 'tests/**/*.spec.ts'],
-    exclude: [
-      'tests/benches/**',
-      'tests/fuzz/**',
-      'node_modules/**',
-      'dist/**',
-    ],
+    include: ["tests/**/*.test.ts", "tests/**/*.spec.ts"],
+    exclude: ["tests/benches/**", "tests/fuzz/**", "node_modules/**", "dist/**"],
     coverage: {
-      provider: 'v8',
-      include: [
-        'core/**',
-        'handlers/**',
-        'index.ts',
-      ],
+      provider: "v8",
+      include: ["core/**", "handlers/**", "index.ts"],
       exclude: [
-        'tests/**',
-        'dist/**',
-        'scripts/**',
-        'node_modules/**',
-        '**/*.test.ts',
-        '**/*.spec.ts',
-        '**/*.bench.ts',
+        "tests/**",
+        "dist/**",
+        "scripts/**",
+        "node_modules/**",
+        "**/*.test.ts",
+        "**/*.spec.ts",
+        "**/*.bench.ts",
       ],
       thresholds: {
         lines: 90,
@@ -32,7 +23,7 @@ export default defineConfig({
         branches: 85,
         statements: 90,
       },
-      reporter: ['text', 'json-summary', 'lcov', 'html'],
+      reporter: ["text", "json-summary", "lcov", "html"],
       all: true,
       clean: true,
     },
@@ -48,11 +39,11 @@ export default defineConfig({
     },
     typecheck: {
       enabled: true,
-      tsconfig: './tsconfig.json',
-      include: ['tests/**/*.test.ts', 'tests/**/*.spec.ts'],
+      tsconfig: "./tsconfig.json",
+      include: ["tests/**/*.test.ts", "tests/**/*.spec.ts"],
       ignoreSourceErrors: true,
     },
-    pool: 'forks',
+    pool: "forks",
     poolOptions: {
       forks: {
         singleFork: false,
@@ -60,15 +51,12 @@ export default defineConfig({
       },
     },
     env: {
-      NODE_ENV: 'test',
-      NODE_OPTIONS: '--experimental-vm-modules',
+      NODE_ENV: "test",
+      NODE_OPTIONS: "--experimental-vm-modules",
     },
-    reporters: [
-      'default',
-      'verbose',
-    ],
+    reporters: ["default", "verbose"],
     outputFile: {
-      json: './coverage/test-results.json',
+      json: "./coverage/test-results.json",
     },
     css: false,
     clearMocks: true,

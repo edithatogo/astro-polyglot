@@ -12,11 +12,6 @@
   ],
   "priority": "should",
   "created": "2026-05-13",
-  "fulfills": [
-    "REQ-SOTA-001",
-    "REQ-SOTA-002",
-    "REQ-SOTA-003",
-    "REQ-SOTA-004"
-  ],
+  "fulfills": ["REQ-SOTA-001", "REQ-SOTA-002", "REQ-SOTA-003", "REQ-SOTA-004"],
   "parallel": false
 }

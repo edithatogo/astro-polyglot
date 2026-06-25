@@ -1,8 +1,8 @@
-import { execSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
-import path from 'node:path';
-import type { Handler, BaseHandlerOptions } from '../core/plugin';
-import { transformToMDX, type ASTModule } from '../core/mdx-generator';
+import { execSync } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+import { type ASTModule, transformToMDX } from "../core/mdx-generator";
+import type { BaseHandlerOptions, Handler } from "../core/plugin";
 
 interface RustHandlerOptions extends BaseHandlerOptions {
   cratePath: string;
@@ -13,14 +13,14 @@ interface RustHandlerOptions extends BaseHandlerOptions {
  * generate JSON-formatted rustdoc documentation, then parses it into ASTModule[].
  */
 export const rustHandler: Handler = {
-  name: 'rust',
+  name: "rust",
 
   async generate(options) {
     const opts = options as unknown as RustHandlerOptions;
     const cratePath = opts.cratePath;
 
     if (!cratePath) {
-      throw new Error('Rust handler requires a cratePath option');
+      throw new Error("Rust handler requires a cratePath option");
     }
 
     if (!existsSync(cratePath)) {
@@ -30,12 +30,12 @@ export const rustHandler: Handler = {
     const modules = extractWithRustDoc(cratePath);
 
     if (modules.length === 0) {
-      throw new Error('rustdoc extraction produced no modules');
+      throw new Error("rustdoc extraction produced no modules");
     }
 
     const output = transformToMDX(modules, {
       outputDir: opts.output,
-      language: 'rust',
+      language: "rust",
       ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
@@ -44,14 +44,13 @@ export const rustHandler: Handler = {
 
   async validate(_sourcePath) {
     try {
-      execSync('cargo --version', { encoding: 'utf-8', stdio: 'pipe' });
+      execSync("cargo --version", { encoding: "utf-8", stdio: "pipe" });
       return { valid: true, errors: [] };
     } catch {
-      return { valid: false, errors: ['cargo not found. Install Rust from https://rustup.rs/'] };
+      return { valid: false, errors: ["cargo not found. Install Rust from https://rustup.rs/"] };
     }
   },
 };
-
 
 interface RustDocCrate {
   root: string;
@@ -91,18 +90,16 @@ interface RustDocOutput {
 function buildRustSignature(item: RustDocItem): string | undefined {
   if (!item.decl) return undefined;
 
-  const params = (item.decl.params ?? [])
-    .map((p) => `${p.name}: ${p.type}`)
-    .join(', ');
+  const params = (item.decl.params ?? []).map((p) => `${p.name}: ${p.type}`).join(", ");
 
-  const output = item.decl.output?.name ?? '';
+  const output = item.decl.output?.name ?? "";
   const header = item.header ?? {};
 
-  let prefix = '';
-  if (header.asyncness === 'async') prefix += 'async ';
-  if (header.safety === 'unsafe') prefix += 'unsafe ';
+  let prefix = "";
+  if (header.asyncness === "async") prefix += "async ";
+  if (header.safety === "unsafe") prefix += "unsafe ";
 
-  if (output && output !== '()' && output !== 'unit') {
+  if (output && output !== "()" && output !== "unit") {
     return `${prefix}fn ${item.name}(${params}) -> ${output}`;
   }
   return `${prefix}fn ${item.name}(${params})`;
@@ -121,12 +118,11 @@ function extractRustParameters(
   }));
 }
 
-
 function extractRustItem(item: RustDocItem, _index: Record<string, RustDocItem>): ASTModule | null {
-  if (item.kind !== 'module' && item.kind !== 'crate') return null;
+  if (item.kind !== "module" && item.kind !== "crate") return null;
 
   const mod: ASTModule = {
-    name: item.name ?? 'unknown',
+    name: item.name ?? "unknown",
     docstring: item.docs?.trim() || undefined,
     classes: [],
     functions: [],
@@ -134,7 +130,7 @@ function extractRustItem(item: RustDocItem, _index: Record<string, RustDocItem>)
   };
 
   for (const child of item.inner ?? []) {
-    if (child.kind === 'struct' || child.kind === 'enum' || child.kind === 'union' || child.kind === 'trait') {
+    if (child.kind === "struct" || child.kind === "enum" || child.kind === "union" || child.kind === "trait") {
       const clsItem: {
         name: string;
         docstring?: string;
@@ -147,22 +143,22 @@ function extractRustItem(item: RustDocItem, _index: Record<string, RustDocItem>)
         }>;
         properties?: Array<{ name: string; type?: string; docstring?: string }>;
       } = {
-        name: child.name ?? 'unknown',
+        name: child.name ?? "unknown",
         docstring: child.docs?.trim() || undefined,
         methods: [],
         properties: [],
       };
 
       for (const field of child.inner ?? []) {
-        if (field.kind === 'field') {
+        if (field.kind === "field") {
           clsItem.properties?.push({
-            name: field.name ?? 'unknown',
+            name: field.name ?? "unknown",
             type: field.decl?.output?.name ?? undefined,
             docstring: field.docs?.trim() || undefined,
           });
-        } else if (field.kind === 'method') {
+        } else if (field.kind === "method") {
           clsItem.methods?.push({
-            name: field.name ?? 'unknown',
+            name: field.name ?? "unknown",
             signature: buildRustSignature(field),
             docstring: field.docs?.trim() || undefined,
             parameters: extractRustParameters(field),
@@ -172,17 +168,17 @@ function extractRustItem(item: RustDocItem, _index: Record<string, RustDocItem>)
       }
 
       mod.classes?.push(clsItem);
-    } else if (child.kind === 'function') {
+    } else if (child.kind === "function") {
       mod.functions?.push({
-        name: child.name ?? 'unknown',
+        name: child.name ?? "unknown",
         signature: buildRustSignature(child),
         docstring: child.docs?.trim() || undefined,
         parameters: extractRustParameters(child),
         return_type: child.decl?.output?.name ?? undefined,
       });
-    } else if (child.kind === 'constant' || child.kind === 'static') {
+    } else if (child.kind === "constant" || child.kind === "static") {
       mod.variables?.push({
-        name: child.name ?? 'unknown',
+        name: child.name ?? "unknown",
         type: child.decl?.output?.name ?? undefined,
         docstring: child.docs?.trim() || undefined,
       });
@@ -198,19 +194,19 @@ function extractWithRustDoc(cratePath: string): ASTModule[] {
   // Run cargo +nightly rustdoc to produce JSON output
   const cmd = `cargo +nightly rustdoc --output-format json --manifest-path "${resolvedPath}/Cargo.toml" 2>/dev/null`;
   execSync(cmd, {
-    encoding: 'utf-8',
-    stdio: 'pipe',
+    encoding: "utf-8",
+    stdio: "pipe",
     timeout: 120_000,
   });
 
   // Determine the target directory for the JSON output
   const crateName = path.basename(resolvedPath);
   const possiblePaths = [
-    path.resolve(resolvedPath, 'target', 'doc', `${crateName}.json`),
-    path.resolve(resolvedPath, '..', 'target', 'doc', `${crateName}.json`),
+    path.resolve(resolvedPath, "target", "doc", `${crateName}.json`),
+    path.resolve(resolvedPath, "..", "target", "doc", `${crateName}.json`),
   ];
 
-  let jsonPath = '';
+  let jsonPath = "";
   for (const p of possiblePaths) {
     if (existsSync(p)) {
       jsonPath = p;
@@ -219,19 +215,17 @@ function extractWithRustDoc(cratePath: string): ASTModule[] {
   }
 
   if (!jsonPath) {
-    throw new Error(
-      `Could not find rustdoc JSON output. Expected at target/doc/${crateName}.json in crate or parent.`,
-    );
+    throw new Error(`Could not find rustdoc JSON output. Expected at target/doc/${crateName}.json in crate or parent.`);
   }
 
-  const raw = readFileSync(jsonPath, 'utf-8');
+  const raw = readFileSync(jsonPath, "utf-8");
   const output = JSON.parse(raw) as RustDocOutput;
 
   const modules: ASTModule[] = [];
 
   // Process all items in the index
   for (const item of Object.values(output.index)) {
-    if (item.kind === 'module' || item.kind === 'crate') {
+    if (item.kind === "module" || item.kind === "crate") {
       const mod = extractRustItem(item, output.index);
       if (mod && !modules.find((m) => m.name === mod.name)) {
         modules.push(mod);

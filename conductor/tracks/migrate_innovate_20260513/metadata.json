@@ -4,15 +4,9 @@
   "type": "feature",
   "status": "completed",
   "phase": 4,
-  "dependsOn": [
-    "self_docs_20260513"
-  ],
+  "dependsOn": ["self_docs_20260513"],
   "priority": "must",
   "created": "2026-05-13",
-  "fulfills": [
-    "REQ-MIG-001",
-    "REQ-MIG-005",
-    "REQ-MIG-006"
-  ],
+  "fulfills": ["REQ-MIG-001", "REQ-MIG-005", "REQ-MIG-006"],
   "parallel": true
 }
