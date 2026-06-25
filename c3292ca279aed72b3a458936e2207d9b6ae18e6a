@@ -1,0 +1,1 @@
+Completed Track: tooling_modernization_20260625. Modernized the monorepo tooling by configuring PNPM v10 Catalogs, integrating Biome, disabling legacy linters, fixing TypeDoc v0.28 changes (projectRoot support), and verifying the Vite/Rolldown ESM build pipeline successfully on both core package and docs.
