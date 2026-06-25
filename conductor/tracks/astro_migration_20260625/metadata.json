@@ -1,8 +1,8 @@
 {
   "track_id": "astro_migration_20260625",
   "type": "feature",
-  "status": "new",
+  "status": "in_progress",
   "created_at": "2026-06-25T17:44:58+10:00",
-  "updated_at": "2026-06-25T17:44:58+10:00",
+  "updated_at": "2026-06-25T20:21:50+10:00",
   "description": "Migrate the existing starlight-polyglot package to support the underlying Astro 7 library as an Astro Integration and Content Loader"
 }
