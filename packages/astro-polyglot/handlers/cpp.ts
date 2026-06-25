@@ -60,7 +60,7 @@ interface DoxygenCompoundFile {
 
 /**
  * C/C++ handler: Uses Doxygen to generate XML documentation, then parses
- * the XML output into structured ASTModule data for the starlight-polyglot
+ * the XML output into structured ASTModule data for the astro-polyglot
  * MDX pipeline.
  *
  * @remarks
@@ -151,7 +151,7 @@ function generateMinimalDoxyfile(projectPath: string, _xmlOutputDir: string, inp
     inputDirs && inputDirs.length > 0 ? inputDirs.map((d) => path.resolve(projectPath, d)).join(" ") : projectPath;
 
   const doxyfileContent = [
-    'PROJECT_NAME           = "starlight-polyglot-cpp"',
+    'PROJECT_NAME           = "astro-polyglot-cpp"',
     `OUTPUT_DIRECTORY       = ${projectPath}`,
     "GENERATE_XML           = YES",
     "XML_OUTPUT             = doxygen_xml",

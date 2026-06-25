@@ -63,7 +63,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --no-frozen-lockfile
       - name: Run tests with coverage
-        run: pnpm --filter starlight-polyglot test -- --coverage
+        run: pnpm --filter astro-polyglot test -- --coverage
       - name: Check coverage thresholds
         run: |
           # Ensure coverage report exists and meets minimum threshold
@@ -95,12 +95,12 @@ jobs:
       - run: pnpm install --no-frozen-lockfile
       - run: pnpm build
       - name: Verify package exports
-        run: node -e "const p = require('fs').readFileSync('packages/starlight-polyglot/package.json','utf8'); const json = JSON.parse(p); console.log('Main:', json.main, '| Module:', json.module, '| Types:', json.types)"
+        run: node -e "const p = require('fs').readFileSync('packages/astro-polyglot/package.json','utf8'); const json = JSON.parse(p); console.log('Main:', json.main, '| Module:', json.module, '| Types:', json.types)"
       - uses: actions/upload-artifact@v4
         if: github.ref == 'refs/heads/main'
         with:
           name: dist
-          path: packages/starlight-polyglot/dist/
+          path: packages/astro-polyglot/dist/
 
   size-limit:
     name: Size Limit
@@ -120,5 +120,5 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: dist
-          path: packages/starlight-polyglot/dist/
-      - run: pnpm --filter starlight-polyglot size
+          path: packages/astro-polyglot/dist/
+      - run: pnpm --filter astro-polyglot size

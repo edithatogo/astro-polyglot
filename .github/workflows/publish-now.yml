@@ -29,12 +29,12 @@ jobs:
 
       - run: pnpm install --no-frozen-lockfile
 
-      - run: pnpm --filter starlight-polyglot build
+      - run: pnpm --filter astro-polyglot build
 
       - name: Publish to npm
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
           npm publish --access public --provenance --tag ${{ github.event.inputs.tag }}
-        working-directory: packages/starlight-polyglot
+        working-directory: packages/astro-polyglot
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

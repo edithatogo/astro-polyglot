@@ -1,8 +1,8 @@
 {
-  "name": "starlight-polyglot-monorepo",
+  "name": "astro-polyglot-monorepo",
   "version": "0.1.0",
   "private": true,
-  "description": "Monorepo for starlight-polyglot — multi-language documentation plugin for Starlight",
+  "description": "Monorepo for astro-polyglot — multi-language documentation plugin for Astro/Starlight",
   "type": "module",
   "engines": {
     "node": ">=22.12.0",
@@ -10,16 +10,16 @@
   },
   "packageManager": "pnpm@10.32.1",
   "scripts": {
-    "build": "pnpm --filter starlight-polyglot build",
-    "dev": "pnpm --filter starlight-polyglot dev",
-    "test": "pnpm --filter starlight-polyglot test",
+    "build": "pnpm --filter astro-polyglot build",
+    "dev": "pnpm --filter astro-polyglot dev",
+    "test": "pnpm --filter astro-polyglot test",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
     "format": "pnpm -r format",
-    "clean": "pnpm --filter starlight-polyglot clean",
-    "docs:dev": "pnpm --filter starlight-polyglot-docs dev",
-    "docs:build": "pnpm --filter starlight-polyglot-docs build",
-    "docs:preview": "pnpm --filter starlight-polyglot-docs preview"
+    "clean": "pnpm --filter astro-polyglot clean",
+    "docs:dev": "pnpm --filter astro-polyglot-docs dev",
+    "docs:build": "pnpm --filter astro-polyglot-docs build",
+    "docs:preview": "pnpm --filter astro-polyglot-docs preview"
   },
   "devDependencies": {
     "typescript": "catalog:",

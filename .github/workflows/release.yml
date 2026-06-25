@@ -15,7 +15,7 @@ env:
 jobs:
   release:
     name: Publish to npm
-    if: github.repository == 'edithatogo/starlight-polyglot'
+    if: github.repository == 'edithatogo/astro-polyglot'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -60,4 +60,4 @@ jobs:
         if: steps.changesets.outputs.published == 'true'
         uses: actions/attest-build-provenance@v2
         with:
-          subject-path: 'packages/starlight-polyglot/dist/**'
+          subject-path: 'packages/astro-polyglot/dist/**'

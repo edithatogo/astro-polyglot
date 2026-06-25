@@ -260,7 +260,7 @@ describe("writeMDXPages property-based integration", () => {
   let tempDir: string;
 
   beforeEach(async () => {
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "starlight-polyglot-prop-"));
+    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "astro-polyglot-prop-"));
   });
 
   afterEach(async () => {

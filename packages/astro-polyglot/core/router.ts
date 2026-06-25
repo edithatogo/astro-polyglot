@@ -91,7 +91,7 @@ export function resolveHandlers(config: PolyglotConfig, logger: Logger): Resolve
     const language = lang as Language;
     const handler = handlerMap[language];
     if (!handler) {
-      logger.warn(`[starlight-polyglot] Unknown language "${lang}", skipping`);
+      logger.warn(`[astro-polyglot] Unknown language "${lang}", skipping`);
       continue;
     }
 
@@ -105,7 +105,7 @@ export function resolveHandlers(config: PolyglotConfig, logger: Logger): Resolve
   }
 
   if (handlers.length === 0) {
-    logger.warn("[starlight-polyglot] No handlers configured. Add at least one language to your polyglot config.");
+    logger.warn("[astro-polyglot] No handlers configured. Add at least one language to your polyglot config.");
   }
 
   return handlers;

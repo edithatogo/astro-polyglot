@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
-  - name: starlight-polyglot Documentation
-    url: https://starlight-polyglot.vercel.app/
+  - name: astro-polyglot Documentation
+    url: https://astro-polyglot.vercel.app/
     about: Check the documentation for usage guides and API reference.
   - name: Starlight Documentation
     url: https://starlight.astro.build/

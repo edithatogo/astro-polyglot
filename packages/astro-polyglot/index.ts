@@ -41,7 +41,7 @@ export function createPolyglotPlugin(): [plugin: typeof polyglot, group: Sidebar
 function makePolyglotPlugin(sidebarGroup: SidebarGroup) {
   return function polyglotPlugin(options: PolyglotConfig): StarlightPlugin {
     return {
-      name: "starlight-polyglot",
+      name: "astro-polyglot",
       hooks: {
         async "config:setup"({ astroConfig, command, config, logger, updateConfig }) {
           if (command === "preview") return;
@@ -51,13 +51,13 @@ function makePolyglotPlugin(sidebarGroup: SidebarGroup) {
 
           for (const handler of handlers) {
             try {
-              logger.info(`[starlight-polyglot] Generating ${handler.name} documentation...`);
+              logger.info(`[astro-polyglot] Generating ${handler.name} documentation...`);
               const handlerOptions = handler.options as Parameters<typeof handler.handler.generate>[0];
               const output = await handler.handler.generate(handlerOptions);
               outputs.push(output);
-              logger.info(`[starlight-polyglot] ✓ ${handler.name}: ${output.pages.length} pages generated`);
+              logger.info(`[astro-polyglot] ✓ ${handler.name}: ${output.pages.length} pages generated`);
             } catch (error) {
-              logger.error(`[starlight-polyglot] ✗ ${handler.name}: ${(error as Error).message}`);
+              logger.error(`[astro-polyglot] ✗ ${handler.name}: ${(error as Error).message}`);
               throw error;
             }
           }

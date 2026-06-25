@@ -2,13 +2,13 @@
 
 ## Reporting a Vulnerability
 
-We take the security of starlight-polyglot seriously. If you discover a security vulnerability, please report it by opening a **GitHub Issue** on the [starlight-polyglot repository](https://github.com/edithatogo/starlight-polyglot/issues).
+We take the security of astro-polyglot seriously. If you discover a security vulnerability, please report it by opening a **GitHub Issue** on the [astro-polyglot repository](https://github.com/edithatogo/astro-polyglot/issues).
 
 Please include the following details in your report:
 
 - **Description** of the vulnerability
 - **Steps to reproduce** the issue
-- **Affected versions** of starlight-polyglot
+- **Affected versions** of astro-polyglot
 - **Potential impact** of the vulnerability
 
 ### What to expect
@@ -21,8 +21,8 @@ Please include the following details in your report:
 ### Scope
 
 This policy covers:
-- The `starlight-polyglot` npm package and its published releases.
-- The `starlight-polyglot` GitHub repository and its source code.
+- The `astro-polyglot` npm package and its published releases.
+- The `astro-polyglot` GitHub repository and its source code.
 
 ### Out of scope
 

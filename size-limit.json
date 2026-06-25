@@ -1,7 +1,7 @@
 [
   {
-    "name": "starlight-polyglot",
-    "path": "packages/starlight-polyglot/dist/index.js",
+    "name": "astro-polyglot",
+    "path": "packages/astro-polyglot/dist/index.js",
     "limit": "50 KB",
     "import": "{ polyglot }"
   }

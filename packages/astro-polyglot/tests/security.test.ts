@@ -1,5 +1,5 @@
 /**
- * Security-focused tests for starlight-polyglot.
+ * Security-focused tests for astro-polyglot.
  *
  * Tests command injection prevention, path traversal, prototype pollution,
  * safe YAML generation, and absence of sensitive data in output.
@@ -210,7 +210,7 @@ describe("no sensitive data leakage", () => {
 
 describe("writeMDXPages path safety", () => {
   it("resolves page paths safely relative to docsDir", async () => {
-    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "starlight-polyglot-sec-"));
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "astro-polyglot-sec-"));
     try {
       const modules: ASTModule[] = [{ name: "safe_mod" }];
       const output = transformToMDX(modules, { outputDir: "api/py" });

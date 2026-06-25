@@ -1,13 +1,13 @@
-# starlight-polyglot
+# astro-polyglot
 
-[![npm version](https://img.shields.io/npm/v/starlight-polyglot.svg?style=flat-square&logo=npm&color=CB3837)](https://www.npmjs.com/package/starlight-polyglot)
-[![CI](https://img.shields.io/github/actions/workflow/status/edithatogo/starlight-polyglot/ci.yml?style=flat-square&logo=github&label=CI)](https://github.com/edithatogo/starlight-polyglot/actions/workflows/ci.yml)
-[![License](https://img.shields.io/github/license/edithatogo/starlight-polyglot?style=flat-square&color=blue)](LICENSE)
-[![Bundle Size](https://img.shields.io/bundlephobia/minzip/starlight-polyglot?style=flat-square&label=bundle)](https://bundlephobia.com/package/starlight-polyglot)
+[![npm version](https://img.shields.io/npm/v/astro-polyglot.svg?style=flat-square&logo=npm&color=CB3837)](https://www.npmjs.com/package/astro-polyglot)
+[![CI](https://img.shields.io/github/actions/workflow/status/edithatogo/astro-polyglot/ci.yml?style=flat-square&logo=github&label=CI)](https://github.com/edithatogo/astro-polyglot/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/edithatogo/astro-polyglot?style=flat-square&color=blue)](LICENSE)
+[![Bundle Size](https://img.shields.io/bundlephobia/minzip/astro-polyglot?style=flat-square&label=bundle)](https://bundlephobia.com/package/astro-polyglot)
 
-**Starlight plugin to generate documentation from any programming language using its native toolchain.**
+**Astro/Starlight integration to generate documentation from any programming language using its native toolchain.**
 
-Write source code in Python, TypeScript, Rust, R, Julia, C#, Go — or add your own language — and starlight-polyglot automatically generates Starlight-native MDX documentation pages, sidebars, and search indexes.
+Write source code in Python, TypeScript, Rust, R, Julia, C#, Go — or add your own language — and astro-polyglot automatically generates Starlight-native MDX documentation pages, sidebars, and search indexes.
 
 ---
 
@@ -15,11 +15,11 @@ Write source code in Python, TypeScript, Rust, R, Julia, C#, Go — or add your 
 
 ```bash
 # Install the plugin
-npm install starlight-polyglot
+npm install astro-polyglot
 
 # In your Astro config (astro.config.mjs):
 import starlight from '@astrojs/starlight';
-import polyglot from 'starlight-polyglot';
+import polyglot from 'astro-polyglot';
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
@@ -47,23 +47,32 @@ That's it. Run `astro dev` or `astro build` and the plugin will generate documen
 
 ## Supported Languages
 
-| Language     | Handler Status | Requires                             | Notes                                           |
-|--------------|----------------|--------------------------------------|-------------------------------------------------|
-| Python       | ✅ Phase 1     | Python 3.11+                         | Uses docstring extraction + AST introspection    |
-| TypeScript   | ✅ Phase 1     | TypeDoc ^0.28, typedoc-plugin-markdown | Generates from TypeDoc JSON output               |
-| Rust         | 🚧 In Progress | rustdoc, cargo                       | Planned: rustdoc JSON output                     |
-| R            | 🚧 Planned     | roxygen2, pkgdown                    | Converts Rd files to MDX                         |
-| Julia        | 🚧 Planned     | Documenter.jl                        | Generates from Documenter JSON                   |
-| C#           | 🚧 Planned     | DocFX / VS docgen                    | Supports XML doc comments                        |
-| Go           | 🚧 Planned     | godoc                                | Extracts from godoc output                       |
+| Language     | Status       | Toolchain                   | Requires                                                |
+|--------------|--------------|-----------------------------|---------------------------------------------------------|
+| Python       | ✅ Implemented | Griffe                    | Python 3.11+ `pip install griffe`                       |
+| TypeScript   | ✅ Implemented | TypeDoc                  | `npm install typedoc typedoc-plugin-markdown`           |
+| Rust         | ✅ Implemented | rustdoc JSON             | Rust nightly `cargo +nightly rustdoc`                   |
+| Go           | ✅ Implemented | gomarkdoc                | `go install github.com/princjef/gomarkdoc`              |
+| Java         | ✅ Implemented | javadoc-json             | JDK 11+                                                  |
+| Kotlin       | ✅ Implemented | Dokka                    | Kotlin compiler + Dokka CLI                             |
+| C# (.NET)    | ✅ Implemented | .NET XML doc             | .NET SDK                                                |
+| C++          | ✅ Implemented | Doxygen XML              | Doxygen                                                 |
+| Swift        | ✅ Implemented | DocC                     | Swift 5.9+ with DocC                                    |
+| Julia        | ✅ Implemented | Base.Docs                | Julia runtime                                           |
+| R            | ✅ Implemented | roxygen2 / Rscript       | R runtime + roxygen2                                    |
+| Scala        | ✅ Implemented | Scaladoc                 | Scala compiler                                          |
+| Ruby         | ✅ Implemented | YARD                     | Ruby runtime + `gem install yard`                       |
+| Dart         | ✅ Implemented | dartdoc                  | Dart SDK                                                |
+| PHP          | ✅ Implemented | phpDocumentor            | PHP 8.1+ `composer require phpdocumentor`              |
+| Elixir       | ✅ Implemented | ExDoc                    | Elixir runtime + ExDoc                                  |
+| Stata        | ✅ Implemented | Help system              | Stata (MP/SE) 17+                                       |
+| SAS          | ✅ Implemented | Documentation macros     | SAS 9.4+                                                |
 
-> **Phase 1** handlers are implemented and tested.  
-> **In Progress** handlers are under active development.  
-> **Planned** handlers are on the roadmap — contributions welcome!
+> All 18 language handlers are implemented, registered, and bundled with the package. Install required toolchains per language as needed.
 
 ## Plugin Architecture
 
-starlight-polyglot uses a **handler-based plugin architecture**. Each programming language has a dedicated handler that:
+astro-polyglot uses a **handler-based plugin architecture**. Each programming language has a dedicated handler that:
 
 1. **Extracts** documentation from source code using the language's native toolchain
 2. **Transforms** the extracted data into a shared AST representation
@@ -130,7 +139,7 @@ interface PolyglotConfig {
 
 ```typescript
 import starlight from '@astrojs/starlight';
-import { createPolyglotPlugin } from 'starlight-polyglot';
+import { createPolyglotPlugin } from 'astro-polyglot';
 import { defineConfig } from 'astro/config';
 
 const [polyglot, sidebarGroup] = createPolyglotPlugin();
@@ -152,18 +161,18 @@ export default defineConfig({
   ],
 ## Documentation
 
-Full documentation is available at **https://starlight-polyglot.vercel.app/** (dogfood site — built with Starlight and starlight-polyglot itself).
+Full documentation is available at **https://astro-polyglot.vercel.app/** (dogfood site — built with Starlight and astro-polyglot itself).
 
-- [Getting Started Guide](https://starlight-polyglot.vercel.app/getting-started)
-- [Language Handlers](https://starlight-polyglot.vercel.app/handlers)
-- [Configuration Reference](https://starlight-polyglot.vercel.app/configuration)
-- [Plugin API](https://starlight-polyglot.vercel.app/api)
+- [Getting Started Guide](https://astro-polyglot.vercel.app/getting-started)
+- [Language Handlers](https://astro-polyglot.vercel.app/handlers)
+- [Configuration Reference](https://astro-polyglot.vercel.app/configuration)
+- [Plugin API](https://astro-polyglot.vercel.app/api)
 - [Contributing Guide](CONTRIBUTING.md)
 - [Changelog](CHANGELOG.md)
 
 ## 🐕 Dogfood
 
-This project's own documentation site (at `docs/astro-site/`) is built with **Starlight** and uses **starlight-polyglot** to generate its API reference pages. We eat our own dog food — every release validates that the plugin works end-to-end with a real Starlight project.
+This project's own documentation site (at `docs/astro-site/`) is built with **Starlight** and uses **astro-polyglot** to generate its API reference pages. We eat our own dog food — every release validates that the plugin works end-to-end with a real Starlight project.
 
 ## Contributing
 
@@ -185,8 +194,8 @@ MIT © 2026 Dylan A Mordaunt. See [LICENSE](LICENSE) for details.
 
 ## Support
 
-- [GitHub Issues](https://github.com/edithatogo/starlight-polyglot/issues) — bug reports and feature requests
-- [GitHub Discussions](https://github.com/edithatogo/starlight-polyglot/discussions) — questions and ideas
+- [GitHub Issues](https://github.com/edithatogo/astro-polyglot/issues) — bug reports and feature requests
+- [GitHub Discussions](https://github.com/edithatogo/astro-polyglot/discussions) — questions and ideas
 - [SUPPORT.md](SUPPORT.md) — more support resources
 
 });

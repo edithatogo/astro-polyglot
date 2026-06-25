@@ -92,7 +92,7 @@ export const scalaHandler: Handler = {
  * Runs scaladoc to produce JSON output and parses it into ASTModule[].
  */
 function extractWithScaladoc(entryPoints: string[], classpath?: string): ASTModule[] {
-  const tmpDir = "/tmp/starlight-polyglot-scaladoc";
+  const tmpDir = "/tmp/astro-polyglot-scaladoc";
   const entries = entryPoints.map((e) => `"${path.resolve(e)}"`).join(" ");
 
   const cpFlag = classpath ? ` -classpath "${classpath}"` : "";

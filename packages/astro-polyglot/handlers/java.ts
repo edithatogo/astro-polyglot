@@ -35,7 +35,7 @@ interface JavadocJSON {
 /**
  * Java handler: Uses the JDK's `javadoc -Xdoclint:none -json` tool to
  * produce structured JSON output, then parses it into the common ASTModule
- * format used by the starlight-polyglot MDX pipeline.
+ * format used by the astro-polyglot MDX pipeline.
  *
  * @remarks
  * Requires a JDK installation (Java 9+ recommended). The `-json` flag is

@@ -105,21 +105,21 @@ if (fex(".prettierrc")) {
   check("CQ-03: Prettier compliance", "Code Quality", pt.ok, pt.ok ? "passed" : "issues");
 }
 const anyC = run(
-  "grep -rn ': any' packages/starlight-polyglot/core/ packages/starlight-polyglot/handlers/ 2>/dev/null | grep -v node_modules | grep -v '.test.' | wc -l",
+  "grep -rn ': any' packages/astro-polyglot/core/ packages/astro-polyglot/handlers/ 2>/dev/null | grep -v node_modules | grep -v '.test.' | wc -l",
 );
 check("CQ-04: No `any` types", "Code Quality", parseInt(anyC.stdout, 10) === 0, `${anyC.stdout.trim()} found`);
 const defC = run(
-  "grep -rn 'export default' packages/starlight-polyglot/core/ packages/starlight-polyglot/handlers/ 2>/dev/null | grep -v node_modules | wc -l",
+  "grep -rn 'export default' packages/astro-polyglot/core/ packages/astro-polyglot/handlers/ 2>/dev/null | grep -v node_modules | wc -l",
 );
 check("CQ-05: Named exports", "Code Quality", parseInt(defC.stdout, 10) <= 1, `${defC.stdout.trim()} defaults`);
 
 // ── Testing ──
 console.log("\n── Testing ──");
-check("T-01: handler-contract test", "Testing", fex("packages/starlight-polyglot/tests/handler-contract.test.ts"));
-check("T-02: mdx-generator test", "Testing", fex("packages/starlight-polyglot/tests/mdx-generator.test.ts"));
-check("T-03: router test", "Testing", fex("packages/starlight-polyglot/tests/router.test.ts"));
-check("T-04: plugin test", "Testing", fex("packages/starlight-polyglot/tests/plugin.test.ts"));
-const tCount = run('find packages/starlight-polyglot/tests -name "*.test.ts" 2>/dev/null | wc -l');
+check("T-01: handler-contract test", "Testing", fex("packages/astro-polyglot/tests/handler-contract.test.ts"));
+check("T-02: mdx-generator test", "Testing", fex("packages/astro-polyglot/tests/mdx-generator.test.ts"));
+check("T-03: router test", "Testing", fex("packages/astro-polyglot/tests/router.test.ts"));
+check("T-04: plugin test", "Testing", fex("packages/astro-polyglot/tests/plugin.test.ts"));
+const tCount = run('find packages/astro-polyglot/tests -name "*.test.ts" 2>/dev/null | wc -l');
 check("T-05: 4+ test files", "Testing", parseInt(tCount.stdout, 10) >= 4, `${tCount.stdout.trim()} files`);
 
 // ── Documentation ──
@@ -216,6 +216,6 @@ const report = {
 writeFileSync(REPORT_FILE, JSON.stringify(report, null, 2));
 console.log(`Report: ${REPORT_FILE}`);
 console.log("\n═══════════════════════════════════════════");
-console.log("  SOTA Audit — starlight-polyglot");
+console.log("  SOTA Audit — astro-polyglot");
 console.log(`  ${new Date().toISOString()}`);
 console.log("═══════════════════════════════════════════\n");

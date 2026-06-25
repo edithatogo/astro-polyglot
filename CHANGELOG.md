@@ -4,7 +4,7 @@
 
 ### Initial scaffold
 
-This is the initial scaffold of the **starlight-polyglot** monorepo. The project is in active development and not yet ready for production use.
+This is the initial scaffold of the **astro-polyglot** monorepo. The project is in active development and not yet ready for production use.
 
 #### Features
 
@@ -21,7 +21,7 @@ This is the initial scaffold of the **starlight-polyglot** monorepo. The project
 
 #### Infrastructure
 
-- **Monorepo setup**: pnpm workspace with `packages/starlight-polyglot` as the main package.
+- **Monorepo setup**: pnpm workspace with `packages/astro-polyglot` as the main package.
 - **Build system**: tsup for ESM + CJS dual output with TypeScript declarations.
 - **Changesets**: Configured for automated versioning and changelog generation.
 - **Starlight docs site**: Scaffolded Astro site under `docs/astro-site/` for the project's own documentation.

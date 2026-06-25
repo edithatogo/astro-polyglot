@@ -4,7 +4,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "node",
-    include: ["packages/starlight-polyglot/tests/**/*.test.ts"],
+    include: ["packages/astro-polyglot/tests/**/*.test.ts"],
     exclude: ["node_modules", "dist"],
     testTimeout: 30000,
     hookTimeout: 30000,
@@ -13,7 +13,7 @@ export default defineConfig({
       enabled: true,
       provider: "v8",
       reporter: ["text", "lcov", "json"],
-      include: ["packages/starlight-polyglot/core/**", "packages/starlight-polyglot/handlers/**"],
+      include: ["packages/astro-polyglot/core/**", "packages/astro-polyglot/handlers/**"],
       thresholds: {
         lines: 90,
         functions: 90,

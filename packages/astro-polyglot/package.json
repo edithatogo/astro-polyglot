@@ -1,8 +1,8 @@
 {
-  "name": "starlight-polyglot",
+  "name": "astro-polyglot",
   "version": "0.1.0",
   "license": "MIT",
-  "description": "Starlight plugin to generate documentation from any programming language using its native toolchain.",
+  "description": "Astro/Starlight integration to generate documentation from any programming language using its native toolchain.",
   "author": "Dylan A Mordaunt <dylan@mordaunt.dev>",
   "type": "module",
   "main": "dist/index.cjs",
@@ -104,11 +104,12 @@
     "LICENSE"
   ],
   "keywords": [
+    "astro",
     "starlight",
     "plugin",
+    "integration",
     "polyglot",
     "documentation",
-    "astro",
     "python",
     "typescript",
     "rust",
@@ -117,11 +118,11 @@
     "csharp",
     "go"
   ],
-  "homepage": "https://github.com/edithatogo/starlight-polyglot",
+  "homepage": "https://github.com/edithatogo/astro-polyglot",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/edithatogo/starlight-polyglot.git",
-    "directory": "packages/starlight-polyglot"
+    "url": "git+https://github.com/edithatogo/astro-polyglot.git",
+    "directory": "packages/astro-polyglot"
   },
-  "bugs": "https://github.com/edithatogo/starlight-polyglot/issues"
+  "bugs": "https://github.com/edithatogo/astro-polyglot/issues"
 }

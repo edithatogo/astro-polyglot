@@ -42,7 +42,7 @@ interface DokkaOutput {
 /**
  * Kotlin handler: Uses Dokka CLI to generate JSON documentation for
  * Kotlin source files, then parses that JSON into the common ASTModule
- * format for the starlight-polyglot MDX pipeline.
+ * format for the astro-polyglot MDX pipeline.
  *
  * @remarks
  * Dokka can be invoked via Gradle (`./gradlew dokkaJson`) or directly

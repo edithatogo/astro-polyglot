@@ -1,0 +1,11 @@
+{
+  "id": "standard_conformance_20260626",
+  "phase": 8,
+  "type": "quality",
+  "status": "pending",
+  "priority": "must",
+  "created": "2026-06-26",
+  "fulfills": ["REQ-QA-006", "REQ-QA-008", "REQ-SOTA-002"],
+  "depends_on": ["astro_migration_20260625", "tooling_modernization_20260625"],
+  "parallel": false
+}

@@ -118,7 +118,7 @@ export const phpHandler: Handler = {
  */
 function extractWithPhpDoc(entryPoints: string[]): ASTModule[] {
   const modules: ASTModule[] = [];
-  const tmpOutput = "/tmp/starlight-polyglot-phpdoc";
+  const tmpOutput = "/tmp/astro-polyglot-phpdoc";
 
   const entries = entryPoints.map((e) => `"${path.resolve(e)}"`).join(" ");
   const cmd = `phpdoc -t "${tmpOutput}" --template="xml" -f ${entries} -d "" 2>&1`;

@@ -1,11 +1,11 @@
 ---
 title: Installation & Setup
-description: Step-by-step guide to install and configure starlight-polyglot in your Starlight project.
+description: Step-by-step guide to install and configure astro-polyglot in your Starlight project.
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-This guide walks you through installing and configuring starlight-polyglot in your existing Starlight documentation site.
+This guide walks you through installing and configuring astro-polyglot in your existing Starlight documentation site.
 
 ## Prerequisites
 
@@ -19,21 +19,21 @@ This guide walks you through installing and configuring starlight-polyglot in yo
 <TabItem label="npm">
 
 ```bash
-npm install starlight-polyglot
+npm install astro-polyglot
 ```
 
 </TabItem>
 <TabItem label="pnpm">
 
 ```bash
-pnpm add starlight-polyglot
+pnpm add astro-polyglot
 ```
 
 </TabItem>
 <TabItem label="yarn">
 
 ```bash
-yarn add starlight-polyglot
+yarn add astro-polyglot
 ```
 
 </TabItem>
@@ -61,7 +61,7 @@ Add the plugin to your `astro.config.mjs`:
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
-import polyglot from 'starlight-polyglot';
+import polyglot from 'astro-polyglot';
 
 export default defineConfig({
   integrations: [
@@ -95,7 +95,7 @@ Here's a multi-language setup:
 // astro.config.mjs
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
-import polyglot from 'starlight-polyglot';
+import polyglot from 'astro-polyglot';
 
 export default defineConfig({
   integrations: [
@@ -150,7 +150,7 @@ If you need to reference the polyglot sidebar group from other plugins, use the 
 ```js
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
-import { createPolyglotPlugin } from 'starlight-polyglot';
+import { createPolyglotPlugin } from 'astro-polyglot';
 
 const [polyglot, sidebarGroup] = createPolyglotPlugin();
 

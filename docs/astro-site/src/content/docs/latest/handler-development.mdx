@@ -5,7 +5,7 @@ description: Learn how to add support for a new programming language by
 slug: latest/handler-development
 ---
 
-This guide covers how to create a new language handler for starlight-polyglot. Handlers are the plugin's extension mechanism — each one encapsulates the logic for extracting API documentation from a specific programming language's source code.
+This guide covers how to create a new language handler for astro-polyglot. Handlers are the plugin's extension mechanism — each one encapsulates the logic for extracting API documentation from a specific programming language's source code.
 
 ## The Handler Interface
 
@@ -100,7 +100,7 @@ interface ASTVariable {
 
 ### 1. Add the Language to the Type System
 
-In `packages/starlight-polyglot/core/handler.ts`, add your language to the `Language` union:
+In `packages/astro-polyglot/core/handler.ts`, add your language to the `Language` union:
 
 ```typescript
 export type Language =
@@ -116,7 +116,7 @@ export type Language =
 
 ### 2. Add Config to the Router
 
-In `packages/starlight-polyglot/core/router.ts`, add the config type:
+In `packages/astro-polyglot/core/router.ts`, add the config type:
 
 ```typescript
 export interface PolyglotConfig {
@@ -128,7 +128,7 @@ export interface PolyglotConfig {
 
 ### 3. Create the Handler File
 
-Create `packages/starlight-polyglot/handlers/<language>.ts`:
+Create `packages/astro-polyglot/handlers/<language>.ts`:
 
 ```typescript
 import type { Handler, HandlerOptions, MDXOutput, ValidationResult } from '../core/handler';
@@ -158,7 +158,7 @@ export default handler;
 
 ### 4. Register in the Router
 
-In `packages/starlight-polyglot/core/router.ts`, add your handler to `getHandlerMap()`:
+In `packages/astro-polyglot/core/router.ts`, add your handler to `getHandlerMap()`:
 
 ```typescript
 function getHandlerMap(): Partial<Record<Language, Handler>> {
@@ -182,7 +182,7 @@ async function generate(options: YourLanguageOptions): Promise<MDXOutput[]> {
 
 ### 6. Add an Extractor Script (If Needed)
 
-If your language requires a companion script (like `python_extract.py`), add it to `packages/starlight-polyglot/scripts/`. The handler should shell out to this script and parse its stdout JSON output.
+If your language requires a companion script (like `python_extract.py`), add it to `packages/astro-polyglot/scripts/`. The handler should shell out to this script and parse its stdout JSON output.
 
 ### 7. Write Tests
 
@@ -216,7 +216,7 @@ const output = transformToMDX(modules, {
 ```mermaid
 sequenceDiagram
     participant S as Starlight build
-    participant P as starlight-polyglot
+    participant P as astro-polyglot
     participant H as Handler
     participant T as Language Toolchain
 
@@ -253,7 +253,7 @@ Each handler must pass contract validation verifying:
 ### Coverage Threshold
 
 * **Minimum line coverage**: 90%
-* Run coverage: `pnpm --filter starlight-polyglot test -- --coverage`
+* Run coverage: `pnpm --filter astro-polyglot test -- --coverage`
 
 ## Example: Minimal Handler Template
 

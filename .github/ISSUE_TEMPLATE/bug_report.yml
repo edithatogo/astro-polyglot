@@ -1,5 +1,5 @@
 name: Bug Report
-description: Report a bug in starlight-polyglot
+description: Report a bug in astro-polyglot
 labels: ["bug", "triage"]
 body:
   - type: markdown
@@ -10,8 +10,8 @@ body:
   - type: input
     id: version
     attributes:
-      label: starlight-polyglot version
-      description: What version of starlight-polyglot are you running? (Check your package.json)
+      label: astro-polyglot version
+      description: What version of astro-polyglot are you running? (Check your package.json)
       placeholder: "0.1.0"
     validations:
       required: true

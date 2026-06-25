@@ -1,9 +1,10 @@
 /**
- * starlight-polyglot — Handler Interface
+ * astro-polyglot — Handler Interface
  *
  * Defines the contract that every language handler must implement.
  * Handlers are responsible for extracting API documentation from
- * a language's source code and producing Starlight-compatible MDX output.
+ * a language's source code and producing Astro-compatible MDX output
+ * (renderable in Starlight, blog themes, or any Astro theme).
  *
  * @module core/handler
  */
@@ -40,7 +41,7 @@ export interface MDXOutput {
   content: string;
   /** Parsed frontmatter metadata */
   frontmatter: Record<string, unknown>;
-  /** Relative output path under the Starlight content directory, e.g. "api/python/io.mdx" */
+  /** Relative output path under the content directory, e.g. "api/python/io.mdx" */
   outputPath: string;
 }
 
@@ -103,7 +104,7 @@ export interface ValidationResult {
  * Handler contract.
  *
  * Every language handler MUST implement this interface to be
- * discoverable and executable by the starlight-polyglot plugin.
+ * discoverable and executable by the astro-polyglot plugin.
  */
 export interface Handler {
   /** Language identifier matching the Language union type */

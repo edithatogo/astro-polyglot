@@ -2,7 +2,8 @@
   "id": "tests_20260513",
   "name": "Comprehensive Test Suite",
   "type": "feature",
-  "status": "completed",
+  "status": "archived",
+  "archived_at": "2026-06-26T06:30:00+10:00",
   "phase": 3,
   "dependsOn": [
     "handler_python_20260513",

@@ -84,7 +84,7 @@
 
 ## MIG - Repo Migrations
 
-Each migration converts a repo documentation to use starlight-polyglot for generating Starlight-native MDX API docs. Parallel execution via dedicated migration agents.
+Each migration converts a repo documentation to use astro-polyglot for generating Starlight-native MDX API docs. Parallel execution via dedicated migration agents.
 
 | ID | Requirement | Priority | Fulfilled By |
 |----|-------------|----------|-------------|
@@ -110,10 +110,10 @@ Each migration converts a repo documentation to use starlight-polyglot for gener
 
 Each migration agent must ensure its repo satisfies:
 
-1. astro.config.mjs - Configured with starlight-polyglot plugin and correct language handlers
+1. astro.config.mjs - Configured with astro-polyglot plugin and correct language handlers
 2. src/content/docs/ - Docs directory with at least an index page and API reference
 3. Conductor - conductor/ directory with tracks.md, tech-stack.md, and migration track
-4. Package.json - starlight-polyglot as dependency, Starlight + Astro as dev dependencies
+4. Package.json - astro-polyglot as dependency, Starlight + Astro as dev dependencies
 5. Dogfooding - Polyglot plugin configured to extract docs from the repo own source code
 6. Links validator - starlight-links-validator configured in astro config
 7. GitHub Actions - docs.yml workflow to build and deploy to GitHub Pages

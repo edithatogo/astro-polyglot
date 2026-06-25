@@ -1,5 +1,5 @@
 import starlight from "@astrojs/starlight";
-import polyglot, { sidebarGroup } from "starlight-polyglot";
+import polyglot, { sidebarGroup } from "astro-polyglot";
 import { defineConfig } from "astro/config";
 import starlightLinksValidator from "starlight-links-validator";
 import starlightLlmsTxt from "starlight-llms-txt";
@@ -7,25 +7,25 @@ import starlightVersions from "starlight-versions";
 
 export default defineConfig({
   site: "https://edithatogo.github.io",
-  base: "/starlight-polyglot",
+  base: "/astro-polyglot",
   trailingSlash: "always",
   integrations: [
     starlight({
-      title: "starlight-polyglot",
+      title: "astro-polyglot",
       logo: {
-        alt: "starlight-polyglot",
+        alt: "astro-polyglot",
         src: "./src/logo.svg",
         replacesTitle: false,
       },
-      social: [{ icon: "github", label: "GitHub", href: "https://github.com/edithatogo/starlight-polyglot" }],
+      social: [{ icon: "github", label: "GitHub", href: "https://github.com/edithatogo/astro-polyglot" }],
       editLink: {
-        baseUrl: "https://github.com/edithatogo/starlight-polyglot/edit/main/docs/astro-site/",
+        baseUrl: "https://github.com/edithatogo/astro-polyglot/edit/main/docs/astro-site/",
       },
       plugins: [
         polyglot({
           typescript: {
-            entryPoints: ["../../packages/starlight-polyglot/core/router.ts"],
-            tsconfig: "../../packages/starlight-polyglot/tsconfig.typedoc.json",
+            entryPoints: ["../../packages/astro-polyglot/core/router.ts"],
+            tsconfig: "../../packages/astro-polyglot/tsconfig.typedoc.json",
             output: "api/typescript",
           },
         }),

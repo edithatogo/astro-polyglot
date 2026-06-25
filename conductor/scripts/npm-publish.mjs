@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Safe npm publication preflight for starlight-polyglot.
+ * Safe npm publication preflight for astro-polyglot.
  *
  * This script intentionally never reads local token files and never runs an
  * actual publish. Use the GitHub Actions release/manual publish workflows for
@@ -12,7 +12,7 @@ import { fileURLToPath } from "node:url";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(scriptDir, "../..");
-const packageDir = resolve(rootDir, "packages/starlight-polyglot");
+const packageDir = resolve(rootDir, "packages/astro-polyglot");
 
 function run(command, args, options = {}) {
   console.log(`$ ${command} ${args.join(" ")}`);
@@ -25,9 +25,9 @@ function run(command, args, options = {}) {
 }
 
 function main() {
-  console.log("=== starlight-polyglot npm publication preflight ===\n");
+  console.log("=== astro-polyglot npm publication preflight ===\n");
 
-  run("pnpm", ["--filter", "starlight-polyglot", "build"]);
+  run("pnpm", ["--filter", "astro-polyglot", "build"]);
 
   const packOutput = run("npm", ["pack", "--dry-run", "--json"], { cwd: packageDir });
   const [packResult] = JSON.parse(packOutput);
@@ -47,7 +47,7 @@ function main() {
 
   let registryView = "not published";
   try {
-    registryView = run("npm", ["view", "starlight-polyglot", "version", "--json"], {
+    registryView = run("npm", ["view", "astro-polyglot", "version", "--json"], {
       cwd: packageDir,
       timeout: 30_000,
     }).trim();

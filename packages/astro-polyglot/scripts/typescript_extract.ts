@@ -2,7 +2,7 @@
 
 /**
  * Extract TypeScript API documentation using TypeDoc.
- * Outputs JSON matching the ASTModule schema from starlight-polyglot.
+ * Outputs JSON matching the ASTModule schema from astro-polyglot.
  *
  * Usage:
  *   npx tsx scripts/typescript_extract.ts --entry-points src/index.ts --output output.json

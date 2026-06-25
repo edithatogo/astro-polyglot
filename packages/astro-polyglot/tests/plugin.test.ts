@@ -33,7 +33,7 @@ function createMockParams(overrides?: Partial<MockConfigSetupParams>): MockConfi
   };
 }
 
-describe("starlight-polyglot plugin", () => {
+describe("astro-polyglot plugin", () => {
   let resolveHandlersSpy: MockInstance;
 
   beforeEach(() => {
@@ -44,7 +44,7 @@ describe("starlight-polyglot plugin", () => {
   describe("plugin structure", () => {
     it("has the correct name", () => {
       const plugin = polyglotPlugin({});
-      expect(plugin.name).toBe("starlight-polyglot");
+      expect(plugin.name).toBe("astro-polyglot");
     });
 
     it("has a hooks object with config:setup", () => {
@@ -252,7 +252,7 @@ describe("starlight-polyglot plugin", () => {
       const [pluginFn, group] = createPolyglotPlugin();
       expect(typeof pluginFn).toBe("function");
       const plugin = pluginFn({});
-      expect(plugin.name).toBe("starlight-polyglot");
+      expect(plugin.name).toBe("astro-polyglot");
       expect(group).toHaveProperty("_key");
       expect(typeof group._key).toBe("symbol");
       expect(group).toHaveProperty("label", "API");

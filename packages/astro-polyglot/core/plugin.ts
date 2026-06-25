@@ -33,7 +33,7 @@ export function getSidebarGroupPlaceholder(key?: symbol): SidebarGroup {
     items: [{ label: "Placeholder", link: "/getting-started/" }],
   };
   Object.defineProperty(placeholder, "_key", {
-    value: key ?? Symbol("starlight-polyglot"),
+    value: key ?? Symbol("astro-polyglot"),
     enumerable: false,
     writable: true,
     configurable: true,

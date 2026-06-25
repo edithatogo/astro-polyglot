@@ -1,5 +1,5 @@
 /**
- * starlight-polyglot — Shared Test Infrastructure
+ * astro-polyglot — Shared Test Infrastructure
  *
  * Provides mock factories, Faker-based random data generators,
  * common fixtures, and global lifecycle hooks for all test suites.
@@ -45,7 +45,7 @@ afterAll(() => {
  * Automatically cleaned up on test teardown via the returned disposer.
  */
 export async function createTempDir(): Promise<string> {
-  return fs.mkdtemp(path.join(os.tmpdir(), "starlight-polyglot-test-"));
+  return fs.mkdtemp(path.join(os.tmpdir(), "astro-polyglot-test-"));
 }
 
 /**

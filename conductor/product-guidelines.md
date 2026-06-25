@@ -1,10 +1,10 @@
 # Product Guidelines
 
 ## Brand
-- **Name**: starlight-polyglot
+- **Name**: astro-polyglot
 - **Description**: One plugin, every language. Starlight-native API docs from any source code.
 - **License**: MIT
-- **Registry**: npm (`starlight-polyglot`)
+- **Registry**: npm (`astro-polyglot`)
 
 ## Language
 - Use clear, direct language

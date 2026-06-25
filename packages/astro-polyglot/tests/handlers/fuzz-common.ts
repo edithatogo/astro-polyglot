@@ -1,5 +1,5 @@
 /**
- * starlight-polyglot — Shared fuzz/property test helpers
+ * astro-polyglot — Shared fuzz/property test helpers
  *
  * Exposes reusable generators and assertions for handler contract tests.
  *

@@ -1,4 +1,4 @@
-# Contributing to starlight-polyglot
+# Contributing to astro-polyglot
 
 Thank you for your interest in contributing! This guide covers how to add new language handlers, set up your development environment, and submit changes.
 
@@ -24,8 +24,8 @@ Thank you for your interest in contributing! This guide covers how to add new la
 
 ```bash
 # Clone the repository
-git clone https://github.com/edithatogo/starlight-polyglot.git
-cd starlight-polyglot
+git clone https://github.com/edithatogo/astro-polyglot.git
+cd astro-polyglot
 
 # Install dependencies
 pnpm install
@@ -56,7 +56,7 @@ pnpm lint
 ## Project Structure
 
 ```
-starlight-polyglot/
+astro-polyglot/
 ├── .changeset/                  # Changeset configuration for versioning
 ├── .github/
 │   ├── workflows/               # CI/CD workflows
@@ -65,7 +65,7 @@ starlight-polyglot/
 ├── docs/
 │   └── astro-site/              # Starlight documentation site (dogfood)
 ├── packages/
-│   └── starlight-polyglot/      # Main plugin package
+│   └── astro-polyglot/      # Main plugin package
 │       ├── core/                # Core plugin logic
 │       │   ├── handler.ts       # Handler contract types
 │       │   ├── plugin.ts        # Plugin setup & sidebar management
@@ -91,7 +91,7 @@ Adding support for a new programming language involves these steps:
 
 ### 1. Understand the Handler Contract
 
-Each handler must implement the `Handler` interface defined in [`packages/starlight-polyglot/core/handler.ts`](packages/starlight-polyglot/core/handler.ts):
+Each handler must implement the `Handler` interface defined in [`packages/astro-polyglot/core/handler.ts`](packages/astro-polyglot/core/handler.ts):
 
 ```typescript
 interface Handler {
@@ -104,7 +104,7 @@ interface Handler {
    * @returns An array of MDXOutput pages ready for writing to disk
 ### 2. Add the Language to the Type System
 
-1. Add your language to the `Language` union type in `packages/starlight-polyglot/core/handler.ts`:
+1. Add your language to the `Language` union type in `packages/astro-polyglot/core/handler.ts`:
 
    ```typescript
    export type Language =
@@ -118,7 +118,7 @@ interface Handler {
      | 'your-language'; // ← Add yours here
    ```
 
-2. Add the configuration type to the `PolyglotConfig` interface in `packages/starlight-polyglot/core/router.ts`:
+2. Add the configuration type to the `PolyglotConfig` interface in `packages/astro-polyglot/core/router.ts`:
 
    ```typescript
    export interface PolyglotConfig {
@@ -130,10 +130,10 @@ interface Handler {
 
 ### 3. Create the Handler File
 
-Create a new file in `packages/starlight-polyglot/handlers/` named `<language>.ts`:
+Create a new file in `packages/astro-polyglot/handlers/` named `<language>.ts`:
 
 ```typescript
-// packages/starlight-polyglot/handlers/your-language.ts
+// packages/astro-polyglot/handlers/your-language.ts
 
 import type { Handler, HandlerOptions, MDXOutput, ValidationResult } from '../core/handler';
 
@@ -160,7 +160,7 @@ const handler: Handler = {
     // Check that required CLI tools are available
 ### 4. Register the Handler in the Router
 
-In `packages/starlight-polyglot/core/router.ts`, add your handler to `getHandlerMap()`:
+In `packages/astro-polyglot/core/router.ts`, add your handler to `getHandlerMap()`:
 
 ```typescript
 function getHandlerMap(): Partial<Record<Language, Handler>> {
@@ -184,7 +184,7 @@ async function generate(options: YourLanguageOptions): Promise<MDXOutput[]> {
 
 ### 6. Add an Extractor Script (If Needed)
 
-If your language requires a companion script (like `python_extract.py` for Python), add it to `packages/starlight-polyglot/scripts/`. The handler should shell out to this script and parse its stdout JSON output.
+If your language requires a companion script (like `python_extract.py` for Python), add it to `packages/astro-polyglot/scripts/`. The handler should shell out to this script and parse its stdout JSON output.
 
 ### 7. Write Tests
 
@@ -256,18 +256,18 @@ This is the **recommended approach** — it ensures consistent output formatting
 ### Coverage Threshold
 
 - **Line coverage**: minimum **90%**
-- Run coverage: `pnpm --filter starlight-polyglot test -- --coverage`
-- Coverage reports are generated in `packages/starlight-polyglot/coverage/`
+- Run coverage: `pnpm --filter astro-polyglot test -- --coverage`
+- Coverage reports are generated in `packages/astro-polyglot/coverage/`
 
 ### End-to-End Tests
 
-- E2E tests using Playwright are in `packages/starlight-polyglot/tests/e2e/`
+- E2E tests using Playwright are in `packages/astro-polyglot/tests/e2e/`
 - These test the full build pipeline with a real Starlight project
-- Run them with: `pnpm --filter starlight-polyglot test:e2e`
+- Run them with: `pnpm --filter astro-polyglot test:e2e`
 
 ### Test Fixtures
 
-Place test fixtures (sample source code, mock configurations) in `packages/starlight-polyglot/tests/fixtures/`.
+Place test fixtures (sample source code, mock configurations) in `packages/astro-polyglot/tests/fixtures/`.
 
 
 

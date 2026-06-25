@@ -107,7 +107,7 @@ function extractWithYard(entryPoints: string[]): ASTModule[] {
       continue;
     }
 
-    const tmpOutput = "/tmp/starlight-polyglot-yard";
+    const tmpOutput = "/tmp/astro-polyglot-yard";
     const cmd = `yard doc --output-format json --output "${tmpOutput}" "${resolvedEntry}" 2>&1`;
 
     execSync(cmd, {

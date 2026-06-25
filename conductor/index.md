@@ -1,6 +1,6 @@
-# starlight-polyglot Conductor System
+# astro-polyglot Conductor System
 
-> Central orchestration hub for the starlight-polyglot plugin and repo migrations.
+> Central orchestration hub for the astro-polyglot plugin and repo migrations.
 
 ---
 

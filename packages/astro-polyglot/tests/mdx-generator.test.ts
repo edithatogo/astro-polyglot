@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { type ASTModule, transformToMDX, writeMDXPages } from "../core/mdx-generator";
 
 function createTempDir(): string {
-  return fs.mkdtemp(path.join(os.tmpdir(), "starlight-polyglot-"));
+  return fs.mkdtemp(path.join(os.tmpdir(), "astro-polyglot-"));
 }
 
 describe("transformToMDX()", () => {

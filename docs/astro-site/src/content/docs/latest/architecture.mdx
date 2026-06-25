@@ -1,10 +1,10 @@
 ---
 title: Architecture
-description: System architecture and design overview of starlight-polyglot.
+description: System architecture and design overview of astro-polyglot.
 slug: latest/architecture
 ---
 
-This page describes the architecture of starlight-polyglot, covering the plugin system, handler dispatch, MDX generation pipeline, and package structure.
+This page describes the architecture of astro-polyglot, covering the plugin system, handler dispatch, MDX generation pipeline, and package structure.
 
 ## System Overview
 
@@ -15,7 +15,7 @@ flowchart TB
         B --> C[Router Dispatch]
     end
 
-    subgraph Core["starlight-polyglot Core"]
+    subgraph Core["astro-polyglot Core"]
         C -->|python| D1[Python Handler]
         C -->|typescript| D2[TypeScript Handler]
         C -->|rust| D3[Rust Handler]
@@ -121,12 +121,12 @@ sequenceDiagram
 ## Package Structure
 
 ```
-starlight-polyglot/
+astro-polyglot/
 ├── conductor/                   # Design docs & requirements
 ├── docs/
 │   └── astro-site/              # Self-hosted Starlight docs (this site)
 ├── packages/
-│   └── starlight-polyglot/      # Main plugin package
+│   └── astro-polyglot/      # Main plugin package
 │       ├── index.ts             # Plugin entry point
 │       ├── core/
 │       │   ├── handler.ts       # Handler interface types

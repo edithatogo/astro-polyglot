@@ -1,0 +1,11 @@
+{
+  "id": "phase3_languages_20260626",
+  "phase": 8,
+  "type": "feature",
+  "status": "pending",
+  "priority": "should",
+  "created": "2026-06-26",
+  "fulfills": ["REQ-HDL-001", "REQ-HDL-002"],
+  "depends_on": ["standard_conformance_20260626"],
+  "parallel": false
+}

@@ -104,8 +104,8 @@ function extractWithDartdoc(entryPoints: string[]): ASTModule[] {
     }
 
     // dart doc generates HTML output by default, --json-output produces a JSON file
-    const jsonOutputPath = "/tmp/starlight-polyglot-dartdoc.json";
-    const cmd = `dart doc --json-output "${jsonOutputPath}" --output /tmp/starlight-polyglot-dartdoc-html "${resolvedEntry}" 2>&1`;
+    const jsonOutputPath = "/tmp/astro-polyglot-dartdoc.json";
+    const cmd = `dart doc --json-output "${jsonOutputPath}" --output /tmp/astro-polyglot-dartdoc-html "${resolvedEntry}" 2>&1`;
 
     execSync(cmd, {
       encoding: "utf-8",
