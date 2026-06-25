@@ -101,7 +101,7 @@
 
 ---
 
-- `[~]` [astro_migration_20260625](./tracks/astro_migration_20260625/) — Migrate the package to support the underlying Astro 7 library as an Astro Integration and Content Loader
+- `[x]` [astro_migration_20260625](./tracks/astro_migration_20260625/) — Migrate the package to support the underlying Astro 7 library as an Astro Integration and Content Loader
 
 - `[x]` [tooling_modernization_20260625](./tracks/tooling_modernization_20260625/) — Modernize the repository setup: Integrate Biome, configure PNPM catalogs, and align build pipeline for Rolldown
 

@@ -23,6 +23,7 @@ export type {
   SidebarGroup,
 } from "./core/plugin";
 export type { PolyglotConfig } from "./core/router";
+export { polyglotLoader, type PolyglotLoaderOptions } from "./core/loader";
 
 // ─── Plugin entry point ──────────────────────────────────────────────
 
