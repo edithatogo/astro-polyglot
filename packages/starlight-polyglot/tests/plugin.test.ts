@@ -243,7 +243,7 @@ describe("starlight-polyglot plugin", () => {
       expect(sidebarGroup).toHaveProperty("_key");
       expect(typeof sidebarGroup._key).toBe("symbol");
       expect(sidebarGroup).toHaveProperty("label", "API");
-      expect(sidebarGroup.items).toEqual([]);
+      expect(sidebarGroup.items).toEqual([{ label: "Placeholder", link: "/getting-started/" }]);
     });
   });
 
