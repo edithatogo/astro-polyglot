@@ -1,0 +1,1 @@
+Task: Phase 1 - Test infrastructure | Track: standard_conformance_20260626 | Created fixtures/ and helpers/conformance.ts with describeConformance, auto-skip for missing toolchains
