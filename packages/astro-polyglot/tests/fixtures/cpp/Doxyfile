@@ -1,0 +1,20 @@
+# Doxyfile for conformance test fixtures
+# Minimal configuration to generate XML documentation for header files.
+
+PROJECT_NAME           = "astro-polyglot C++ Fixtures"
+OUTPUT_DIRECTORY       = doxygen_output
+GENERATE_XML           = YES
+GENERATE_HTML          = NO
+GENERATE_LATEX         = NO
+QUIET                  = YES
+WARNINGS               = NO
+INPUT                  = .
+RECURSIVE              = NO
+FILE_PATTERNS          = *.h *.hpp *.cpp *.c
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = YES
+SORT_MEMBER_DOCS       = YES
+JAVADOC_AUTOBRIEF      = YES
+QT_AUTOBRIEF           = YES
