@@ -160,12 +160,14 @@ function parsePhpDocXml(xmlContent: string): PhpDocElement[] {
 
   while ((fileMatch = fileRegex.exec(xmlContent)) !== null) {
     const fileBody = fileMatch[2];
+    if (!fileBody) continue;
 
     // Parse classes
     const classRegex = /<class[^>]*>([\s\S]*?)<\/class>/g;
     let classMatch: RegExpExecArray | null;
     while ((classMatch = classRegex.exec(fileBody)) !== null) {
       const classBody = classMatch[1];
+      if (!classBody) continue;
       const className = classBody.match(/<full_name>([^<]*)<\/full_name>/)?.[1]?.trim();
       const classSummary = classBody.match(/<summary>([\s\S]*?)<\/summary>/)?.[1]?.trim();
       const classDesc = classBody.match(/<description>([\s\S]*?)<\/description>/)?.[1]?.trim();
@@ -185,6 +187,7 @@ function parsePhpDocXml(xmlContent: string): PhpDocElement[] {
       let methodMatch: RegExpExecArray | null;
       while ((methodMatch = methodRegex.exec(classBody)) !== null) {
         const methodBody = methodMatch[1];
+        if (!methodBody) continue;
         const mName = methodBody.match(/<name>([^<]*)<\/name>/)?.[1]?.trim() ?? 'unknown';
         const mSummary = methodBody.match(/<summary>([\s\S]*?)<\/summary>/)?.[1]?.trim();
         const mDesc = methodBody.match(/<description>([\s\S]*?)<\/description>/)?.[1]?.trim();
@@ -195,6 +198,7 @@ function parsePhpDocXml(xmlContent: string): PhpDocElement[] {
         let argMatch: RegExpExecArray | null;
         while ((argMatch = argRegex.exec(methodBody)) !== null) {
           const argBody = argMatch[1];
+          if (!argBody) continue;
           const aName = argBody.match(/<name>([^<]*)<\/name>/)?.[1]?.trim() ?? 'param';
           const aType = argBody.match(/<type>([^<]*)<\/type>/)?.[1]?.trim();
           const aDefault = argBody.match(/<default>([^<]*)<\/default>/)?.[1]?.trim();
@@ -206,7 +210,8 @@ function parsePhpDocXml(xmlContent: string): PhpDocElement[] {
         const returnMatch = methodBody.match(/<return[^>]*>([\s\S]*?)<\/return>/);
         let returnType: string | undefined;
         if (returnMatch) {
-          returnType = returnMatch[1].match(/<type>([^<]*)<\/type>/)?.[1]?.trim() || undefined;
+          const returnBody = returnMatch[1];
+          returnType = returnBody ? returnBody.match(/<type>([^<]*)<\/type>/)?.[1]?.trim() || undefined : undefined;
         }
 
         element.methods?.push({
@@ -224,6 +229,7 @@ function parsePhpDocXml(xmlContent: string): PhpDocElement[] {
       let propMatch: RegExpExecArray | null;
       while ((propMatch = propRegex.exec(classBody)) !== null) {
         const propBody = propMatch[1];
+        if (!propBody) continue;
         const pName = propBody.match(/<name>([^<]*)<\/name>/)?.[1]?.trim() ?? 'unknown';
         const pType = propBody.match(/<type>([^<]*)<\/type>/)?.[1]?.trim();
         const pDefault = propBody.match(/<default>([^<]*)<\/default>/)?.[1]?.trim();
@@ -246,6 +252,7 @@ function parsePhpDocXml(xmlContent: string): PhpDocElement[] {
     let funcMatch: RegExpExecArray | null;
     while ((funcMatch = funcRegex.exec(fileBody)) !== null) {
       const funcBody = funcMatch[1];
+      if (!funcBody) continue;
       const fName = funcBody.match(/<name>([^<]*)<\/name>/)?.[1]?.trim() ?? 'unknown';
       const fSummary = funcBody.match(/<summary>([^<]*)<\/summary>/)?.[1]?.trim();
       const fDesc = funcBody.match(/<description>([^<]*)<\/description>/)?.[1]?.trim();
@@ -255,6 +262,7 @@ function parsePhpDocXml(xmlContent: string): PhpDocElement[] {
       let argMatch: RegExpExecArray | null;
       while ((argMatch = argRegex.exec(funcBody)) !== null) {
         const argBody = argMatch[1];
+        if (!argBody) continue;
         const aName = argBody.match(/<name>([^<]*)<\/name>/)?.[1]?.trim() ?? 'param';
         const aType = argBody.match(/<type>([^<]*)<\/type>/)?.[1]?.trim();
         const aDefault = argBody.match(/<default>([^<]*)<\/default>/)?.[1]?.trim();
@@ -264,7 +272,8 @@ function parsePhpDocXml(xmlContent: string): PhpDocElement[] {
       const returnMatch = funcBody.match(/<return[^>]*>([\s\S]*?)<\/return>/);
       let returnType: string | undefined;
       if (returnMatch) {
-        returnType = returnMatch[1].match(/<type>([^<]*)<\/type>/)?.[1]?.trim() || undefined;
+        const returnBody = returnMatch[1];
+        returnType = returnBody ? returnBody.match(/<type>([^<]*)<\/type>/)?.[1]?.trim() || undefined : undefined;
       }
 
       elements.push({

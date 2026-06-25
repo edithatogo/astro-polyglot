@@ -1,5 +1,5 @@
 import type { Handler, BaseHandlerOptions } from '../core/plugin';
-import { transformToMDX, type ASTModule } from '../core/mdx-generator';
+import { transformToMDX, type ASTModule, type ASTParameter } from '../core/mdx-generator';
 
 interface TypeScriptHandlerOptions extends BaseHandlerOptions {
   entryPoints: string[];
@@ -74,9 +74,10 @@ function extractCommentText(comment?: { summary?: Array<{ kind: string; text: st
 }
 
 function extractSignature(reflection: TypeDocReflection): string | undefined {
-  if (!reflection.signatures || reflection.signatures.length === 0) return undefined;
-
+  if (!reflection.signatures) return undefined;
   const sig = reflection.signatures[0];
+  if (!sig) return undefined;
+
   const params = (sig.parameters ?? [])
     .map((p) => {
       const typeName = p.type?.name ?? p.type?.type ?? 'any';
@@ -89,15 +90,17 @@ function extractSignature(reflection: TypeDocReflection): string | undefined {
 }
 
 function extractReturnType(reflection: TypeDocReflection): string | undefined {
-  if (!reflection.signatures || reflection.signatures.length === 0) return undefined;
-  return reflection.signatures[0].type?.name ?? reflection.signatures[0].type?.type ?? undefined;
+  if (!reflection.signatures) return undefined;
+  const sig = reflection.signatures[0];
+  if (!sig) return undefined;
+  return sig.type?.name ?? sig.type?.type ?? undefined;
 }
 
-function extractParameters(reflection: TypeDocReflection): Array<{ name: string; type?: string; description?: string; default?: string }> | undefined {
+function extractParameters(reflection: TypeDocReflection): ASTParameter[] | undefined {
   if (!reflection.signatures || reflection.signatures.length === 0) return undefined;
 
   const sig = reflection.signatures[0];
-  if (!sig.parameters || sig.parameters.length === 0) return undefined;
+  if (!sig || !sig.parameters || sig.parameters.length === 0) return undefined;
 
   return sig.parameters.map((p) => ({
     name: p.name,
@@ -175,18 +178,22 @@ async function extractWithTypeDoc(
   entryPoints: string[],
   tsconfig?: string,
 ): Promise<ASTModule[]> {
-  const { Application, TSConfigReader } = await import('typedoc');
+  const { Application, TSConfigReader, normalizePath } = await import('typedoc');
 
-  const app = await Application.bootstrap({
+  const bootstrapOptions: any = {
     entryPoints,
-    tsconfig,
     skipErrorChecking: false,
     excludeExternals: true,
     excludePrivate: true,
     excludeProtected: false,
     validation: { notExported: false },
     plugin: [],
-  });
+  };
+  if (tsconfig) {
+    bootstrapOptions.tsconfig = tsconfig;
+  }
+
+  const app = await Application.bootstrap(bootstrapOptions);
 
   // Register the TSConfig reader
   app.options.addReader(new TSConfigReader());
@@ -198,7 +205,8 @@ async function extractWithTypeDoc(
   }
 
   // Serialize the project reflection to plain JSON for processing
-  const serialized = app.serializer.projectToObject(project);
+  const projectRoot = normalizePath(process.cwd());
+  const serialized = app.serializer.projectToObject(project, projectRoot);
 
   // The serialized output has a top-level with children array
   const children = (serialized as unknown as { children?: TypeDocReflection[] }).children ?? [];

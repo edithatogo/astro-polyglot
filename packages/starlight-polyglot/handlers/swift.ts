@@ -2,7 +2,7 @@ import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import type { Handler, BaseHandlerOptions } from '../core/plugin';
-import { transformToMDX, type ASTModule } from '../core/mdx-generator';
+import { transformToMDX, type ASTModule, type ASTClass, type ASTParameter } from '../core/mdx-generator';
 
 interface SwiftHandlerOptions extends BaseHandlerOptions {
   /** Path to the Swift module (source root or .swiftmodule directory). */
@@ -117,8 +117,9 @@ function extractWithSwiftDoc(
   }
 
   const symbolGraphCandidates = findSymbolGraphFiles(resolvedPath);
-  if (symbolGraphCandidates.length > 0) {
-    return parseSymbolGraphDir(path.dirname(symbolGraphCandidates[0]));
+  const firstCandidate = symbolGraphCandidates[0];
+  if (firstCandidate) {
+    return parseSymbolGraphDir(path.dirname(firstCandidate));
   }
 
   return runSwiftDoc(resolvedPath);
@@ -253,18 +254,7 @@ function convertSymbolGraph(doc: SymbolGraphDocument): ASTModule | null {
     const docComment = extractDocComment(symbol);
 
     if (kind === 'class' || kind === 'struct' || kind === 'enum' || kind === 'protocol' || kind === 'extension') {
-      const cls: {
-        name: string;
-        docstring?: string;
-        methods: Array<{
-          name: string;
-          signature?: string;
-          docstring?: string;
-          parameters?: Array<{ name: string; type?: string; description?: string; default?: string }>;
-          return_type?: string;
-        }>;
-        properties: Array<{ name: string; type?: string; docstring?: string }>;
-      } = {
+      const cls: ASTClass = {
         name,
         docstring: docComment,
         methods: [],
@@ -282,7 +272,7 @@ function convertSymbolGraph(doc: SymbolGraphDocument): ASTModule | null {
         const childDoc = extractDocComment(child);
 
         if (childKind === 'method' || childKind === 'instanceMethod' || childKind === 'typeMethod' || childKind === 'constructor' || childKind === 'instanceSubscript') {
-          cls.methods.push({
+          cls.methods!.push({
             name: childName,
             signature: buildSwiftSignature(child),
             docstring: childDoc,
@@ -290,7 +280,7 @@ function convertSymbolGraph(doc: SymbolGraphDocument): ASTModule | null {
             return_type: extractSwiftReturnType(child),
           });
         } else if (childKind === 'property' || childKind === 'instanceProperty' || childKind === 'typeProperty' || childKind === 'instanceVariable') {
-          cls.properties.push({
+          cls.properties!.push({
             name: childName,
             type: extractSwiftReturnType(child) ?? undefined,
             docstring: childDoc,
@@ -358,7 +348,7 @@ function buildSwiftSignature(symbol: SymbolGraphSymbol): string | undefined {
  */
 function extractSwiftParameters(
   symbol: SymbolGraphSymbol,
-): Array<{ name: string; type?: string; description?: string; default?: string }> | undefined {
+): ASTParameter[] | undefined {
   const sig = symbol.functionSignature;
   if (!sig?.parameters || sig.parameters.length === 0) return undefined;
 

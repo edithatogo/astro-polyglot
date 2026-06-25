@@ -2,7 +2,7 @@ import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import type { Handler, BaseHandlerOptions } from '../core/plugin';
-import { transformToMDX, type ASTModule } from '../core/mdx-generator';
+import { transformToMDX, type ASTModule, type ASTClass } from '../core/mdx-generator';
 
 interface ScalaHandlerOptions extends BaseHandlerOptions {
   /** Paths to Scala source files or directories to document */
@@ -166,18 +166,7 @@ function convertScaladocDocument(doc: ScaladocDocument): ASTModule | null {
       member.kind === 'object' ||
       member.kind === 'case class'
     ) {
-      const cls: {
-        name: string;
-        docstring?: string;
-        methods: Array<{
-          name: string;
-          signature?: string;
-          docstring?: string;
-          parameters?: Array<{ name: string; type?: string; description?: string; default?: string }>;
-          return_type?: string;
-        }>;
-        properties: Array<{ name: string; type?: string; docstring?: string }>;
-      } = {
+      const cls: ASTClass = {
         name: member.name,
         docstring: memberDoc,
         methods: [],
@@ -191,7 +180,7 @@ function convertScaladocDocument(doc: ScaladocDocument): ASTModule | null {
           sub.kind === 'method' ||
           sub.kind === 'function'
         ) {
-          cls.methods.push({
+          cls.methods!.push({
             name: sub.name,
             signature: buildScalaSignature(sub),
             docstring: subDoc,
@@ -208,7 +197,7 @@ function convertScaladocDocument(doc: ScaladocDocument): ASTModule | null {
           sub.kind === 'var' ||
           sub.kind === 'lazy val'
         ) {
-          cls.properties.push({
+          cls.properties!.push({
             name: sub.name,
             type: sub.resultType ?? sub.valueType ?? undefined,
             docstring: subDoc,

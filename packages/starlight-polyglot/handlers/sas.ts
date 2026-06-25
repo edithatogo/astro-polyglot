@@ -135,11 +135,13 @@ function parseSasOutput(output: string, entryPath: string): ASTModule | null {
   let macroMatch: RegExpExecArray | null;
   while ((macroMatch = macroRegex.exec(output)) !== null) {
     const macroName = macroMatch[1];
-    const paramStr = macroMatch[2].trim();
+    const paramStr = macroMatch[2];
+    if (!macroName || paramStr === undefined) continue;
     const description = macroMatch[3]?.trim();
 
-    const params = paramStr
-      ? paramStr.split(',').map((p) => {
+    const paramStrTrimmed = paramStr.trim();
+    const params = paramStrTrimmed
+      ? paramStrTrimmed.split(',').map((p) => {
           const parts = p.trim().split(/\s*=\s*/);
           return {
             name: parts[0]?.trim() || p.trim(),
@@ -163,6 +165,7 @@ function parseSasOutput(output: string, entryPath: string): ASTModule | null {
   while ((macroMatch = varRegex.exec(output)) !== null) {
     const varName = macroMatch[2];
     const varType = macroMatch[3];
+    if (!varName || !varType) continue;
     items.push({
       name: varName,
       type: 'variable',
@@ -175,8 +178,9 @@ function parseSasOutput(output: string, entryPath: string): ASTModule | null {
   // Parse comment-based documentation: * description for function_name;
   const commentDocRegex = /\*\s*@(macro|function|dataset)\s+(\w+)\s*([^*]*)\*;/gi;
   while ((macroMatch = commentDocRegex.exec(output)) !== null) {
-    const itemType = macroMatch[1] as 'macro' | 'function' | 'dataset';
+    const itemType = macroMatch[1] as 'macro' | 'function' | 'dataset' | undefined;
     const itemName = macroMatch[2];
+    if (!itemType || !itemName) continue;
     const itemDesc = macroMatch[3]?.trim();
 
     // Check if a matching item already exists
@@ -193,18 +197,13 @@ function parseSasOutput(output: string, entryPath: string): ASTModule | null {
   }
 
   // Populate module from extracted items
+
   for (const item of items) {
     if (item.type === 'macro' || item.type === 'function') {
       mod.functions?.push({
         name: item.name,
-        signature: `${item.name}(${(item.parameters ?? []).map((p) => p.name).join(', ')})`,
         docstring: item.description,
-        parameters: item.parameters?.map((p) => ({
-          name: p.name,
-          type: p.type,
-          description: p.description,
-          default: p.default,
-        })),
+        parameters: item.parameters,
         return_type: item.returns,
       });
     } else {
@@ -218,7 +217,10 @@ function parseSasOutput(output: string, entryPath: string): ASTModule | null {
 
   // Use the first function description as module docstring if available
   if (!mod.docstring && mod.functions && mod.functions.length > 0) {
-    mod.docstring = mod.functions[0].docstring;
+    const firstFunc = mod.functions[0];
+    if (firstFunc) {
+      mod.docstring = firstFunc.docstring;
+    }
   }
 
   return mod;

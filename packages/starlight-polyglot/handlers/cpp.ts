@@ -2,7 +2,7 @@ import { execSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import type { Handler, BaseHandlerOptions } from '../core/plugin';
-import { transformToMDX, type ASTModule } from '../core/mdx-generator';
+import { transformToMDX, type ASTModule, type ASTClass } from '../core/mdx-generator';
 
 interface CppHandlerOptions extends BaseHandlerOptions {
   /** Path to the C/C++ project root containing a Doxyfile (or CMakeLists.txt with doxygen target). */
@@ -224,15 +224,19 @@ function parseDoxygenXmlRaw(xmlContent: string): DoxygenCompound | null {
 
   const kind = compoundDefMatch[1];
   const body = compoundDefMatch[2];
+  if (!kind || !body) return null;
 
   const nameMatch = body.match(/<compoundname>([^<]*)<\/compoundname>/);
-  const name = nameMatch ? nameMatch[1].trim() : undefined;
+  const nameVal = nameMatch ? nameMatch[1] : undefined;
+  const name = nameVal ? nameVal.trim() : undefined;
 
   const briefMatch = body.match(/<briefdescription>([\s\S]*?)<\/briefdescription>/);
-  const briefdescription = extractParaText(briefMatch ? briefMatch[1] : '');
+  const briefVal = briefMatch ? briefMatch[1] : undefined;
+  const briefdescription = extractParaText(briefVal ?? '');
 
   const detailedMatch = body.match(/<detaileddescription>([\s\S]*?)<\/detaileddescription>/);
-  const detaileddescription = extractParaText(detailedMatch ? detailedMatch[1] : '');
+  const detailedVal = detailedMatch ? detailedMatch[1] : undefined;
+  const detaileddescription = extractParaText(detailedVal ?? '');
 
   const compound: DoxygenCompound = {
     kind,
@@ -249,6 +253,7 @@ function parseDoxygenXmlRaw(xmlContent: string): DoxygenCompound | null {
   while ((sectionMatch = sectionRegex.exec(body)) !== null) {
     const sectionKind = sectionMatch[1];
     const sectionBody = sectionMatch[2];
+    if (!sectionKind || !sectionBody) continue;
     const members = parseMemberDefs(sectionBody);
     compound.sectiondef?.push({
       kind: sectionKind,
@@ -276,6 +281,69 @@ function extractParaText(paraContent: string): string | undefined {
 function parseMemberDefs(sectionBody: string): DoxygenMember[] {
   const members: DoxygenMember[] = [];
   const memberRegex = /<memberdef\s+kind="([^"]*)"[^>]*>([\s\S]*?)<\/memberdef>/g;
+
+  let match: RegExpExecArray | null;
+
+  while ((match = memberRegex.exec(sectionBody)) !== null) {
+    const kind = match[1];
+    const body = match[2];
+    if (!kind || !body) continue;
+
+    const nameMatch = body.match(/<name>([^<]*)<\/name>/);
+    const nameVal = nameMatch ? nameMatch[1] : undefined;
+    const name = nameVal ? nameVal.trim() : undefined;
+    if (!name) continue;
+
+    const defMatch = body.match(/<definition>([^<]*)<\/definition>/);
+    const defVal = defMatch ? defMatch[1] : undefined;
+    const definition = defVal ? defVal.trim() : undefined;
+
+    const argsMatch = body.match(/<argsstring>([^<]*)<\/argsstring>/);
+    const argsVal = argsMatch ? argsMatch[1] : undefined;
+    const argsstring = argsVal ? argsVal.trim() : undefined;
+
+    const typeMatch = body.match(/<type>([\s\S]*?)<\/type>/);
+    const typeVal = typeMatch ? typeMatch[1] : undefined;
+    const type = typeVal ? typeVal.replace(/<[^>]*>/g, '').trim() : undefined;
+
+    const briefMatch = body.match(/<briefdescription>([\s\S]*?)<\/briefdescription>/);
+    const briefVal = briefMatch ? briefMatch[1] : undefined;
+    const briefdescription = extractParaText(briefVal ?? '');
+
+    const detailedMatch = body.match(/<detaileddescription>([\s\S]*?)<\/detaileddescription>/);
+    const detailedVal = detailedMatch ? detailedMatch[1] : undefined;
+    const detaileddescription = extractParaText(detailedVal ?? '');
+
+    const initMatch = body.match(/<initializer>([^<]*)<\/initializer>/);
+    const initVal = initMatch ? initMatch[1] : undefined;
+    const initializer = initVal ? initVal.trim() : undefined;
+
+    // Parse parameters
+    const params: Array<{ name?: string; type?: string; defval?: string; briefdescription?: string }> = [];
+    const paramRegex = /<param>([\s\S]*?)<\/param>/g;
+    let paramMatch: RegExpExecArray | null;
+
+    while ((paramMatch = paramRegex.exec(body)) !== null) {
+      const pBody = paramMatch[1];
+      if (!pBody) continue;
+      const pName = pBody.match(/<declname>([^<]*)<\/declname>/)?.[1]?.trim();
+      const pType = pBody.match(/<type>([\s\S]*?)<\/type>/)?.[1]?.replace(/<[^>]*>/g, '').trim();
+      const pDefval = pBody.match(/<defval>([^<]*)<\/defval>/)?.[1]?.trim();
+      const pBrief = extractParaText(
+        pBody.match(/<briefdescription>([\s\S]*?)<\/briefdescription>/)?.[1] ?? '',
+      );
+      params.push({ name: pName, type: pType, defval: pDefval, briefdescription: pBrief });
+    }
+
+    members.push({
+      kind, name, definition, argsstring, briefdescription, detaileddescription,
+      type, initializer, param: params.length > 0 ? params : undefined,
+    });
+  }
+
+  return members;
+}
+
 /**
  * Converts a parsed Doxygen compound into an ASTModule.
  */
@@ -292,6 +360,7 @@ function convertDoxygenCompound(compound: DoxygenCompound): ASTModule | null {
     variables: [],
   };
 
+  // Group members by section
   for (const section of compound.sectiondef ?? []) {
     for (const member of section.memberdef ?? []) {
       if (!member.name) continue;
@@ -321,18 +390,7 @@ function convertDoxygenCompound(compound: DoxygenCompound): ASTModule | null {
 
   // If this compound is a class/struct/union, add it as a class
   if (compound.kind === 'class' || compound.kind === 'struct' || compound.kind === 'union' || compound.kind === 'interface') {
-    const cls: {
-      name: string;
-      docstring?: string;
-      methods?: Array<{
-        name: string;
-        signature?: string;
-        docstring?: string;
-        parameters?: Array<{ name: string; type?: string; description?: string; default?: string }>;
-        return_type?: string;
-      }>;
-      properties?: Array<{ name: string; type?: string; docstring?: string }>;
-    } = {
+    const cls: ASTClass = {
       name: compound.name,
       docstring: description,
       methods: [],
@@ -371,56 +429,4 @@ function convertDoxygenCompound(compound: DoxygenCompound): ASTModule | null {
   }
 
   return mod;
-}
-
-  let match: RegExpExecArray | null;
-
-  while ((match = memberRegex.exec(sectionBody)) !== null) {
-    const kind = match[1];
-    const body = match[2];
-
-    const nameMatch = body.match(/<name>([^<]*)<\/name>/);
-    const name = nameMatch ? nameMatch[1].trim() : undefined;
-
-    const defMatch = body.match(/<definition>([^<]*)<\/definition>/);
-    const definition = defMatch ? defMatch[1].trim() : undefined;
-
-    const argsMatch = body.match(/<argsstring>([^<]*)<\/argsstring>/);
-    const argsstring = argsMatch ? argsMatch[1].trim() : undefined;
-
-    const typeMatch = body.match(/<type>([\s\S]*?)<\/type>/);
-    const type = typeMatch ? typeMatch[1].replace(/<[^>]*>/g, '').trim() : undefined;
-
-    const briefMatch = body.match(/<briefdescription>([\s\S]*?)<\/briefdescription>/);
-    const briefdescription = extractParaText(briefMatch ? briefMatch[1] : '');
-
-    const detailedMatch = body.match(/<detaileddescription>([\s\S]*?)<\/detaileddescription>/);
-    const detaileddescription = extractParaText(detailedMatch ? detailedMatch[1] : '');
-
-    const initMatch = body.match(/<initializer>([^<]*)<\/initializer>/);
-    const initializer = initMatch ? initMatch[1].trim() : undefined;
-
-    // Parse parameters
-    const params: Array<{ name?: string; type?: string; defval?: string; briefdescription?: string }> = [];
-    const paramRegex = /<param>([\s\S]*?)<\/param>/g;
-    let paramMatch: RegExpExecArray | null;
-
-    while ((paramMatch = paramRegex.exec(body)) !== null) {
-      const pBody = paramMatch[1];
-      const pName = pBody.match(/<declname>([^<]*)<\/declname>/)?.[1]?.trim();
-      const pType = pBody.match(/<type>([\s\S]*?)<\/type>/)?.[1]?.replace(/<[^>]*>/g, '').trim();
-      const pDefval = pBody.match(/<defval>([^<]*)<\/defval>/)?.[1]?.trim();
-      const pBrief = extractParaText(
-        pBody.match(/<briefdescription>([\s\S]*?)<\/briefdescription>/)?.[1] ?? '',
-      );
-      params.push({ name: pName, type: pType, defval: pDefval, briefdescription: pBrief });
-    }
-
-    members.push({
-      kind, name, definition, argsstring, briefdescription, detaileddescription,
-      type, initializer, param: params.length > 0 ? params : undefined,
-    });
-  }
-
-  return members;
 }

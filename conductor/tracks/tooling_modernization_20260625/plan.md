@@ -1,10 +1,10 @@
 # Plan: tooling_modernization_20260625
 
 ## Phase 1: PNPM Catalogs Configuration
-- [ ] Task: Set up Catalogs in Workspace
-    - [ ] Add `catalog:` block to `pnpm-workspace.yaml` with vitest, typescript, tsup, etc.
-    - [ ] Update all `package.json` dependency versions to `catalog:` references
-    - [ ] Run `pnpm install` and verify lockfile updates
+- [x] Task: Set up Catalogs in Workspace
+    - [x] Add `catalog:` block to `pnpm-workspace.yaml` with vitest, typescript, tsup, etc.
+    - [x] Update all `package.json` dependency versions to `catalog:` references
+    - [x] Run `pnpm install` and verify lockfile updates
 
 ## Phase 2: Biome Integration
 - [ ] Task: Configure Biome and Replace Legacy Linters

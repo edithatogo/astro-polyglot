@@ -138,6 +138,7 @@ function parseXmlDocFile(xmlPath: string): ASTModule[] {
   while ((match = memberRegex.exec(xmlContent)) !== null) {
     const memberName = match[1];
     const memberBody = match[2];
+    if (!memberName || !memberBody) continue;
 
     const summary = summaryRegex.exec(memberBody)?.[1]?.trim();
     const returns = returnsRegex.exec(memberBody)?.[1]?.trim();
@@ -146,7 +147,11 @@ function parseXmlDocFile(xmlPath: string): ASTModule[] {
     let paramMatch: RegExpExecArray | null;
     const localParamRegex = new RegExp(paramRegex.source, 'g');
     while ((paramMatch = localParamRegex.exec(memberBody)) !== null) {
-      params.push({ name: paramMatch[1], text: paramMatch[2].trim() });
+      const pName = paramMatch[1];
+      const pText = paramMatch[2];
+      if (pName && pText) {
+        params.push({ name: pName, text: pText.trim() });
+      }
     }
 
     members.push({

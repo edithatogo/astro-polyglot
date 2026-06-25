@@ -190,7 +190,7 @@ function convertExDocModules(exDocModules: ExDocModule[]): ASTModule[] {
         name: fn.name,
         signature: fn.spec ?? fn.signature ?? undefined,
         docstring: fn.doc?.trim() || undefined,
-        parameters: params.length > 0 ? params : undefined,
+        parameters: params && params.length > 0 ? params : undefined,
         return_type: extractExDocReturnType(fn.spec ?? fn.signature),
       });
     }
@@ -202,7 +202,7 @@ function convertExDocModules(exDocModules: ExDocModule[]): ASTModule[] {
         name: cb.name,
         signature: cb.spec ?? cb.signature ?? `callback ${cb.name}`,
         docstring: cb.doc?.trim() || undefined,
-        parameters: params.length > 0 ? params : undefined,
+        parameters: params && params.length > 0 ? params : undefined,
         return_type: extractExDocReturnType(cb.spec ?? cb.signature),
       });
     }

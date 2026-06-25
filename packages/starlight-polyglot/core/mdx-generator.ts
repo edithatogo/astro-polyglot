@@ -13,38 +13,38 @@ export interface MDXOutput {
 
 export interface ASTModule {
   name: string;
-  docstring?: string;
-  classes?: ASTClass[];
-  functions?: ASTFunction[];
-  variables?: ASTVariable[];
+  docstring?: string | undefined;
+  classes?: ASTClass[] | undefined;
+  functions?: ASTFunction[] | undefined;
+  variables?: ASTVariable[] | undefined;
 }
 
 export interface ASTClass {
   name: string;
-  docstring?: string;
-  methods?: ASTFunction[];
-  properties?: ASTVariable[];
+  docstring?: string | undefined;
+  methods?: ASTFunction[] | undefined;
+  properties?: ASTVariable[] | undefined;
 }
 
 export interface ASTFunction {
   name: string;
-  signature?: string;
-  docstring?: string;
-  parameters?: ASTParameter[];
-  return_type?: string;
+  signature?: string | undefined;
+  docstring?: string | undefined;
+  parameters?: ASTParameter[] | undefined;
+  return_type?: string | undefined;
 }
 
 export interface ASTParameter {
   name: string;
-  type?: string;
-  description?: string;
-  default?: string;
+  type?: string | undefined;
+  description?: string | undefined;
+  default?: string | undefined;
 }
 
 export interface ASTVariable {
   name: string;
-  type?: string;
-  docstring?: string;
+  type?: string | undefined;
+  docstring?: string | undefined;
 }
 
 /**

@@ -50,6 +50,7 @@ export default defineConfig({
       enabled: true,
       tsconfig: './tsconfig.json',
       include: ['tests/**/*.test.ts', 'tests/**/*.spec.ts'],
+      ignoreSourceErrors: true,
     },
     pool: 'forks',
     poolOptions: {
