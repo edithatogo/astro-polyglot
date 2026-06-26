@@ -115,8 +115,6 @@ function extractWithSas(entryPoints: string[]): ASTModule[] {
  */
 function parseSasOutput(output: string, entryPath: string): ASTModule | null {
   const name = path.basename(entryPath, path.extname(entryPath));
-  const _lines = output.split("\n");
-
   const mod: ASTModule = {
     name,
     docstring: undefined,

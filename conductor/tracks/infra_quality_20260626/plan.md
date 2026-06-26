@@ -31,15 +31,15 @@ Every task: implement → `git commit -m "type(area): description"` → `conduct
 - [x] Add benchmark tracking to CI (`pnpm bench`) — added bench job to ci.yml
 - [x] Create Dockerfile for containerized handler testing
 - [x] Add `test:e2e` multi-language Astro site (already existed)
-- [x] GIT: commit "ci: add conformance gate, benchmark tracking, containerized testing, e2e"
-- [ ] REVIEW + CI + PUSH
+- [x] GIT: commit "ci: add conformance gate, benchmark tracking, containerized testing, e2e" (fb173f8)
+- [x] REVIEW + CI + PUSH
 
 ## Phase 5: Code Quality & TypeScript Strictness
-- [ ] Enable `noUncheckedIndexedAccess` in tsconfig
-- [ ] Add `noUnusedLocals`, `noUnusedParameters` with error level
-- [ ] Enforce per-handler coverage thresholds in vitest.config.ts
-- [ ] Create handler maturity badge generator
-- [ ] GIT: commit "quality: strict TS checks, per-handler coverage thresholds, maturity badges"
+- [x] Enable `noUncheckedIndexedAccess` in tsconfig (already enabled)
+- [x] Add `noUnusedLocals`, `noUnusedParameters` with error level — fixed 3 unused vars in csharp/python/sas
+- [x] Enforce per-handler coverage thresholds in vitest.config.ts (perFile: true)
+- [x] Create handler maturity badge generator
+- [x] GIT: commit "quality: strict TS checks, per-handler coverage thresholds, maturity badges"
 - [ ] REVIEW + CI + PUSH
 
 ## Phase 6: Repo Structure & Governance

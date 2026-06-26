@@ -119,8 +119,6 @@ interface XmlDocMember {
 
 function parseXmlDocFile(xmlPath: string): ASTModule[] {
   const xmlContent = readFileSync(xmlPath, "utf-8");
-  const _modules: ASTModule[] = [];
-
   // Parse <member> tags from the XML doc file
   const memberRegex = /<member\s+name="([^"]+)"\s*>([\s\S]*?)<\/member>/g;
   const summaryRegex = /<summary>([\s\S]*?)<\/summary>/;

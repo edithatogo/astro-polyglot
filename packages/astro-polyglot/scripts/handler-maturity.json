@@ -1,0 +1,20 @@
+{
+  "python": "stable",
+  "typescript": "stable",
+  "rust": "stable",
+  "go": "stable",
+  "csharp": "stable",
+  "java": "stable",
+  "kotlin": "stable",
+  "cpp": "beta",
+  "swift": "beta",
+  "r": "stable",
+  "julia": "beta",
+  "scala": "beta",
+  "ruby": "beta",
+  "dart": "beta",
+  "php": "beta",
+  "elixir": "beta",
+  "stata": "experimental",
+  "sas": "experimental"
+}

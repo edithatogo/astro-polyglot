@@ -39,6 +39,7 @@
     "generate:handler": "node scripts/generate-handler.mjs",
     "generate:conformance": "node scripts/generate-conformance.mjs",
     "register:handler": "node scripts/register-handler.mjs",
+    "badges:maturity": "node scripts/generate-maturity-badges.mjs",
     "size": "size-limit",
     "prepublish": "pnpm build",
     "release": "changeset publish"
@@ -104,6 +105,8 @@
     "scripts/generate-handler.mjs",
     "scripts/generate-conformance.mjs",
     "scripts/register-handler.mjs",
+    "scripts/generate-maturity-badges.mjs",
+    "scripts/handler-maturity.json",
     "scripts/rust_extract/Cargo.lock",
     "scripts/rust_extract/Cargo.toml",
     "scripts/rust_extract/src/",

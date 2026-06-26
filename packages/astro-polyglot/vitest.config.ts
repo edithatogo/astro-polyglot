@@ -22,6 +22,7 @@ export default defineConfig({
         functions: 85,
         branches: 85,
         statements: 90,
+        perFile: true,
       },
       reporter: ["text", "json-summary", "lcov", "html"],
       all: true,

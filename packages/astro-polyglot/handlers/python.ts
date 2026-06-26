@@ -42,7 +42,7 @@ export const pythonHandler: Handler = {
 
   async validate(_sourcePath) {
     try {
-      const _result = execSync('python3 -c "import griffe"', { encoding: "utf-8", stdio: "pipe" });
+      execSync('python3 -c "import griffe"', { encoding: "utf-8", stdio: "pipe" });
       return { valid: true, errors: [] };
     } catch {
       return { valid: false, errors: ["griffe not installed. Run: pip install griffe"] };
