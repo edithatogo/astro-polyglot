@@ -1,0 +1,1 @@
+Phase 1 complete: Created shared utility modules for Doxygen, .NET XML, and Natural Docs fallback. Files: core/doxygen-utils.ts (336 lines), core/dotnet-xml-utils.ts (290 lines), core/natural-docs-fallback.ts (375 lines). Also added core/version.ts, scripts/inject-version.mjs, tests/version.test.ts. Updated index.ts and package.json for version injection.
