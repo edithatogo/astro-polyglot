@@ -16,6 +16,7 @@ import { lexHandler } from "../handlers/lex";
 import { yaccHandler } from "../handlers/yacc";
 import { vbnetHandler } from "../handlers/vbnet";
 import { fsharpHandler } from "../handlers/fsharp";
+import { javascriptHandler } from "../handlers/javascript";
 import { csharpHandler } from "../handlers/csharp";
 import { dartHandler } from "../handlers/dart";
 import { elixirHandler } from "../handlers/elixir";
@@ -98,6 +99,7 @@ export interface PolyglotConfig {
   yacc?: HandlerConfig;
   vbnet?: HandlerConfig;
   fsharp?: HandlerConfig;
+  javascript?: HandlerConfig;
   /** When true, abort all handler execution on first error (default: false) */
   failFast?: boolean;
   /** Maximum number of handlers to execute concurrently (default: 4) */
@@ -193,6 +195,8 @@ function getHandlerMap(): Partial<Record<Language, Handler>> {
     // Phase 3: .NET XML
     vbnet: registeredHandler("vbnet", vbnetHandler),
     fsharp: registeredHandler("fsharp", fsharpHandler),
+    // Phase 3: JavaScript/JSDoc
+    javascript: registeredHandler("javascript", javascriptHandler),
   };
 }
 

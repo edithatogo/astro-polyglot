@@ -45,7 +45,8 @@ export type Language =
   | "lex"
   | "yacc"
   | "vbnet"
-  | "fsharp";
+  | "fsharp"
+  | "javascript";
 
 /**
  * A single MDX output page produced by a handler, used internally

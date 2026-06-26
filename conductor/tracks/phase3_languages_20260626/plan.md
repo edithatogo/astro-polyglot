@@ -30,11 +30,11 @@ Every Phase follows this cycle:
 - [x] PUSH: git push origin main + refs/notes/commits
 
 ## Phase 2: Strategy 2 — .NET XML Foundation (parallel)
-- [ ] Create `core/dotnet-xml-utils.ts` — shared XML doc parsing
-- [ ] Create **Visual Basic (.NET)** handler
-- [ ] Create **F#** handler
-- [ ] GIT: commit "feat(phase3): add VB.NET and F# .NET XML handlers"
-- [ ] REVIEW + CI + PUSH
+- [x] `core/dotnet-xml-utils.ts` already existed
+- [x] Created **Visual Basic (.NET)** handler
+- [x] Created **F#** handler
+- [x] GIT: commit `feat(phase3): add VB.NET and F# .NET XML handlers` (SHA: 8dcf34e)
+- [x] REVIEW + CI + PUSH
 
 ## Phase 3: Strategy 1 — JavaScript / JSDoc
 - [ ] Create **JavaScript** handler using TypeDoc allowJs + JSDoc-specific tags
