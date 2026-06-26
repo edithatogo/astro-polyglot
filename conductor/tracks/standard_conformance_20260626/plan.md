@@ -18,7 +18,7 @@
 - [x] Stata conformance fixtures (.sthlp format) (b6d22fe)
 - [x] SAS conformance fixtures (macro comment blocks) (b6d22fe)
 
-## Phase 5: Integration & Documentation ⬜
-- [ ] Add conformance tests to CI pipeline
-- [ ] Document the `describeConformance` pattern for future Phase 3 handlers
-- [ ] Update README and docs-site to note exact standard variants supported per handler
+## Phase 5: Integration & Documentation ✅
+- [x] (968350a) Add conformance tests to CI pipeline
+- [x] (968350a) Document the `describeConformance` pattern for future Phase 3 handlers
+- [x] (968350a) Update README and docs-site to note exact standard variants supported per handler
