@@ -14,6 +14,8 @@ import { tclHandler } from "../handlers/tcl";
 import { idlHandler } from "../handlers/idl";
 import { lexHandler } from "../handlers/lex";
 import { yaccHandler } from "../handlers/yacc";
+import { vbnetHandler } from "../handlers/vbnet";
+import { fsharpHandler } from "../handlers/fsharp";
 import { csharpHandler } from "../handlers/csharp";
 import { dartHandler } from "../handlers/dart";
 import { elixirHandler } from "../handlers/elixir";
@@ -94,6 +96,8 @@ export interface PolyglotConfig {
   idl?: HandlerConfig;
   lex?: HandlerConfig;
   yacc?: HandlerConfig;
+  vbnet?: HandlerConfig;
+  fsharp?: HandlerConfig;
   /** When true, abort all handler execution on first error (default: false) */
   failFast?: boolean;
   /** Maximum number of handlers to execute concurrently (default: 4) */
@@ -186,6 +190,9 @@ function getHandlerMap(): Partial<Record<Language, Handler>> {
     idl: registeredHandler("idl", idlHandler),
     lex: registeredHandler("lex", lexHandler),
     yacc: registeredHandler("yacc", yaccHandler),
+    // Phase 3: .NET XML
+    vbnet: registeredHandler("vbnet", vbnetHandler),
+    fsharp: registeredHandler("fsharp", fsharpHandler),
   };
 }
 

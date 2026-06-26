@@ -43,7 +43,9 @@ export type Language =
   | "tcl"
   | "idl"
   | "lex"
-  | "yacc";
+  | "yacc"
+  | "vbnet"
+  | "fsharp";
 
 /**
  * A single MDX output page produced by a handler, used internally
