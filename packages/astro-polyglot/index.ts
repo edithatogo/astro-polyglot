@@ -2,7 +2,7 @@ import { randomBytes } from "node:crypto";
 import type { StarlightPlugin } from "@astrojs/starlight/types";
 import type { HandlerAggregateOutput } from "./core/handler";
 import { getSidebarGroupPlaceholder, type SidebarGroup } from "./core/plugin";
-import { type PolyglotConfig, resolveHandlers } from "./core/router";
+import { type PolyglotConfig, resolveHandlers, runHandlers } from "./core/router";
 
 // ─── Canonical type re-exports ───────────────────────────────────────
 export type {
@@ -48,20 +48,7 @@ function makePolyglotPlugin(sidebarGroup: SidebarGroup) {
           if (command === "preview") return;
 
           const handlers = resolveHandlers(options, logger);
-          const outputs: HandlerAggregateOutput[] = [];
-
-          for (const handler of handlers) {
-            try {
-              logger.info(`[astro-polyglot] Generating ${handler.name} documentation...`);
-              const handlerOptions = handler.options as Parameters<typeof handler.handler.generate>[0];
-              const output = await handler.handler.generate(handlerOptions);
-              outputs.push(output);
-              logger.info(`[astro-polyglot] ✓ ${handler.name}: ${output.pages.length} pages generated`);
-            } catch (error) {
-              logger.error(`[astro-polyglot] ✗ ${handler.name}: ${(error as Error).message}`);
-              throw error;
-            }
-          }
+          const outputs = await runHandlers(handlers, options, logger);
           // Merge sidebars from all handlers
           updateConfig({
             sidebar: mergeSidebars(config.sidebar, sidebarGroup, outputs) as any,

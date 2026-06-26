@@ -2,27 +2,55 @@ import { describe, it, expect, vi } from "vitest";
 import { polyglotLoader } from "../core/loader";
 import type { LoaderContext } from "astro/loaders";
 
+const mockHandlerConfig = {
+  name: "typescript",
+  options: { output: "api/typescript" },
+  handler: {
+    generate: async () => ({
+      pages: [
+        {
+          path: "api/typescript/index.mdx",
+          frontmatter: { title: "API Reference", sidebar: { label: "API" } },
+          body: "Hello World",
+        },
+      ],
+      sidebar: { label: "API", items: [] },
+    }),
+  },
+};
+
 // Mock handler execution to avoid real subprocesses during test
 vi.mock("../core/router", () => {
+  class MockHandlerCache {
+    private store = new Map<string, string>();
+    get(key: string) { return this.store.get(key); }
+    set(key: string, value: string) { this.store.set(key, value); }
+    entries() {
+      const result: Record<string, string> = {};
+      for (const [k, v] of this.store) result[k] = v;
+      return result;
+    }
+    load(entries: Record<string, string>) {
+      for (const [k, v] of Object.entries(entries)) this.store.set(k, v);
+    }
+  }
+
   return {
-    resolveHandlers: () => [
-      {
-        name: "typescript",
-        options: { output: "api/typescript" },
-        handler: {
-          generate: async () => ({
-            pages: [
-              {
-                path: "api/typescript/index.mdx",
-                frontmatter: { title: "API Reference", sidebar: { label: "API" } },
-                body: "Hello World",
-              },
-            ],
-            sidebar: { label: "API", items: [] },
-          }),
-        },
-      },
-    ],
+    resolveHandlers: () => [mockHandlerConfig],
+    runHandlers: async (_handlers: any, _config: any, _logger: any, cache?: any) => {
+      // Simulate per-handler caching
+      const cacheKey = "handler:typescript";
+      if (cache?.get(cacheKey)) {
+        // Cache hit — return no outputs
+        return [];
+      }
+      const output = await mockHandlerConfig.handler.generate();
+      if (cache) {
+        cache.set(cacheKey, "mock-digest");
+      }
+      return [output];
+    },
+    HandlerCache: MockHandlerCache,
   };
 });
 

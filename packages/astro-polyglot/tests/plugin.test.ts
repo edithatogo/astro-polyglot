@@ -222,7 +222,7 @@ describe("astro-polyglot plugin", () => {
       expect(params.logger.info).toHaveBeenCalledWith(expect.stringContaining("1 pages"));
     });
 
-    it("logs and re-throws handler errors", async () => {
+    it("logs handler errors without re-throwing by default", async () => {
       const mockHandlers = [
         {
           name: "python" as const,
@@ -232,6 +232,21 @@ describe("astro-polyglot plugin", () => {
       ];
       resolveHandlersSpy.mockReturnValue(mockHandlers);
       const plugin = polyglotPlugin({ python: {} });
+      const params = createMockParams();
+      await expect(plugin.hooks["config:setup"](params as never)).resolves.toBeUndefined();
+      expect(params.logger.error).toHaveBeenCalledWith(expect.stringContaining("python"));
+    });
+
+    it("re-throws handler errors when failFast is true", async () => {
+      const mockHandlers = [
+        {
+          name: "python" as const,
+          handler: { name: "python" as const, generate: vi.fn().mockRejectedValue(new Error("Boom")) },
+          options: { output: "api/python" },
+        },
+      ];
+      resolveHandlersSpy.mockReturnValue(mockHandlers);
+      const plugin = polyglotPlugin({ python: {}, failFast: true });
       const params = createMockParams();
       await expect(plugin.hooks["config:setup"](params as never)).rejects.toThrow("Boom");
       expect(params.logger.error).toHaveBeenCalledWith(expect.stringContaining("python"));

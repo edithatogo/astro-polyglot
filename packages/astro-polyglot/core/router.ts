@@ -1,3 +1,6 @@
+import * as crypto from "node:crypto";
+import * as fs from "node:fs";
+import * as path from "node:path";
 import { cppHandler } from "../handlers/cpp";
 import { csharpHandler } from "../handlers/csharp";
 import { dartHandler } from "../handlers/dart";
@@ -16,7 +19,7 @@ import { scalaHandler } from "../handlers/scala";
 import { stataHandler } from "../handlers/stata";
 import { swiftHandler } from "../handlers/swift";
 import { typescriptHandler } from "../handlers/typescript";
-import type { Language } from "./handler";
+import type { HandlerAggregateOutput, Language } from "./handler";
 import type { Handler } from "./plugin";
 
 /**
@@ -67,7 +70,11 @@ export interface PolyglotConfig {
   dart?: HandlerConfig;
   php?: HandlerConfig;
   elixir?: HandlerConfig;
-  [key: string]: HandlerConfig | undefined;
+  /** When true, abort all handler execution on first error (default: false) */
+  failFast?: boolean;
+  /** Maximum number of handlers to execute concurrently (default: 4) */
+  concurrency?: number;
+  [key: string]: HandlerConfig | boolean | number | undefined;
 }
 
 export interface ResolvedHandler {
@@ -86,7 +93,7 @@ export function resolveHandlers(config: PolyglotConfig, logger: Logger): Resolve
   const handlerMap = getHandlerMap();
 
   for (const [lang, opts] of Object.entries(config)) {
-    if (!opts) continue;
+    if (!opts || typeof opts !== "object") continue;
 
     const language = lang as Language;
     const handler = handlerMap[language];
@@ -95,9 +102,10 @@ export function resolveHandlers(config: PolyglotConfig, logger: Logger): Resolve
       continue;
     }
 
-    const output = opts.output ?? `api/${lang}`;
+    const hc = opts as HandlerConfig;
+    const output = hc.output ?? `api/${lang}`;
     const options: Record<string, unknown> = {
-      ...opts,
+      ...hc,
       output,
     };
 
@@ -152,4 +160,156 @@ function registeredHandler(name: Language, handler: Handler): Handler {
     },
     ...(handler.validate ? { validate: (sourcePath) => handler.validate!(sourcePath) } : {}),
   };
+}
+
+// ─── Cache Utilities ─────────────────────────────────────────────────
+
+function getSourcePaths(options: Record<string, unknown>): string[] {
+  const paths: string[] = [];
+  if (Array.isArray(options.entryPoints)) {
+    paths.push(...options.entryPoints);
+  }
+  for (const key of ["cratePath", "projectPath", "modulePath", "sourcePath"]) {
+    if (typeof options[key] === "string") {
+      paths.push(options[key] as string);
+    }
+  }
+  return paths;
+}
+
+function scanFiles(dirOrFile: string): { path: string; mtime: number; size: number }[] {
+  const results: { path: string; mtime: number; size: number }[] = [];
+  if (!fs.existsSync(dirOrFile)) return results;
+  const stat = fs.statSync(dirOrFile);
+  if (stat.isFile()) {
+    results.push({ path: dirOrFile, mtime: stat.mtimeMs, size: stat.size });
+  } else if (stat.isDirectory()) {
+    try {
+      const files = fs.readdirSync(dirOrFile);
+      for (const file of files) {
+        if (file === "node_modules" || file === "dist" || file.startsWith(".")) continue;
+        results.push(...scanFiles(path.join(dirOrFile, file)));
+      }
+    } catch {
+      // Ignore reading errors for directories we cannot read
+    }
+  }
+  return results;
+}
+
+function calculateDigest(handlers: ResolvedHandler[]): string {
+  const hash = crypto.createHash("sha256");
+  const allFiles: { path: string; mtime: number; size: number }[] = [];
+
+  for (const handler of handlers) {
+    const paths = getSourcePaths(handler.options);
+    for (const p of paths) {
+      const resolved = path.resolve(p);
+      allFiles.push(...scanFiles(resolved));
+    }
+  }
+
+  allFiles.sort((a, b) => a.path.localeCompare(b.path));
+
+  for (const file of allFiles) {
+    hash.update(`${file.path}:${file.mtime}:${file.size}`);
+  }
+
+  return hash.digest("hex");
+}
+
+// ─── Content-Hash Cache ──────────────────────────────────────────────
+
+export class HandlerCache {
+  private store = new Map<string, string>();
+
+  get(key: string): string | undefined {
+    return this.store.get(key);
+  }
+
+  set(key: string, value: string): void {
+    this.store.set(key, value);
+  }
+
+  entries(): Record<string, string> {
+    const result: Record<string, string> = {};
+    for (const [key, value] of this.store) {
+      result[key] = value;
+    }
+    return result;
+  }
+
+  load(entries: Record<string, string>): void {
+    for (const [key, value] of Object.entries(entries)) {
+      this.store.set(key, value);
+    }
+  }
+}
+
+// ─── Parallel Handler Execution ──────────────────────────────────────
+
+/**
+ * Run multiple handlers with concurrency-limited parallel execution.
+ * Each handler is wrapped in try/catch for graceful error recovery.
+ * When a HandlerCache is provided, per-handler content-hash caching
+ * skips handlers whose source files haven't changed.
+ *
+ * @param handlers  Resolved handler instances
+ * @param config    Polyglot configuration (failFast, concurrency)
+ * @param logger    Logger for status messages
+ * @param cache     Optional HandlerCache for per-handler content-hash caching
+ * @returns Array of handler aggregate outputs from successfully executed handlers
+ */
+export async function runHandlers(
+  handlers: ResolvedHandler[],
+  config: PolyglotConfig,
+  logger: Logger,
+  cache?: HandlerCache,
+): Promise<HandlerAggregateOutput[]> {
+  const concurrency = Math.max(1, config.concurrency ?? 4);
+  const results: HandlerAggregateOutput[] = [];
+  const queue = [...handlers];
+
+  async function processHandler(item: ResolvedHandler): Promise<void> {
+    const cacheKey = `handler:${item.name}`;
+
+    if (cache) {
+      const digest = calculateDigest([item]);
+      if (cache.get(cacheKey) === digest) {
+        logger.info(`[astro-polyglot] Cache hit for ${item.name}, skipping regeneration`);
+        return;
+      }
+    }
+
+    logger.info(`[astro-polyglot] Generating ${item.name} documentation...`);
+    const handlerOptions = item.options as Parameters<typeof item.handler.generate>[0];
+    const output = await item.handler.generate(handlerOptions);
+    results.push(output);
+    logger.info(`[astro-polyglot] ✓ ${item.name}: ${output.pages.length} pages generated`);
+
+    if (cache) {
+      const digest = calculateDigest([item]);
+      cache.set(cacheKey, digest);
+    }
+  }
+
+  async function worker(): Promise<void> {
+    while (queue.length > 0) {
+      const item = queue.shift()!;
+      try {
+        await processHandler(item);
+      } catch (error) {
+        logger.error(`[astro-polyglot] ✗ ${item.name}: ${(error as Error).message}`);
+        if (config.failFast) {
+          throw error;
+        }
+      }
+    }
+  }
+
+  const workerCount = Math.min(concurrency, handlers.length);
+  const workers = Array.from({ length: workerCount }, () => worker());
+  await Promise.all(workers);
+
+  return results;
 }
