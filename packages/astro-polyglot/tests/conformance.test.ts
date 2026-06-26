@@ -70,9 +70,7 @@ describe("fixture structure", () => {
 
 // ─── Conformance suites (auto-skipped on CI without toolchain) ───────────────
 
-describeConformance("python", "PEP-484", [
-  path.resolve(import.meta.dirname, "fixtures", "python", "typed_module.py"),
-]);
+describeConformance("python", "PEP-484", [path.resolve(import.meta.dirname, "fixtures", "python", "typed_module.py")]);
 
 describeConformance("typescript", "JSDoc", [
   path.resolve(import.meta.dirname, "fixtures", "typescript", "typed_module.ts"),
@@ -82,45 +80,29 @@ describeConformance("rust", "Rustdoc CommonMark", [
   path.resolve(import.meta.dirname, "fixtures", "rust", "src", "lib.rs"),
 ]);
 
-describeConformance("go", "Go comments", [
-  path.resolve(import.meta.dirname, "fixtures", "go", "math.go"),
-]);
+describeConformance("go", "Go comments", [path.resolve(import.meta.dirname, "fixtures", "go", "math.go")]);
 
-describeConformance("java", "Javadoc", [
-  path.resolve(import.meta.dirname, "fixtures", "java", "MathUtils.java"),
-]);
+describeConformance("java", "Javadoc", [path.resolve(import.meta.dirname, "fixtures", "java", "MathUtils.java")]);
 
 describeConformance("kotlin", "KDoc", [
   path.resolve(import.meta.dirname, "fixtures", "kotlin", "src", "main", "kotlin", "MathUtils.kt"),
 ]);
 
-describeConformance("csharp", ".NET XML", [
-  path.resolve(import.meta.dirname, "fixtures", "csharp", "MathUtils.cs"),
-]);
+describeConformance("csharp", ".NET XML", [path.resolve(import.meta.dirname, "fixtures", "csharp", "MathUtils.cs")]);
 
 describeConformance("swift", "DocC", [
   path.resolve(import.meta.dirname, "fixtures", "swift", "Sources", "MathUtils", "MathUtils.swift"),
 ]);
 
-describeConformance("r", "roxygen2", [
-  path.resolve(import.meta.dirname, "fixtures", "r", "math_utils.R"),
-]);
+describeConformance("r", "roxygen2", [path.resolve(import.meta.dirname, "fixtures", "r", "math_utils.R")]);
 
-describeConformance("scala", "Scaladoc", [
-  path.resolve(import.meta.dirname, "fixtures", "scala", "MathUtils.scala"),
-]);
+describeConformance("scala", "Scaladoc", [path.resolve(import.meta.dirname, "fixtures", "scala", "MathUtils.scala")]);
 
-describeConformance("ruby", "YARD", [
-  path.resolve(import.meta.dirname, "fixtures", "ruby", "math_utils.rb"),
-]);
+describeConformance("ruby", "YARD", [path.resolve(import.meta.dirname, "fixtures", "ruby", "math_utils.rb")]);
 
-describeConformance("dart", "dartdoc", [
-  path.resolve(import.meta.dirname, "fixtures", "dart", "math_utils.dart"),
-]);
+describeConformance("dart", "dartdoc", [path.resolve(import.meta.dirname, "fixtures", "dart", "math_utils.dart")]);
 
-describeConformance("php", "PHPDoc", [
-  path.resolve(import.meta.dirname, "fixtures", "php", "MathUtils.php"),
-]);
+describeConformance("php", "PHPDoc", [path.resolve(import.meta.dirname, "fixtures", "php", "MathUtils.php")]);
 
 describeConformance("elixir", "ExDoc", [
   path.resolve(import.meta.dirname, "fixtures", "elixir", "lib", "math_utils.ex"),

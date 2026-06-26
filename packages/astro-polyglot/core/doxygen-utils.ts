@@ -190,7 +190,10 @@ function parseDoxygenParams(detailedDescription: string): { name: string; descri
  */
 export function parseCompoundXml(xmlContent: string): DoxygenCompound {
   const kindMatch = /kind\s*=\s*"([^"]+)"/.exec(
-    xmlContent.slice(xmlContent.indexOf("<compounddef"), xmlContent.indexOf(">", xmlContent.indexOf("<compounddef")) + 1),
+    xmlContent.slice(
+      xmlContent.indexOf("<compounddef"),
+      xmlContent.indexOf(">", xmlContent.indexOf("<compounddef")) + 1,
+    ),
   );
   const kind = kindMatch?.[1] ?? "class";
   const name = extractTagContent(xmlContent, "compoundname") ?? "Unknown";

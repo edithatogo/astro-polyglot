@@ -14,15 +14,27 @@ export const verilogHandler: Handler = {
     const opts = options as unknown as VerilogOptions;
     if (!opts.sourcePath) throw new Error("Verilog handler requires a sourcePath option");
     if (!existsSync(opts.sourcePath)) throw new Error(`Source path does not exist: ${opts.sourcePath}`);
-    const xmlDir = await runDoxygen({ inputDir: opts.sourcePath, filePatterns: ["*.v", "*.sv", "*.svh"], projectName: "Verilog/SystemVerilog" });
+    const xmlDir = await runDoxygen({
+      inputDir: opts.sourcePath,
+      filePatterns: ["*.v", "*.sv", "*.svh"],
+      projectName: "Verilog/SystemVerilog",
+    });
     if (!xmlDir) throw new Error("Doxygen extraction failed for Verilog");
     const compounds = parseDoxygenXmlDir(xmlDir);
     const modules = doxygenToAST(compounds, "verilog");
     if (modules.length === 0) throw new Error("Doxygen extraction produced no modules for Verilog");
-    return transformToMDX(modules, { outputDir: opts.output, language: "verilog", ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}) });
+    return transformToMDX(modules, {
+      outputDir: opts.output,
+      language: "verilog",
+      ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
+    });
   },
   async validate() {
-    try { execSync("doxygen --version", { encoding: "utf-8", stdio: "pipe" }); return { valid: true, errors: [] }; }
-    catch { return { valid: false, errors: ["doxygen not found"] }; }
+    try {
+      execSync("doxygen --version", { encoding: "utf-8", stdio: "pipe" });
+      return { valid: true, errors: [] };
+    } catch {
+      return { valid: false, errors: ["doxygen not found"] };
+    }
   },
 };

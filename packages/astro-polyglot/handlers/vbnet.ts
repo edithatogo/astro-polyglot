@@ -29,10 +29,18 @@ export const vbnetHandler: Handler = {
     const modules = dotNetXmlToAST(doc);
 
     if (modules.length === 0) throw new Error("XML doc extraction produced no modules for VB.NET");
-    return transformToMDX(modules, { outputDir: opts.output, language: "vbnet", ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}) });
+    return transformToMDX(modules, {
+      outputDir: opts.output,
+      language: "vbnet",
+      ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
+    });
   },
   async validate() {
-    try { execSync("dotnet --version", { encoding: "utf-8", stdio: "pipe" }); return { valid: true, errors: [] }; }
-    catch { return { valid: false, errors: ["dotnet SDK not found"] }; }
+    try {
+      execSync("dotnet --version", { encoding: "utf-8", stdio: "pipe" });
+      return { valid: true, errors: [] };
+    } catch {
+      return { valid: false, errors: ["dotnet SDK not found"] };
+    }
   },
 };

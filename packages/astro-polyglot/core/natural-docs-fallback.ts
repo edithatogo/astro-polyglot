@@ -146,9 +146,7 @@ export function extractCommentBlocks(source: string, config: LanguageConfig): Co
   const lines = source.split(/\r?\n/);
 
   // Single-line doc-comment prefixes (e.g. "///", "//!", "--!")
-  const docLinePrefixes = config.commentSyntaxes
-    .filter((s) => s.isDocSyntax && s.linePrefix)
-    .map((s) => s.linePrefix!);
+  const docLinePrefixes = config.commentSyntaxes.filter((s) => s.isDocSyntax && s.linePrefix).map((s) => s.linePrefix!);
 
   // Block doc-comment delimiters (e.g. "/**", "--[[")
   const blockSyntaxes = config.commentSyntaxes.filter((s) => s.isDocSyntax && s.blockStart);
@@ -165,7 +163,10 @@ export function extractCommentBlocks(source: string, config: LanguageConfig): Co
       if (blockMatch.blockEnd && line.includes(blockMatch.blockEnd, blockMatch.blockStart!.length)) {
         const endIdx = line.indexOf(blockMatch.blockEnd, blockMatch.blockStart!.length);
         blocks.push({
-          text: collected.join("\n").slice(0, endIdx - blockMatch.blockStart!.length).trim(),
+          text: collected
+            .join("\n")
+            .slice(0, endIdx - blockMatch.blockStart!.length)
+            .trim(),
           line: startLine,
         });
         i++;
@@ -344,7 +345,10 @@ export function parseFile(filePath: string): ASTModule[] {
   if (!config) return [];
   if (!existsSync(filePath)) return [];
   const source = readFileSync(filePath, "utf-8");
-  const baseName = filePath.split(/[\\/]/).pop()?.replace(/\.[^.]+$/, "");
+  const baseName = filePath
+    .split(/[\\/]/)
+    .pop()
+    ?.replace(/\.[^.]+$/, "");
   return naturalDocsToAST(source, config, baseName);
 }
 

@@ -24,9 +24,7 @@ declare const POLYGLOT_VERSION: string | undefined;
  * 3. `"0.0.0-dev"` if neither is available.
  */
 export const VERSION: string =
-  typeof POLYGLOT_VERSION !== "undefined" && POLYGLOT_VERSION
-    ? POLYGLOT_VERSION
-    : readVersionFallback();
+  typeof POLYGLOT_VERSION !== "undefined" && POLYGLOT_VERSION ? POLYGLOT_VERSION : readVersionFallback();
 
 /**
  * Resolve the version from `package.json` at module-evaluation time.

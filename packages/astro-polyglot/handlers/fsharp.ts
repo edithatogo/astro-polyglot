@@ -29,10 +29,18 @@ export const fsharpHandler: Handler = {
     const modules = dotNetXmlToAST(doc);
 
     if (modules.length === 0) throw new Error("XML doc extraction produced no modules for F#");
-    return transformToMDX(modules, { outputDir: opts.output, language: "fsharp", ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}) });
+    return transformToMDX(modules, {
+      outputDir: opts.output,
+      language: "fsharp",
+      ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
+    });
   },
   async validate() {
-    try { execSync("dotnet --version", { encoding: "utf-8", stdio: "pipe" }); return { valid: true, errors: [] }; }
-    catch { return { valid: false, errors: ["dotnet SDK not found"] }; }
+    try {
+      execSync("dotnet --version", { encoding: "utf-8", stdio: "pipe" });
+      return { valid: true, errors: [] };
+    } catch {
+      return { valid: false, errors: ["dotnet SDK not found"] };
+    }
   },
 };

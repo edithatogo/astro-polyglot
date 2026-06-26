@@ -177,10 +177,7 @@ export function describeConformance(
         return;
       }
       if (!toolchainAvailable) {
-        console.warn(
-          `[conformance] Skipping "${suiteName}" — ` +
-            `"${language}" toolchain not found on this host.`,
-        );
+        console.warn(`[conformance] Skipping "${suiteName}" — ` + `"${language}" toolchain not found on this host.`);
       }
     });
 
@@ -192,9 +189,7 @@ export function describeConformance(
       }
       expect(allFixturesExist).toBe(true);
       if (!allFixturesExist) {
-        console.warn(
-          `[conformance] Missing fixture(s): ${missingFixtures.join(", ")}`,
-        );
+        console.warn(`[conformance] Missing fixture(s): ${missingFixtures.join(", ")}`);
       }
     });
 
@@ -215,9 +210,7 @@ export function describeConformance(
           output = await handler.generate(options);
         } catch (err: unknown) {
           const message = err instanceof Error ? err.message : String(err);
-          console.warn(
-            `[conformance] Handler "${language}" errored on "${fixtureName}": ${message}`,
-          );
+          console.warn(`[conformance] Handler "${language}" errored on "${fixtureName}": ${message}`);
           expect(err).toBeDefined();
           return;
         }

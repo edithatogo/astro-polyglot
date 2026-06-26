@@ -24,9 +24,12 @@ if (!languageMatch) {
 }
 
 const existingLanguages = languageMatch[1];
-const langEntries = existingLanguages.split("\n").map(l => l.trim()).filter(Boolean);
+const langEntries = existingLanguages
+  .split("\n")
+  .map((l) => l.trim())
+  .filter(Boolean);
 
-const alreadyExists = langEntries.some(e => e.includes(`"${lang}"`));
+const alreadyExists = langEntries.some((e) => e.includes(`"${lang}"`));
 if (alreadyExists) {
   console.error(`Language "${lang}" already exists in the Language union type`);
 } else {
@@ -34,10 +37,7 @@ if (alreadyExists) {
   const lastEntry = langEntries[langEntries.length - 1];
   const lastIndex = handlerContent.lastIndexOf(lastEntry);
   const insertPos = lastIndex + lastEntry.length;
-  handlerContent =
-    handlerContent.slice(0, insertPos) +
-    `\n  | "${lang}"` +
-    handlerContent.slice(insertPos);
+  handlerContent = handlerContent.slice(0, insertPos) + `\n  | "${lang}"` + handlerContent.slice(insertPos);
   writeFileSync(handlerPath, handlerContent, "utf-8");
   console.log(`✓ Added "${lang}" to Language union type in core/handler.ts`);
 }
@@ -59,7 +59,8 @@ if (!routerContent.includes(importStatement)) {
     const lastImportIndex = routerContent.lastIndexOf(lastImport);
     routerContent =
       routerContent.slice(0, lastImportIndex + lastImport.length) +
-      "\n" + importStatement +
+      "\n" +
+      importStatement +
       routerContent.slice(lastImportIndex + lastImport.length);
     writeFileSync(routerPath, routerContent, "utf-8");
     console.log(`✓ Added import for ${lang}Handler in core/router.ts`);
@@ -87,7 +88,8 @@ if (mapMatch) {
       const lastEntryIndex = routerContent.lastIndexOf(lastMapEntry);
       routerContent =
         routerContent.slice(0, lastEntryIndex + lastMapEntry.length) +
-        "\n" + mapEntry +
+        "\n" +
+        mapEntry +
         routerContent.slice(lastEntryIndex + lastMapEntry.length);
       writeFileSync(routerPath, routerContent, "utf-8");
       console.log(`✓ Added ${lang} to getHandlerMap() in core/router.ts`);
@@ -109,7 +111,8 @@ if (!routerContent.includes(configEntry)) {
       const pos = routerContent.lastIndexOf(lastConfigEntry);
       routerContent =
         routerContent.slice(0, pos + lastConfigEntry.length) +
-        "\n" + configEntry +
+        "\n" +
+        configEntry +
         routerContent.slice(pos + lastConfigEntry.length);
       writeFileSync(routerPath, routerContent, "utf-8");
       console.log(`✓ Added ${lang} config to PolyglotConfig in core/router.ts`);

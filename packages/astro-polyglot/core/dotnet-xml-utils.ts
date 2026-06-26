@@ -60,8 +60,7 @@ export function detectProject(dir: string): ProjectInfo | null {
       const fullPath = resolve(dir, entry);
       const content = readFileSync(fullPath, "utf-8");
       const tfm = content.match(/<TargetFramework[^>]*>([^<]+)<\/TargetFramework>/)?.[1];
-      const aname =
-        content.match(/<AssemblyName[^>]*>([^<]+)<\/AssemblyName>/)?.[1] ?? basename(entry, ext);
+      const aname = content.match(/<AssemblyName[^>]*>([^<]+)<\/AssemblyName>/)?.[1] ?? basename(entry, ext);
       return {
         projectPath: fullPath,
         language,
@@ -93,8 +92,7 @@ export function resolveProjectFile(projectPath: string): ProjectInfo | null {
 
   const content = readFileSync(resolved, "utf-8");
   const tfm = content.match(/<TargetFramework[^>]*>([^<]+)<\/TargetFramework>/)?.[1];
-  const aname =
-    content.match(/<AssemblyName[^>]*>([^<]+)<\/AssemblyName>/)?.[1] ?? basename(resolved, ext);
+  const aname = content.match(/<AssemblyName[^>]*>([^<]+)<\/AssemblyName>/)?.[1] ?? basename(resolved, ext);
 
   return {
     projectPath: resolved,

@@ -23,8 +23,12 @@ const mockHandlerConfig = {
 vi.mock("../core/router", () => {
   class MockHandlerCache {
     private store = new Map<string, string>();
-    get(key: string) { return this.store.get(key); }
-    set(key: string, value: string) { this.store.set(key, value); }
+    get(key: string) {
+      return this.store.get(key);
+    }
+    set(key: string, value: string) {
+      this.store.set(key, value);
+    }
     entries() {
       const result: Record<string, string> = {};
       for (const [k, v] of this.store) result[k] = v;

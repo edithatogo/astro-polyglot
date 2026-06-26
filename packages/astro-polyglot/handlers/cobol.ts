@@ -14,15 +14,27 @@ export const cobolHandler: Handler = {
     const opts = options as unknown as CobolOptions;
     if (!opts.sourcePath) throw new Error("COBOL handler requires a sourcePath option");
     if (!existsSync(opts.sourcePath)) throw new Error(`Source path does not exist: ${opts.sourcePath}`);
-    const xmlDir = await runDoxygen({ inputDir: opts.sourcePath, filePatterns: ["*.cob", "*.cbl", "*.cpy"], projectName: "COBOL" });
+    const xmlDir = await runDoxygen({
+      inputDir: opts.sourcePath,
+      filePatterns: ["*.cob", "*.cbl", "*.cpy"],
+      projectName: "COBOL",
+    });
     if (!xmlDir) throw new Error("Doxygen extraction failed for COBOL");
     const compounds = parseDoxygenXmlDir(xmlDir);
     const modules = doxygenToAST(compounds, "cobol");
     if (modules.length === 0) throw new Error("Doxygen extraction produced no modules for COBOL");
-    return transformToMDX(modules, { outputDir: opts.output, language: "cobol", ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}) });
+    return transformToMDX(modules, {
+      outputDir: opts.output,
+      language: "cobol",
+      ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
+    });
   },
   async validate() {
-    try { execSync("doxygen --version", { encoding: "utf-8", stdio: "pipe" }); return { valid: true, errors: [] }; }
-    catch { return { valid: false, errors: ["doxygen not found"] }; }
+    try {
+      execSync("doxygen --version", { encoding: "utf-8", stdio: "pipe" });
+      return { valid: true, errors: [] };
+    } catch {
+      return { valid: false, errors: ["doxygen not found"] };
+    }
   },
 };
