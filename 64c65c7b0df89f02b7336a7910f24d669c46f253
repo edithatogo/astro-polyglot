@@ -1,0 +1,1 @@
+PowerShell handler: created handlers/powershell.ts with natural-docs-fallback integration. Added tests/conformance/powershell.test.ts and tests/fixtures/powershell/. Updated handler.ts and router.ts with registration.
