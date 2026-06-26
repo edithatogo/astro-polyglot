@@ -1,0 +1,1 @@
+Phase 2: Created VB.NET and F# handlers using core/dotnet-xml-utils shared pipeline. Each detects .vbproj/.fsproj, builds with dotnet, finds XML doc output, and transforms via dotNetXmlToAST.
