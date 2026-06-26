@@ -106,6 +106,7 @@
   ],
   "keywords": [
     "astro",
+    "astro-integration",
     "starlight",
     "plugin",
     "integration",
@@ -117,7 +118,8 @@
     "r",
     "julia",
     "csharp",
-    "go"
+    "go",
+    "tooling"
   ],
   "homepage": "https://github.com/edithatogo/astro-polyglot",
   "repository": {
