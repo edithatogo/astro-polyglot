@@ -30,7 +30,20 @@ export type Language =
   | "ruby"
   | "dart"
   | "php"
-  | "elixir";
+  | "elixir"
+  // Phase 3 languages
+  | "c"
+  | "objc"
+  | "ada"
+  | "fortran"
+  | "pascal"
+  | "cobol"
+  | "vhdl"
+  | "verilog"
+  | "tcl"
+  | "idl"
+  | "lex"
+  | "yacc";
 
 /**
  * A single MDX output page produced by a handler, used internally

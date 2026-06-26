@@ -1,0 +1,13 @@
+/**
+ * @brief A simple math interface in IDL.
+ */
+
+/**
+ * @brief Add two integers.
+ * @param a First operand.
+ * @param b Second operand.
+ * @return The sum.
+ */
+interface MathUtils {
+    long add(in long a, in long b);
+};

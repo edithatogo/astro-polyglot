@@ -2,6 +2,18 @@ import * as crypto from "node:crypto";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { cppHandler } from "../handlers/cpp";
+import { cHandler } from "../handlers/c";
+import { objcHandler } from "../handlers/objc";
+import { adaHandler } from "../handlers/ada";
+import { fortranHandler } from "../handlers/fortran";
+import { pascalHandler } from "../handlers/pascal";
+import { cobolHandler } from "../handlers/cobol";
+import { vhdlHandler } from "../handlers/vhdl";
+import { verilogHandler } from "../handlers/verilog";
+import { tclHandler } from "../handlers/tcl";
+import { idlHandler } from "../handlers/idl";
+import { lexHandler } from "../handlers/lex";
+import { yaccHandler } from "../handlers/yacc";
 import { csharpHandler } from "../handlers/csharp";
 import { dartHandler } from "../handlers/dart";
 import { elixirHandler } from "../handlers/elixir";
@@ -70,6 +82,18 @@ export interface PolyglotConfig {
   dart?: HandlerConfig;
   php?: HandlerConfig;
   elixir?: HandlerConfig;
+  c?: HandlerConfig;
+  objc?: HandlerConfig;
+  ada?: HandlerConfig;
+  fortran?: HandlerConfig;
+  pascal?: HandlerConfig;
+  cobol?: HandlerConfig;
+  vhdl?: HandlerConfig;
+  verilog?: HandlerConfig;
+  tcl?: HandlerConfig;
+  idl?: HandlerConfig;
+  lex?: HandlerConfig;
+  yacc?: HandlerConfig;
   /** When true, abort all handler execution on first error (default: false) */
   failFast?: boolean;
   /** Maximum number of handlers to execute concurrently (default: 4) */
@@ -149,6 +173,19 @@ function getHandlerMap(): Partial<Record<Language, Handler>> {
     dart: registeredHandler("dart", dartHandler),
     php: registeredHandler("php", phpHandler),
     elixir: registeredHandler("elixir", elixirHandler),
+    // Phase 3: Doxygen pipeline
+    c: registeredHandler("c", cHandler),
+    objc: registeredHandler("objc", objcHandler),
+    ada: registeredHandler("ada", adaHandler),
+    fortran: registeredHandler("fortran", fortranHandler),
+    pascal: registeredHandler("pascal", pascalHandler),
+    cobol: registeredHandler("cobol", cobolHandler),
+    vhdl: registeredHandler("vhdl", vhdlHandler),
+    verilog: registeredHandler("verilog", verilogHandler),
+    tcl: registeredHandler("tcl", tclHandler),
+    idl: registeredHandler("idl", idlHandler),
+    lex: registeredHandler("lex", lexHandler),
+    yacc: registeredHandler("yacc", yaccHandler),
   };
 }
 
