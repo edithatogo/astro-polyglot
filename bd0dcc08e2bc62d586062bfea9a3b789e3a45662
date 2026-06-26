@@ -1,0 +1,1 @@
+Phase 5 of infra_quality_20260626: Enabled noUnusedLocals and noUnusedParameters (fixed unused vars in csharp.ts, python.ts, sas.ts). Added perFile coverage thresholds to vitest.config.ts. Created generate-maturity-badges.mjs script and handler-maturity.json config. Added badges:maturity script to package.json.
