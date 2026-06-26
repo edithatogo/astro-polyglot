@@ -1,0 +1,1 @@
+Total: 36 new handler files created. All registered in core/handler.ts Language union and core/router.ts PolyglotConfig + getHandlerMap. Conformance tests and fixtures for all phases. 97 test files, 747 tests passing.
