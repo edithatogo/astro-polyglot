@@ -56,5 +56,5 @@ Every task: implement → `git commit -m "type(area): description"` → `conduct
 - [x] Update docs-site with architecture documentation (docs/adr/)
 - [x] Add Architecture Decision Records for key decisions (ADR-001, ADR-002, ADR-003)
 - [x] Run full test suite: build + lint + typecheck + test
-- [x] GIT: commit "docs: architecture documentation, ADRs, handler lifecycle docs"
-- [ ] REVIEW + CI + PUSH
+- [x] GIT: commit "docs: architecture documentation, ADRs, handler lifecycle docs" (afb3aec)
+- [x] REVIEW + CI + PUSH

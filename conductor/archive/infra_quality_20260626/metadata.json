@@ -2,7 +2,7 @@
   "id": "infra_quality_20260626",
   "phase": 8,
   "type": "infrastructure",
-  "status": "in_progress",
+  "status": "completed",
   "priority": "must",
   "created": "2026-06-26",
   "fulfills": ["REQ-QA-001", "REQ-QA-006", "REQ-QA-008", "REQ-CI-001", "REQ-ARCH-001"],
