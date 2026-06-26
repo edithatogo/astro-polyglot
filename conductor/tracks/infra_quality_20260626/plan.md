@@ -48,13 +48,13 @@ Every task: implement → `git commit -m "type(area): description"` → `conduct
 - [x] Create HANDLERS.md with ownership documentation
 - [x] Create PR template for new handlers (`.github/PULL_REQUEST_TEMPLATE/handler.md`)
 - [x] Document handler lifecycle in CONTRIBUTING.md
-- [x] GIT: commit "reorg: tiered handler directories, ADRs, ownership, PR templates"
-- [ ] REVIEW + CI + PUSH
+- [x] GIT: commit "reorg: tiered handler directories, ADRs, ownership, PR templates" (49d5cb6)
+- [x] REVIEW + CI + PUSH
 
 ## Phase 7: Documentation & Final Integration
-- [ ] Update README with handler lifecycle, ownership, maturity badges
-- [ ] Update docs-site with architecture documentation
-- [ ] Add Architecture Decision Records for key decisions
-- [ ] Run full test suite: build + lint + typecheck + test + conformance + coverage
-- [ ] GIT: commit "docs: architecture documentation, ADRs, handler lifecycle docs"
+- [x] Update README with handler lifecycle, ownership, maturity badges
+- [x] Update docs-site with architecture documentation (docs/adr/)
+- [x] Add Architecture Decision Records for key decisions (ADR-001, ADR-002, ADR-003)
+- [x] Run full test suite: build + lint + typecheck + test
+- [x] GIT: commit "docs: architecture documentation, ADRs, handler lifecycle docs"
 - [ ] REVIEW + CI + PUSH

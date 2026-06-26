@@ -70,6 +70,24 @@ That's it. Run `astro dev` or `astro build` and the plugin will generate documen
 
 > All 18 language handlers are implemented, registered, and bundled with the package. Install required toolchains per language as needed.
 
+## Handler Lifecycle
+
+Handlers progress through three maturity tiers:
+
+| Tier | Description | Languages |
+|------|-------------|-----------|
+| **Stable** | Production-ready, full test coverage, CI validated | Python, TypeScript, Rust, Go, C#, Java, Kotlin, R |
+| **Beta** | Feature-complete, partial edge-case coverage | C++, Swift, Julia, Scala, Ruby, Dart, PHP, Elixir |
+| **Experimental** | Proof-of-concept, limited testing | Stata, SAS |
+
+See [packages/astro-polyglot/docs/handler-lifecycle.md](packages/astro-polyglot/docs/handler-lifecycle.md) for the full lifecycle process.
+
+![cpp](https://img.shields.io/badge/cpp-beta-yellow) ![csharp](https://img.shields.io/badge/csharp-stable-brightgreen) ![dart](https://img.shields.io/badge/dart-beta-yellow) ![elixir](https://img.shields.io/badge/elixir-beta-yellow) ![go](https://img.shields.io/badge/go-stable-brightgreen) ![java](https://img.shields.io/badge/java-stable-brightgreen) ![julia](https://img.shields.io/badge/julia-beta-yellow) ![kotlin](https://img.shields.io/badge/kotlin-stable-brightgreen) ![php](https://img.shields.io/badge/php-beta-yellow) ![python](https://img.shields.io/badge/python-stable-brightgreen) ![r](https://img.shields.io/badge/r-stable-brightgreen) ![ruby](https://img.shields.io/badge/ruby-beta-yellow) ![rust](https://img.shields.io/badge/rust-stable-brightgreen) ![sas](https://img.shields.io/badge/sas-experimental-orange) ![scala](https://img.shields.io/badge/scala-beta-yellow) ![stata](https://img.shields.io/badge/stata-experimental-orange) ![swift](https://img.shields.io/badge/swift-beta-yellow) ![typescript](https://img.shields.io/badge/typescript-stable-brightgreen)
+
+## Handler Ownership
+
+Handler ownership is documented in [packages/astro-polyglot/HANDLERS.md](packages/astro-polyglot/HANDLERS.md).
+
 ## Plugin Architecture
 
 astro-polyglot uses a **handler-based plugin architecture**. Each programming language has a dedicated handler that:
@@ -95,7 +113,8 @@ astro-polyglot uses a **handler-based plugin architecture**. Each programming la
 
 - **Handler Interface** (`core/handler.ts`): Contract every language handler must implement
 - **Plugin Setup** (`index.ts`): Astro-Starlight plugin entry point with `config:setup` hook
-- **Router** (`core/router.ts`): Resolves user configuration to handler instances
+- **Router** (`core/router.ts`): Resolves user configuration to handler instances, parallel execution (`runHandlers`), content-hash caching (`HandlerCache`), and error recovery (`failFast`)
+- **Content Loader** (`core/loader.ts`): Astro 7 content collection loader (`polyglotLoader`) with persistent caching and file watching
 - **MDX Generator** (`core/mdx-generator.ts`): Shared pipeline transforming AST data to MDX pages
 
 ### Configuration Reference
@@ -133,6 +152,21 @@ interface PolyglotConfig {
     output?: string;           // Output subdirectory (default: "api/go")
   };
 }
+```
+
+### Scaffold Scripts
+
+New language handlers can be bootstrapped using the included automation scripts:
+
+```bash
+# Scaffold handler file, fixture directory, and conformance test
+pnpm --filter astro-polyglot generate:handler <language>
+
+# Register in the type system and router
+pnpm --filter astro-polyglot register:handler <language>
+
+# Generate maturity badges
+pnpm --filter astro-polyglot badges:maturity
 ```
 
 ### Advanced Usage: Multi-Plugin Setup
