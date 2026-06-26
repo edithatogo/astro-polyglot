@@ -26,4 +26,4 @@ if (!pkg.version || !/^\d+\.\d+\.\d+/.test(pkg.version)) {
   process.exit(1);
 }
 
-process.stdout.write(`--define.POLYGLOT_VERSION=${pkg.version}`);
+process.stdout.write(`--define.POLYGLOT_VERSION='"${pkg.version}"'`);
