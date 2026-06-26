@@ -1,0 +1,1 @@
+Phase 2 of infra_quality_20260626: Added runHandlers() with concurrency-limited parallel execution (default 4), graceful error recovery with failFast option, HandlerCache for per-handler content-hash caching. Moved calculateDigest utilities to router.ts. Updated loader.ts and index.ts to use runHandlers.
