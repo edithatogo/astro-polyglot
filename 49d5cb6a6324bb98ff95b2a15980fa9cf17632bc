@@ -1,0 +1,1 @@
+Phase 6 of infra_quality_20260626: Created docs/handler-lifecycle.md with tiered structure (stable/beta/experimental), docs/adr/ADR-template.md for ADRs, HANDLERS.md with ownership assignments, .github/PULL_REQUEST_TEMPLATE/handler.md for new handler PRs. Updated CONTRIBUTING.md with lifecycle docs.
