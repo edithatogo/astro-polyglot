@@ -1,0 +1,1 @@
+Phase 1: Created 12 Doxygen-ecosystem language handlers (C, Objective-C, Ada/SPARK, Fortran, Pascal/Delphi, COBOL, VHDL, Verilog/SystemVerilog, Tcl/Tk, IDL, Lex/Flex, Yacc/Bison) using core/doxygen-utils shared pipeline. Each handler has sourcePath-based generate(), doxygen validate(), basic fixture files, and conformance tests.
