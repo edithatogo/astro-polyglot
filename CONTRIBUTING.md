@@ -270,6 +270,67 @@ This is the **recommended approach** — it ensures consistent output formatting
 Place test fixtures (sample source code, mock configurations) in `packages/astro-polyglot/tests/fixtures/`.
 
 
+### Test Fixtures
+
+Place test fixtures (sample source code, mock configurations) in `packages/astro-polyglot/tests/fixtures/`.
+
+### Conformance Testing
+
+Every language handler must pass **standard conformance tests** that validate it correctly parses its target docstring standard. The `describeConformance(language, standard, fixtures)` helper in `tests/helpers/conformance.ts` provides a standardized testing pattern.
+
+#### How `describeConformance` Works
+
+```typescript
+import { describeConformance } from "../helpers/conformance";
+import path from "node:path";
+
+describeConformance("python", "PEP-484 / Google-style", [
+  path.resolve(import.meta.dirname, "fixtures", "python", "typed_module.py"),
+]);
+```
+
+When invoked at the top level of a test file, `describeConformance` automatically:
+
+1. **Loads the handler** — Imports `handlers/{language}` and extracts the `{language}Handler` export
+2. **Checks toolchain availability** — Calls the handler's `validate()` method or probes for its CLI command; skips the suite if unavailable
+3. **Validates fixture files** — Asserts all referenced fixture paths exist on disk
+4. **Runs per-fixture generation** — Calls `handler.generate(options)` for each fixture and validates the output shape (`.pages[]`, `.sidebar`, frontmatter, body)
+5. **Checks consistency** — Verifies repeated `generate()` calls return consistent output shapes
+
+Results are reported as standard Vitest tests in the `Conformance: {standard}` describe block.
+
+#### Adding Conformance for a New Handler
+
+When adding a new language handler:
+
+1. Create fixture source files in `tests/fixtures/{language}/` using the target docstring standard
+2. Add a `describeConformance(...)` call in `tests/conformance.test.ts`
+3. Run locally: `pnpm --filter astro-polyglot test:conformance`
+4. The CI pipeline runs all conformance suites automatically via the `conformance` job
+
+#### Supported Standard Variants by Handler
+
+| Handler | Standard(s) | Fixture Path | Risk |
+|---------|-------------|-------------|------|
+| Python | Google-style, NumPy-style, Sphinx reST | `fixtures/python/` | Medium |
+| TypeScript | JSDoc | `fixtures/typescript/` | Low |
+| Rust | Rustdoc CommonMark | `fixtures/rust/` | Low |
+| Go | Go comments | `fixtures/go/` | Low |
+| Java | Javadoc | `fixtures/java/` | Low |
+| Kotlin | KDoc | `fixtures/kotlin/` | Low |
+| C# | .NET XML | `fixtures/csharp/` | Low |
+| Swift | DocC | `fixtures/swift/` | Low |
+| Julia | Base.Docs | `fixtures/julia/` | Medium |
+| R | roxygen2 | `fixtures/r/` | Low |
+| Scala | Scaladoc | `fixtures/scala/` | Low |
+| Ruby | YARD | `fixtures/ruby/` | Low |
+| Dart | dartdoc | `fixtures/dart/` | Low |
+| PHP | PHPDoc | `fixtures/php/` | Low |
+| Elixir | ExDoc | `fixtures/elixir/` | Low |
+| Stata | .sthlp custom | `fixtures/stata/` | High |
+| SAS | Macro comments | `fixtures/sas/` | High |
+
+> **Note:** Tests automatically skip when the handler's CLI toolchain is not installed on the host. This allows CI to pass even without every language runtime, while still validating fixture structure and handler exports.
 
 
 ## Pull Request Process

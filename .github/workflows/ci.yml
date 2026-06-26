@@ -48,6 +48,26 @@ jobs:
       - run: pnpm install --no-frozen-lockfile
       - run: pnpm -r typecheck
 
+  conformance:
+    name: Conformance (Golden Fixtures)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --no-frozen-lockfile
+      - name: Run conformance tests
+        run: pnpm --filter astro-polyglot test:conformance
+      - name: Check conformance results
+        run: |
+          echo "✅ Conformance tests completed (fixtures may auto-skip if toolchain is unavailable)"
+
   test:
     name: Test (Vitest)
     runs-on: ubuntu-latest

@@ -20,6 +20,7 @@
     "build": "tsup index.ts --format esm,cjs --dts --clean --shims --define.import.meta.dirname=__dirname",
     "dev": "tsup index.ts --format esm,cjs --dts --watch --shims --define.import.meta.dirname=__dirname",
     "test": "vitest run",
+    "test:conformance": "vitest run tests/conformance.test.ts --reporter=verbose",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:properties": "vitest run tests/properties/ --reporter=verbose",

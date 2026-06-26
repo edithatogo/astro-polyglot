@@ -47,26 +47,26 @@ That's it. Run `astro dev` or `astro build` and the plugin will generate documen
 
 ## Supported Languages
 
-| Language     | Status       | Toolchain                   | Requires                                                |
-|--------------|--------------|-----------------------------|---------------------------------------------------------|
-| Python       | ✅ Implemented | Griffe                    | Python 3.11+ `pip install griffe`                       |
-| TypeScript   | ✅ Implemented | TypeDoc                  | `npm install typedoc typedoc-plugin-markdown`           |
-| Rust         | ✅ Implemented | rustdoc JSON             | Rust nightly `cargo +nightly rustdoc`                   |
-| Go           | ✅ Implemented | gomarkdoc                | `go install github.com/princjef/gomarkdoc`              |
-| Java         | ✅ Implemented | javadoc-json             | JDK 11+                                                  |
-| Kotlin       | ✅ Implemented | Dokka                    | Kotlin compiler + Dokka CLI                             |
-| C# (.NET)    | ✅ Implemented | .NET XML doc             | .NET SDK                                                |
-| C++          | ✅ Implemented | Doxygen XML              | Doxygen                                                 |
-| Swift        | ✅ Implemented | DocC                     | Swift 5.9+ with DocC                                    |
-| Julia        | ✅ Implemented | Base.Docs                | Julia runtime                                           |
-| R            | ✅ Implemented | roxygen2 / Rscript       | R runtime + roxygen2                                    |
-| Scala        | ✅ Implemented | Scaladoc                 | Scala compiler                                          |
-| Ruby         | ✅ Implemented | YARD                     | Ruby runtime + `gem install yard`                       |
-| Dart         | ✅ Implemented | dartdoc                  | Dart SDK                                                |
-| PHP          | ✅ Implemented | phpDocumentor            | PHP 8.1+ `composer require phpdocumentor`              |
-| Elixir       | ✅ Implemented | ExDoc                    | Elixir runtime + ExDoc                                  |
-| Stata        | ✅ Implemented | Help system              | Stata (MP/SE) 17+                                       |
-| SAS          | ✅ Implemented | Documentation macros     | SAS 9.4+                                                |
+| Language     | Status       | Doc Standard                      | Toolchain                   | Requires                                                |
+|--------------|--------------|-----------------------------------|-----------------------------|---------------------------------------------------------|
+| Python       | ✅ Implemented | Google, NumPy, Sphinx reST        | Griffe                    | Python 3.11+ `pip install griffe`                       |
+| TypeScript   | ✅ Implemented | JSDoc                             | TypeDoc                  | `npm install typedoc typedoc-plugin-markdown`           |
+| Rust         | ✅ Implemented | Rustdoc CommonMark                | rustdoc JSON             | Rust nightly `cargo +nightly rustdoc`                   |
+| Go           | ✅ Implemented | Go comments                       | gomarkdoc                | `go install github.com/princjef/gomarkdoc`              |
+| Java         | ✅ Implemented | Javadoc                           | javadoc-json             | JDK 11+                                                  |
+| Kotlin       | ✅ Implemented | KDoc                              | Dokka                    | Kotlin compiler + Dokka CLI                             |
+| C# (.NET)    | ✅ Implemented | .NET XML doc                      | .NET SDK                | .NET SDK                                                |
+| C++          | ✅ Implemented | Doxygen (Javadoc + QT style)      | Doxygen XML              | Doxygen                                                 |
+| Swift        | ✅ Implemented | DocC                              | DocC                     | Swift 5.9+ with DocC                                    |
+| Julia        | ✅ Implemented | Base.Docs                         | Base.Docs                | Julia runtime                                           |
+| R            | ✅ Implemented | roxygen2                          | roxygen2 / Rscript       | R runtime + roxygen2                                    |
+| Scala        | ✅ Implemented | Scaladoc                          | Scaladoc                 | Scala compiler                                          |
+| Ruby         | ✅ Implemented | YARD                              | YARD                     | Ruby runtime + `gem install yard`                       |
+| Dart         | ✅ Implemented | dartdoc                           | dartdoc                  | Dart SDK                                                |
+| PHP          | ✅ Implemented | PHPDoc                            | phpDocumentor            | PHP 8.1+ `composer require phpdocumentor`              |
+| Elixir       | ✅ Implemented | ExDoc                             | ExDoc                    | Elixir runtime + ExDoc                                  |
+| Stata        | ✅ Implemented | .sthlp help system                | Stata CLI                | Stata (MP/SE) 17+                                       |
+| SAS          | ✅ Implemented | SAS macro comments                | SAS CLI                  | SAS 9.4+                                                |
 
 > All 18 language handlers are implemented, registered, and bundled with the package. Install required toolchains per language as needed.
 
