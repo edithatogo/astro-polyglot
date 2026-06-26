@@ -1,0 +1,1 @@
+Phase 3 of infra_quality_20260626: Created three scripts for handler scaffold and automation: generate-handler.mjs (scaffolds handler.ts + fixture dir + conformance test), generate-conformance.mjs (conformance test boilerplate), register-handler.mjs (adds to Language union, router imports, getHandlerMap, PolyglotConfig). Added script commands to package.json.
