@@ -142,3 +142,28 @@ jobs:
           name: dist
           path: packages/astro-polyglot/dist/
       - run: pnpm --filter astro-polyglot size
+
+  bench:
+    name: Benchmark
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --no-frozen-lockfile
+      - name: Run benchmarks
+        run: pnpm --filter astro-polyglot test:bench
+      - name: Report benchmark results
+        run: |
+          if [ -f packages/astro-polyglot/coverage/bench-results.json ]; then
+            echo "✅ Benchmark results found"
+            cat packages/astro-polyglot/coverage/bench-results.json
+          else
+            echo "⚠️  No benchmark results file found — running baseline"
+          fi

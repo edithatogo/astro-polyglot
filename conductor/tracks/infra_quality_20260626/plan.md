@@ -19,19 +19,19 @@ Every task: implement → `git commit -m "type(area): description"` → `conduct
 - [x] REVIEW + CI + PUSH
 
 ## Phase 3: Handler Scaffold & Automation (parallel)
-- [ ] Create `scripts/generate-handler.mjs` — handler scaffold generator
-- [ ] Create `scripts/generate-conformance.mjs` — conformance test generator
-- [ ] Create `scripts/register-handler.mjs` — auto-registration in router.ts
-- [ ] GIT: commit "feat(scripts): add handler scaffold, conformance, and registration generators"
-- [ ] REVIEW + CI + PUSH
+- [x] Create `scripts/generate-handler.mjs` — handler scaffold generator
+- [x] Create `scripts/generate-conformance.mjs` — conformance test generator
+- [x] Create `scripts/register-handler.mjs` — auto-registration in router.ts
+- [x] GIT: commit "feat(scripts): add handler scaffold, conformance, and registration generators" (b7c3345)
+- [x] REVIEW + CI + PUSH
 
 ## Phase 4: CI/CD Pipeline Improvements
-- [ ] Add `test:conformance` script to package.json
-- [ ] Add conformance CI gate to `.github/workflows/ci.yml`
-- [ ] Add benchmark tracking to CI (`pnpm bench`)
-- [ ] Create Dockerfile for containerized handler testing
-- [ ] Add `test:e2e` multi-language Astro site
-- [ ] GIT: commit "ci: add conformance gate, benchmark tracking, containerized testing, e2e"
+- [x] Add `test:conformance` script to package.json (already existed)
+- [x] Add conformance CI gate to `.github/workflows/ci.yml` (already existed)
+- [x] Add benchmark tracking to CI (`pnpm bench`) — added bench job to ci.yml
+- [x] Create Dockerfile for containerized handler testing
+- [x] Add `test:e2e` multi-language Astro site (already existed)
+- [x] GIT: commit "ci: add conformance gate, benchmark tracking, containerized testing, e2e"
 - [ ] REVIEW + CI + PUSH
 
 ## Phase 5: Code Quality & TypeScript Strictness
