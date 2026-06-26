@@ -1,0 +1,1 @@
+Phase 4 of infra_quality_20260626: Added benchmark CI job to .github/workflows/ci.yml, created Dockerfile for containerized handler testing. Existing scripts (test:conformance, test:e2e) and conformance CI gate were already in place.
