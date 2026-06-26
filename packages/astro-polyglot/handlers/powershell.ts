@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { transformToMDX } from "../core/mdx-generator";
-import { extractCommentBlocks, parseDocBlock, naturalDocsToAST, type LanguageConfig } from "../core/natural-docs-fallback";
+import { naturalDocsToAST, type LanguageConfig } from "../core/natural-docs-fallback";
 import type { BaseHandlerOptions, Handler } from "../core/plugin";
 import type { ASTModule } from "../core/mdx-generator";
 
@@ -17,7 +17,7 @@ const powerShellConfig: LanguageConfig = {
   ],
 };
 
-export const powerShellHandler: Handler = {
+export const powershellHandler: Handler = {
   name: "powershell",
 
   async generate(options) {

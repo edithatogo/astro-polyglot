@@ -103,7 +103,7 @@ const languageConfigs: Record<string, LanguageConfig> = {
   },
   prolog: {
     extensions: [".pl", ".pro"],
-    commentSyntaxes: [{ linePrefix: "%", isDocSyntax: false }],
+    commentSyntaxes: [{ linePrefix: "%", isDocSyntax: true }],
   },
   ocaml: {
     extensions: [".ml", ".mli"],

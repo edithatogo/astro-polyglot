@@ -47,7 +47,40 @@ export type Language =
   | "vbnet"
   | "fsharp"
   | "javascript"
-  | "powershell";
+  | "powershell"
+  // Phase 5: SHOULD priority
+  | "matlab"
+  | "haskell"
+  | "lua"
+  | "perl"
+  | "clojure"
+  | "erlang"
+  | "groovy"
+  | "gdscript"
+  // Phase 6: COULD priority
+  | "ocaml"
+  | "d"
+  | "solidity"
+  | "apex"
+  | "zig"
+  | "gleam"
+  | "nim"
+  | "crystal"
+  | "vlang"
+  | "odin"
+  | "pony"
+  // Phase 7: Emerging
+  | "gml"
+  | "purescript"
+  | "reason"
+  | "mojo"
+  | "qsharp"
+  | "graphql"
+  | "idris"
+  // Phase 8: Legacy fallback
+  | "prolog"
+  | "smalltalk"
+  | "algol";
 
 /**
  * A single MDX output page produced by a handler, used internally

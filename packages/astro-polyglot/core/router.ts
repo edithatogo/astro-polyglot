@@ -17,7 +17,7 @@ import { yaccHandler } from "../handlers/yacc";
 import { vbnetHandler } from "../handlers/vbnet";
 import { fsharpHandler } from "../handlers/fsharp";
 import { javascriptHandler } from "../handlers/javascript";
-import { powerShellHandler } from "../handlers/powershell";
+import { powershellHandler } from "../handlers/powershell";
 import { csharpHandler } from "../handlers/csharp";
 import { dartHandler } from "../handlers/dart";
 import { elixirHandler } from "../handlers/elixir";
@@ -35,6 +35,32 @@ import { scalaHandler } from "../handlers/scala";
 import { stataHandler } from "../handlers/stata";
 import { swiftHandler } from "../handlers/swift";
 import { typescriptHandler } from "../handlers/typescript";
+import { matlabHandler } from "../handlers/matlab";
+import { haskellHandler } from "../handlers/haskell";
+import { luaHandler } from "../handlers/lua";
+import { perlHandler } from "../handlers/perl";
+import { clojureHandler } from "../handlers/clojure";
+import { erlangHandler } from "../handlers/erlang";
+import { groovyHandler } from "../handlers/groovy";
+import { gdscriptHandler } from "../handlers/gdscript";
+import { ocamlHandler } from "../handlers/ocaml";
+import { dHandler } from "../handlers/d";
+import { solidityHandler } from "../handlers/solidity";
+import { apexHandler } from "../handlers/apex";
+import { zigHandler } from "../handlers/zig";
+import { gleamHandler } from "../handlers/gleam";
+import { nimHandler } from "../handlers/nim";
+import { crystalHandler } from "../handlers/crystal";
+import { vlangHandler } from "../handlers/vlang";
+import { odinHandler } from "../handlers/odin";
+import { ponyHandler } from "../handlers/pony";
+import { gmlHandler } from "../handlers/gml";
+import { purescriptHandler } from "../handlers/purescript";
+import { reasonHandler } from "../handlers/reason";
+import { mojoHandler } from "../handlers/mojo";
+import { qsharpHandler } from "../handlers/qsharp";
+import { graphqlHandler } from "../handlers/graphql";
+import { idrisHandler } from "../handlers/idris";
 import type { HandlerAggregateOutput, Language } from "./handler";
 import type { Handler } from "./plugin";
 
@@ -102,6 +128,35 @@ export interface PolyglotConfig {
   fsharp?: HandlerConfig;
   javascript?: HandlerConfig;
   powershell?: HandlerConfig;
+  matlab?: HandlerConfig;
+  haskell?: HandlerConfig;
+  lua?: HandlerConfig;
+  perl?: HandlerConfig;
+  clojure?: HandlerConfig;
+  erlang?: HandlerConfig;
+  groovy?: HandlerConfig;
+  gdscript?: HandlerConfig;
+  ocaml?: HandlerConfig;
+  d?: HandlerConfig;
+  solidity?: HandlerConfig;
+  apex?: HandlerConfig;
+  zig?: HandlerConfig;
+  gleam?: HandlerConfig;
+  nim?: HandlerConfig;
+  crystal?: HandlerConfig;
+  vlang?: HandlerConfig;
+  odin?: HandlerConfig;
+  pony?: HandlerConfig;
+  gml?: HandlerConfig;
+  purescript?: HandlerConfig;
+  reason?: HandlerConfig;
+  mojo?: HandlerConfig;
+  qsharp?: HandlerConfig;
+  graphql?: HandlerConfig;
+  idris?: HandlerConfig;
+  prolog?: HandlerConfig;
+  smalltalk?: HandlerConfig;
+  algol?: HandlerConfig;
   /** When true, abort all handler execution on first error (default: false) */
   failFast?: boolean;
   /** Maximum number of handlers to execute concurrently (default: 4) */
@@ -200,7 +255,36 @@ function getHandlerMap(): Partial<Record<Language, Handler>> {
     // Phase 3: JavaScript/JSDoc
     javascript: registeredHandler("javascript", javascriptHandler),
     // Phase 3: PowerShell
-    powershell: registeredHandler("powershell", powerShellHandler),
+    powershell: registeredHandler("powershell", powershellHandler),
+    // Phase 5: SHOULD priority
+    matlab: registeredHandler("matlab", matlabHandler),
+    haskell: registeredHandler("haskell", haskellHandler),
+    lua: registeredHandler("lua", luaHandler),
+    perl: registeredHandler("perl", perlHandler),
+    clojure: registeredHandler("clojure", clojureHandler),
+    erlang: registeredHandler("erlang", erlangHandler),
+    groovy: registeredHandler("groovy", groovyHandler),
+    gdscript: registeredHandler("gdscript", gdscriptHandler),
+    // Phase 6: COULD priority
+    ocaml: registeredHandler("ocaml", ocamlHandler),
+    d: registeredHandler("d", dHandler),
+    solidity: registeredHandler("solidity", solidityHandler),
+    apex: registeredHandler("apex", apexHandler),
+    zig: registeredHandler("zig", zigHandler),
+    gleam: registeredHandler("gleam", gleamHandler),
+    nim: registeredHandler("nim", nimHandler),
+    crystal: registeredHandler("crystal", crystalHandler),
+    vlang: registeredHandler("vlang", vlangHandler),
+    odin: registeredHandler("odin", odinHandler),
+    pony: registeredHandler("pony", ponyHandler),
+    // Phase 7: Emerging
+    gml: registeredHandler("gml", gmlHandler),
+    purescript: registeredHandler("purescript", purescriptHandler),
+    reason: registeredHandler("reason", reasonHandler),
+    mojo: registeredHandler("mojo", mojoHandler),
+    qsharp: registeredHandler("qsharp", qsharpHandler),
+    graphql: registeredHandler("graphql", graphqlHandler),
+    idris: registeredHandler("idris", idrisHandler),
   };
 }
 
