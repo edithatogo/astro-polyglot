@@ -1,0 +1,1 @@
+Phase 7 of infra_quality_20260626: Updated README.md with handler lifecycle, ownership, scaffold scripts. Created ADR-001 (plugin architecture), ADR-002 (handler dispatch), ADR-003 (caching strategy). Full test suite passes.
