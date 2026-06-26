@@ -24,6 +24,7 @@ export type {
 } from "./core/plugin";
 export type { PolyglotConfig } from "./core/router";
 export { polyglotLoader, type PolyglotLoaderOptions } from "./core/loader";
+export { VERSION } from "./core/version";
 
 // ─── Plugin entry point ──────────────────────────────────────────────
 

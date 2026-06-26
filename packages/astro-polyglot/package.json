@@ -17,8 +17,8 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsup index.ts --format esm,cjs --dts --clean --shims --define.import.meta.dirname=__dirname",
-    "dev": "tsup index.ts --format esm,cjs --dts --watch --shims --define.import.meta.dirname=__dirname",
+    "build": "tsup index.ts --format esm,cjs --dts --clean --shims --define.import.meta.dirname=__dirname $(node scripts/inject-version.mjs)",
+    "dev": "tsup index.ts --format esm,cjs --dts --watch --shims --define.import.meta.dirname=__dirname $(node scripts/inject-version.mjs)",
     "test": "vitest run",
     "test:conformance": "vitest run tests/conformance.test.ts --reporter=verbose",
     "test:watch": "vitest",
@@ -97,6 +97,7 @@
     "scripts/*.sas",
     "scripts/*.scala",
     "scripts/*.ts",
+    "scripts/inject-version.mjs",
     "scripts/rust_extract/Cargo.lock",
     "scripts/rust_extract/Cargo.toml",
     "scripts/rust_extract/src/",

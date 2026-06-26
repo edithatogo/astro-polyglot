@@ -3,12 +3,12 @@
 ## Execution Lifecycle
 Every task: implement → `git commit -m "type(area): description"` → `conductor-review` → apply fixes → `pnpm build && pnpm test` → verify CI green → `git push origin main` → next task
 
-## Phase 1: Shared Utility Modules (parallel)
-- [ ] Create `core/doxygen-utils.ts` — Doxyfile generation + XML-to-AST transform
-- [ ] Create `core/dotnet-xml-utils.ts` — .NET XML doc parsing + project detection
-- [ ] Create `core/natural-docs-fallback.ts` — language-agnostic comment parser
-- [ ] GIT: commit "feat(core): add shared doxygen-utils, dotnet-xml-utils, natural-docs-fallback"
-- [ ] REVIEW + CI + PUSH
+## Phase 1: Shared Utility Modules (parallel) ✅
+- [x] Create `core/doxygen-utils.ts` — Doxyfile generation + XML-to-AST transform
+- [x] Create `core/dotnet-xml-utils.ts` — .NET XML doc parsing + project detection
+- [x] Create `core/natural-docs-fallback.ts` — language-agnostic comment parser
+- [x] GIT: commit "feat(core): add shared doxygen-utils, dotnet-xml-utils, natural-docs-fallback"
+- [x] REVIEW + CI + PUSH
 
 ## Phase 2: Architecture Improvements (parallel)
 - [ ] Implement parallel handler execution (Promise.all with concurrency limit)
