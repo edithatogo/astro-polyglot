@@ -299,7 +299,7 @@ export function naturalDocsToAST(source: string, config: LanguageConfig, fileNam
     const docstring = [parsed.summary, parsed.description].filter(Boolean).join("\n\n") || undefined;
     const params = parsed.tags
       .filter((t) => t.name === "param")
-      .map((t) => ({ name: t.value?.split("\s")[0] ?? "param", description: t.body ?? t.value }));
+      .map((t) => ({ name: t.value?.split("\\s")[0] ?? "param", description: t.body ?? t.value }));
     const returnType = parsed.tags.find((t) => t.name === "returns")?.value;
 
     if (target?.kind === "class") {

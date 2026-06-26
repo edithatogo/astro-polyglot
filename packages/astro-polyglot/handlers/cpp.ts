@@ -51,14 +51,6 @@ interface DoxygenSectionDef {
 }
 
 /**
- * Top-level Doxygen XML compound output shape.
- */
-interface DoxygenCompoundFile {
-  compound?: DoxygenCompound;
-  compounddef?: DoxygenCompound;
-}
-
-/**
  * C/C++ handler: Uses Doxygen to generate XML documentation, then parses
  * the XML output into structured ASTModule data for the astro-polyglot
  * MDX pipeline.

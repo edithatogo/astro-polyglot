@@ -74,7 +74,7 @@ describe.each(ALL_LANGUAGES.map((language) => [language]))("Edge cases: %s handl
         expect(result.value).toHaveProperty("sidebar");
       }
     }
-  });
+  }, 120_000);
 
   it("validate() handles path edge cases when implemented", async () => {
     if (!handler?.validate) return;

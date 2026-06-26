@@ -189,7 +189,6 @@ function parseDoxygenParams(detailedDescription: string): { name: string; descri
  * Parse a Doxygen compound definition XML into a structured DoxygenCompound.
  */
 export function parseCompoundXml(xmlContent: string): DoxygenCompound {
-  const compoundDef = extractTagContent(xmlContent, "compounddef") ?? "";
   const kindMatch = /kind\s*=\s*"([^"]+)"/.exec(
     xmlContent.slice(xmlContent.indexOf("<compounddef"), xmlContent.indexOf(">", xmlContent.indexOf("<compounddef")) + 1),
   );
@@ -266,9 +265,7 @@ export function parseDoxygenXmlDir(xmlDir: string): DoxygenCompound[] {
     if (!content.includes("<compounddef")) continue;
     try {
       compounds.push(parseCompoundXml(content));
-    } catch {
-      continue;
-    }
+    } catch {}
   }
   return compounds;
 }

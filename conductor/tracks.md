@@ -95,7 +95,6 @@
 | migrate_mars_20260513 | 4 | must | self_docs_20260513 | REQ-MIG-003, REQ-MIG-005, REQ-MIG-006 |
 | migrate_lifecourse_20260513 | 4 | must | self_docs_20260513 | REQ-MIG-004, REQ-MIG-005, REQ-MIG-006 |
 | sota_contract_review_20260513 | 5 | should | All Phase 4 migrations | REQ-SOTA-001..004 |
-| | standard_conformance_20260626 | 8 | must | — | REQ-QA-001, REQ-QA-006, REQ-HDL-001 |
 | | infra_quality_20260626 | 8 | must | astro_migration_20260625, tooling_modernization_20260625, standard_conformance_20260626 | REQ-QA-001, REQ-QA-006, REQ-QA-008, REQ-CI-001, REQ-ARCH-001 |
 | | phase3_languages_20260626 | 8 | should | standard_conformance_20260626 | REQ-HDL-001, REQ-HDL-002 |
 ## Phase 7: Bleeding-Edge Testing (Completed)
@@ -110,7 +109,6 @@
 
 ## Phase 8: Infrastructure & Language Expansion (In Progress)
 
-- `[x]` [standard_conformance_20260626](./tracks/standard_conformance_20260626/) — Standard conformance test infrastructure (all phases complete ✅)
 - `[~]` [infra_quality_20260626](./tracks/infra_quality_20260626/) — Shared utilities, architecture improvements, CI/CD upgrades, repo governance
 - `[ ]` [phase3_languages_20260626](./tracks/phase3_languages_20260626/) — 60+ language handlers via Doxygen, .NET XML, JSDoc, Natural Docs strategies
 

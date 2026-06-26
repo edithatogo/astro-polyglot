@@ -44,7 +44,7 @@ function makePolyglotPlugin(sidebarGroup: SidebarGroup) {
     return {
       name: "astro-polyglot",
       hooks: {
-        async "config:setup"({ astroConfig, command, config, logger, updateConfig }) {
+        async "config:setup"({ command, config, logger, updateConfig }) {
           if (command === "preview") return;
 
           const handlers = resolveHandlers(options, logger);
