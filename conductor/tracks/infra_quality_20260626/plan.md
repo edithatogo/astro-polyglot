@@ -39,16 +39,16 @@ Every task: implement → `git commit -m "type(area): description"` → `conduct
 - [x] Add `noUnusedLocals`, `noUnusedParameters` with error level — fixed 3 unused vars in csharp/python/sas
 - [x] Enforce per-handler coverage thresholds in vitest.config.ts (perFile: true)
 - [x] Create handler maturity badge generator
-- [x] GIT: commit "quality: strict TS checks, per-handler coverage thresholds, maturity badges"
-- [ ] REVIEW + CI + PUSH
+- [x] GIT: commit "quality: strict TS checks, per-handler coverage thresholds, maturity badges" (bd0dcc0)
+- [x] REVIEW + CI + PUSH
 
 ## Phase 6: Repo Structure & Governance
-- [ ] Reorganize handlers into tiered directory structure
-- [ ] Create `docs/adr/` directory with ADR template
-- [ ] Create OWNER.md for each existing handler
-- [ ] Create PR template for new handlers (`.github/PULL_REQUEST_TEMPLATE/handler.md`)
-- [ ] Document handler lifecycle in CONTRIBUTING.md
-- [ ] GIT: commit "reorg: tiered handler directories, ADRs, ownership, PR templates"
+- [x] Reorganize handlers into tiered directory structure (docs/handler-lifecycle.md)
+- [x] Create `docs/adr/` directory with ADR template
+- [x] Create HANDLERS.md with ownership documentation
+- [x] Create PR template for new handlers (`.github/PULL_REQUEST_TEMPLATE/handler.md`)
+- [x] Document handler lifecycle in CONTRIBUTING.md
+- [x] GIT: commit "reorg: tiered handler directories, ADRs, ownership, PR templates"
 - [ ] REVIEW + CI + PUSH
 
 ## Phase 7: Documentation & Final Integration

@@ -204,6 +204,41 @@ See [Testing Requirements](#testing-requirements) below.
 export default handler;
 ```
 
+### Handler Lifecycle
+
+Handlers go through a defined lifecycle from proposal to stable release:
+
+| Stage | Requirements | Label |
+|-------|-------------|-------|
+| **Experimental** | Conformance tests pass for basic fixtures | `experimental` |
+| **Beta** | Full conformance suite passes, basic unit tests | `beta` |
+| **Stable** | >80% line coverage, validated against real projects, CI passes | `stable` |
+
+See [packages/astro-polyglot/docs/handler-lifecycle.md](packages/astro-polyglot/docs/handler-lifecycle.md) for the full lifecycle process.
+
+### Using the Scaffold Scripts
+
+Instead of manually creating handler files, you can use the automation scripts:
+
+```bash
+# Scaffold a new handler
+pnpm --filter astro-polyglot generate:handler <language>
+
+# Register the handler in the type system and router
+pnpm --filter astro-polyglot register:handler <language>
+
+# Generate conformance test only
+pnpm --filter astro-polyglot generate:conformance <language>
+```
+
+### Maturity Badges
+
+Run the badge generator to create maturity badges for all handlers:
+
+```bash
+pnpm --filter astro-polyglot badges:maturity
+```
+
 
    */
 ## Handler Contract
