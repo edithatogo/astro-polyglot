@@ -15,8 +15,8 @@ Every task: implement → `git commit -m "type(area): description"` → `conduct
 - [x] Implement graceful error recovery (per-handler try/catch, failFast option)
 - [x] Implement content-hash caching layer at router level
 - [x] Promote polyglotLoader as primary Astro 7 API export
-- [x] GIT: commit "feat(core): parallel execution, error recovery, caching, content loader API"
-- [ ] REVIEW + CI + PUSH
+- [x] GIT: commit "feat(core): parallel execution, error recovery, caching, content loader API" (b707f8e)
+- [x] REVIEW + CI + PUSH
 
 ## Phase 3: Handler Scaffold & Automation (parallel)
 - [ ] Create `scripts/generate-handler.mjs` — handler scaffold generator
