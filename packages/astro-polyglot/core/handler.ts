@@ -46,7 +46,8 @@ export type Language =
   | "yacc"
   | "vbnet"
   | "fsharp"
-  | "javascript";
+  | "javascript"
+  | "powershell";
 
 /**
  * A single MDX output page produced by a handler, used internally
