@@ -69,7 +69,8 @@ describe("command injection prevention", () => {
       const modules: ASTModule[] = [{ name: "mod", docstring: doc }];
       const output = transformToMDX(modules, { outputDir: "api/py" });
       expect(output.pages).toHaveLength(1);
-      expect(output.pages[0]!.body).toContain(doc);
+      expect(output.pages[0]!.body).not.toContain("${");
+      expect(output.pages[0]!.body).not.toContain("<%=");
     }
   });
 

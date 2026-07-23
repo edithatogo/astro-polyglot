@@ -125,7 +125,7 @@ describe("docstring with HTML/JSX/XML (XSS prevention)", () => {
   ];
 
   for (const xss of xssDocstrings) {
-    it(`preserves docstring with HTML content: ${xss.slice(0, 40)}...`, () => {
+    it(`escapes docstring with HTML content: ${xss.slice(0, 40)}...`, () => {
       const modules: ASTModule[] = [
         {
           name: "safe_mod",
@@ -137,10 +137,9 @@ describe("docstring with HTML/JSX/XML (XSS prevention)", () => {
       const output = transformToMDX(modules, { outputDir: "api/py" });
       expect(output.pages).toHaveLength(3);
       for (const page of output.pages) {
-        const firstLine = xss.split("\n")[0]!;
-        if (page.frontmatter.description === firstLine) {
-          expect(page.body).toContain(xss);
-        }
+        expect(page.body).not.toContain("<script");
+        expect(page.body).not.toContain("<iframe");
+        expect(page.body).not.toContain("<img");
       }
     });
   }
