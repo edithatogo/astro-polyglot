@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { slug } from "github-slugger";
+import GithubSlugger from "github-slugger";
 import type { HandlerOutput, HandlerPage } from "./plugin";
 
 export interface MDXOutput {
@@ -47,45 +47,63 @@ export interface ASTVariable {
   docstring?: string | undefined;
 }
 
+function escapeMDXText(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll("{", "&#123;")
+    .replaceAll("}", "&#125;");
+}
+
+function safeSlug(value: string): string {
+  return new GithubSlugger().slug(value);
+}
+
 /**
  * Transforms structured AST data into Starlight-native MDX files.
  * Shared output pipeline used by ALL language handlers.
  */
 export function transformToMDX(
   modules: ASTModule[],
-  options: { outputDir: string; language?: string; pagination?: boolean },
+  options: { outputDir: string; language?: string; pagination?: boolean; basePath?: string },
 ): HandlerOutput {
   const pages: HandlerPage[] = [];
   const sidebarItems: { label: string; link: string }[] = [];
   const { outputDir, language } = options;
+  const linkRoot = options.basePath
+    ? `/${options.basePath.replace(/^\/+|\/+$/g, "")}/${outputDir.replace(/^\/+|\/+$/g, "")}`
+    : undefined;
 
   for (const mod of modules) {
-    const modSlug = slug(mod.name);
+    const modSlug = safeSlug(mod.name);
     const modLink = `${outputDir}/${modSlug}/`;
 
     pages.push({
       path: `${outputDir}/${modSlug}.mdx`,
       frontmatter: {
         title: mod.name,
-        description: mod.docstring?.split("\n")[0] ?? `${language ?? ""} module: ${mod.name}`,
+        description: mod.docstring
+          ? escapeMDXText(mod.docstring.split("\n")[0] ?? "")
+          : `${language ?? ""} module: ${mod.name}`,
         sidebar: { label: mod.name },
         pagefind: true,
         ...(language ? { language } : {}),
         source: mod.name,
       },
-      body: generateModuleBody(mod),
+      body: generateModuleBody(mod, linkRoot),
     });
 
     sidebarItems.push({ label: mod.name, link: modLink });
 
     // Class pages
     for (const cls of mod.classes ?? []) {
-      const clsSlug = `${modSlug}.${slug(cls.name)}`;
+      const clsSlug = `${modSlug}-${safeSlug(cls.name)}`;
       pages.push({
         path: `${outputDir}/${clsSlug}.mdx`,
         frontmatter: {
           title: `${mod.name}.${cls.name}`,
-          description: cls.docstring?.split("\n")[0] ?? `Class ${cls.name}`,
+          description: cls.docstring ? escapeMDXText(cls.docstring.split("\n")[0] ?? "") : `Class ${cls.name}`,
           sidebar: { label: cls.name },
           pagefind: true,
           ...(language ? { language } : {}),
@@ -97,12 +115,12 @@ export function transformToMDX(
 
     // Function pages (for top-level functions)
     for (const fn of mod.functions ?? []) {
-      const fnSlug = `${modSlug}.${slug(fn.name)}`;
+      const fnSlug = `${modSlug}-${safeSlug(fn.name)}`;
       pages.push({
         path: `${outputDir}/${fnSlug}.mdx`,
         frontmatter: {
           title: `${mod.name}.${fn.name}`,
-          description: fn.docstring?.split("\n")[0] ?? `Function ${fn.name}`,
+          description: fn.docstring ? escapeMDXText(fn.docstring.split("\n")[0] ?? "") : `Function ${fn.name}`,
           sidebar: { label: fn.name },
           pagefind: true,
           ...(language ? { language } : {}),
@@ -127,9 +145,14 @@ export function transformToMDX(
  */
 export async function writeMDXPages(output: HandlerOutput, docsDir: string): Promise<string[]> {
   const written: string[] = [];
+  const resolvedDocsDir = path.resolve(docsDir);
 
   for (const page of output.pages) {
-    const filePath = path.resolve(docsDir, page.path);
+    const filePath = path.resolve(resolvedDocsDir, page.path);
+    const relativePath = path.relative(resolvedDocsDir, filePath);
+    if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
+      throw new Error(`Generated page path escapes the documentation directory: ${page.path}`);
+    }
     await fs.mkdir(path.dirname(filePath), { recursive: true });
 
     const content = [
@@ -175,17 +198,22 @@ function renderYAMLValue(value: unknown, indent = 0): string {
   return String(value);
 }
 
-function generateModuleBody(mod: ASTModule): string {
+function generateModuleBody(mod: ASTModule, linkRoot?: string): string {
   const parts: string[] = [];
 
   if (mod.docstring) {
-    parts.push(mod.docstring, "");
+    parts.push(escapeMDXText(mod.docstring), "");
   }
 
   if (mod.classes && mod.classes.length > 0) {
     parts.push("## Classes", "");
     for (const cls of mod.classes) {
-      parts.push(`- [${cls.name}](${slug(mod.name)}.${slug(cls.name)}/) ${cls.docstring?.split("\n")[0] ?? ""}`);
+      const target = `${safeSlug(mod.name)}-${safeSlug(cls.name)}`;
+      parts.push(
+        `- [${cls.name}](${linkRoot ? `${linkRoot}/${target}` : `../${target}`}) ${
+          cls.docstring ? escapeMDXText(cls.docstring.split("\n")[0] ?? "") : ""
+        }`,
+      );
     }
     parts.push("");
   }
@@ -193,7 +221,12 @@ function generateModuleBody(mod: ASTModule): string {
   if (mod.functions && mod.functions.length > 0) {
     parts.push("## Functions", "");
     for (const fn of mod.functions) {
-      parts.push(`- [${fn.name}](${slug(mod.name)}.${slug(fn.name)}/)\n  ${fn.docstring?.split("\n")[0] ?? ""}`);
+      const target = `${safeSlug(mod.name)}-${safeSlug(fn.name)}`;
+      parts.push(
+        `- [${fn.name}](${linkRoot ? `${linkRoot}/${target}` : `../${target}`})\n  ${
+          fn.docstring ? escapeMDXText(fn.docstring.split("\n")[0] ?? "") : ""
+        }`,
+      );
     }
     parts.push("");
   }
@@ -205,7 +238,7 @@ function generateClassBody(cls: ASTClass): string {
   const parts: string[] = [];
 
   if (cls.docstring) {
-    parts.push(cls.docstring, "");
+    parts.push(escapeMDXText(cls.docstring), "");
   }
 
   if (cls.methods && cls.methods.length > 0) {
@@ -220,7 +253,7 @@ function generateClassBody(cls: ASTClass): string {
     for (const prop of cls.properties) {
       parts.push(`### ${prop.name}`);
       if (prop.type) parts.push(`- **Type**: \`${prop.type}\``);
-      if (prop.docstring) parts.push(`- ${prop.docstring}`);
+      if (prop.docstring) parts.push(`- ${escapeMDXText(prop.docstring)}`);
       parts.push("");
     }
   }
@@ -237,7 +270,7 @@ function generateFunctionBody(fn: ASTFunction): string {
   }
 
   if (fn.docstring) {
-    parts.push(fn.docstring, "");
+    parts.push(escapeMDXText(fn.docstring), "");
   }
 
   if (fn.parameters && fn.parameters.length > 0) {
@@ -246,7 +279,7 @@ function generateFunctionBody(fn: ASTFunction): string {
       const defaultStr = param.default ? ` (default: \`${param.default}\`)` : "";
       const typeStr = param.type ? `\`${param.type}\`` : "";
       parts.push(`- \`${param.name}\`${typeStr ? ` ${typeStr}` : ""}${defaultStr}`);
-      if (param.description) parts.push(`  - ${param.description}`);
+      if (param.description) parts.push(`  - ${escapeMDXText(param.description)}`);
     }
     parts.push("");
   }

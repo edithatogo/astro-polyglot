@@ -1,4 +1,7 @@
 import { beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
+import { existsSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import * as routerModule from "../core/router";
 import polyglotPlugin, { createPolyglotPlugin, sidebarGroup } from "../index";
 
@@ -10,7 +13,7 @@ interface MockLogger {
 }
 
 interface MockConfigSetupParams {
-  astroConfig: Record<string, unknown>;
+  astroConfig: { root: URL };
   command: string;
   config: { sidebar: unknown[] };
   logger: MockLogger;
@@ -19,7 +22,7 @@ interface MockConfigSetupParams {
 
 function createMockParams(overrides?: Partial<MockConfigSetupParams>): MockConfigSetupParams {
   return {
-    astroConfig: { root: "/tmp/test-root" },
+    astroConfig: { root: new URL(`file://${tmpdir()}/astro-polyglot-test/`) },
     command: "dev",
     config: { sidebar: [] },
     logger: {
@@ -93,6 +96,41 @@ describe("astro-polyglot plugin", () => {
       expect(arg).toHaveProperty("sidebar");
       expect(arg.sidebar).toHaveLength(1);
       expect(arg.sidebar[0]).toHaveProperty("label", "PYTHON");
+    });
+
+    it("writes generated pages into the Astro content directory", async () => {
+      const root = path.join(tmpdir(), `astro-polyglot-${Date.now()}`);
+      const page = path.join(root, "src/content/docs/api/python/mymod.mdx");
+      resolveHandlersSpy.mockReturnValue([
+        {
+          name: "python" as const,
+          handler: {
+            name: "python" as const,
+            generate: vi.fn().mockResolvedValue({
+              pages: [
+                {
+                  path: "api/python/mymod.mdx",
+                  frontmatter: { title: "mymod" },
+                  body: "# mymod",
+                },
+              ],
+              sidebar: { label: "PYTHON", items: [] },
+            }),
+          },
+          options: { output: "api/python", entryPoints: ["mymod"] },
+        },
+      ]);
+
+      try {
+        const plugin = polyglotPlugin({ python: { entryPoints: ["mymod"] } });
+        const params = createMockParams({
+          astroConfig: { root: new URL(`file://${root}/`) },
+        });
+        await plugin.hooks["config:setup"](params as never);
+        expect(existsSync(page)).toBe(true);
+      } finally {
+        rmSync(root, { recursive: true, force: true });
+      }
     });
   });
 

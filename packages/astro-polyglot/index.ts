@@ -1,8 +1,25 @@
 import { randomBytes } from "node:crypto";
-import type { StarlightPlugin } from "@astrojs/starlight/types";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import type { HandlerAggregateOutput } from "./core/handler";
+import { writeMDXPages } from "./core/mdx-generator";
 import { getSidebarGroupPlaceholder, type SidebarGroup } from "./core/plugin";
-import { type PolyglotConfig, resolveHandlers, runHandlers } from "./core/router";
+import { type Logger, type PolyglotConfig, resolveHandlers, runHandlers } from "./core/router";
+
+interface StarlightPluginContext {
+  astroConfig: { root: URL };
+  command: string;
+  config: { sidebar?: unknown };
+  logger: Logger;
+  updateConfig: (config: { sidebar: unknown }) => void;
+}
+
+interface StarlightPlugin {
+  name: string;
+  hooks: {
+    "config:setup": (context: StarlightPluginContext) => Promise<void>;
+  };
+}
 
 // ─── Canonical type re-exports ───────────────────────────────────────
 export type {
@@ -44,11 +61,16 @@ function makePolyglotPlugin(sidebarGroup: SidebarGroup) {
     return {
       name: "astro-polyglot",
       hooks: {
-        async "config:setup"({ command, config, logger, updateConfig }) {
+        async "config:setup"({ astroConfig, command, config, logger, updateConfig }) {
           if (command === "preview") return;
 
           const handlers = resolveHandlers(options, logger);
           const outputs = await runHandlers(handlers, options, logger);
+          const root = fileURLToPath(astroConfig.root);
+          const contentDir = path.resolve(root, options.contentDir ?? "src/content/docs");
+          for (const output of outputs) {
+            await writeMDXPages(output, contentDir);
+          }
           // Merge sidebars from all handlers
           updateConfig({
             sidebar: mergeSidebars(config.sidebar, sidebarGroup, outputs) as any,
