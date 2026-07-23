@@ -224,6 +224,29 @@ describe("writeMDXPages path safety", () => {
       await fs.rm(tempDir, { recursive: true, force: true });
     }
   });
+
+  it("rejects page paths that escape docsDir", async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "astro-polyglot-sec-"));
+    try {
+      await expect(
+        writeMDXPages(
+          {
+            pages: [
+              {
+                path: "../outside.mdx",
+                frontmatter: { title: "Unsafe" },
+                body: "unsafe",
+              },
+            ],
+            sidebar: { label: "Unsafe", items: [] },
+          },
+          tempDir,
+        ),
+      ).rejects.toThrow("escapes the documentation directory");
+    } finally {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    }
+  });
 });
 
 // ─── Safe YAML generation ────────────────────────────────────────────────────

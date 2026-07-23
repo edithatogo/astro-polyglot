@@ -35,6 +35,8 @@ def extract_module(griffe_mod: Module) -> dict[str, Any]:
     }
 
     for member in griffe_mod.members.values():
+        if member.name.startswith("_"):
+            continue
         if isinstance(member, Class):
             result["classes"].append(extract_class(member))
         elif isinstance(member, Function):
@@ -62,6 +64,8 @@ def extract_class(griffe_cls: Class) -> dict[str, Any]:
     }
 
     for member in griffe_cls.members.values():
+        if member.name.startswith("_"):
+            continue
         if isinstance(member, Function):
             result["methods"].append(extract_function(member))
 

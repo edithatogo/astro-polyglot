@@ -138,9 +138,14 @@ export function transformToMDX(
  */
 export async function writeMDXPages(output: HandlerOutput, docsDir: string): Promise<string[]> {
   const written: string[] = [];
+  const resolvedDocsDir = path.resolve(docsDir);
 
   for (const page of output.pages) {
-    const filePath = path.resolve(docsDir, page.path);
+    const filePath = path.resolve(resolvedDocsDir, page.path);
+    const relativePath = path.relative(resolvedDocsDir, filePath);
+    if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
+      throw new Error(`Generated page path escapes the documentation directory: ${page.path}`);
+    }
     await fs.mkdir(path.dirname(filePath), { recursive: true });
 
     const content = [
