@@ -1,6 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { slug } from "github-slugger";
+import GithubSlugger from "github-slugger";
 import type { HandlerOutput, HandlerPage } from "./plugin";
 
 export interface MDXOutput {
@@ -56,6 +56,10 @@ function escapeMDXText(value: string): string {
     .replaceAll("}", "&#125;");
 }
 
+function safeSlug(value: string): string {
+  return new GithubSlugger().slug(value);
+}
+
 /**
  * Transforms structured AST data into Starlight-native MDX files.
  * Shared output pipeline used by ALL language handlers.
@@ -72,7 +76,7 @@ export function transformToMDX(
     : undefined;
 
   for (const mod of modules) {
-    const modSlug = slug(mod.name);
+    const modSlug = safeSlug(mod.name);
     const modLink = `${outputDir}/${modSlug}/`;
 
     pages.push({
@@ -94,7 +98,7 @@ export function transformToMDX(
 
     // Class pages
     for (const cls of mod.classes ?? []) {
-      const clsSlug = `${modSlug}-${slug(cls.name)}`;
+      const clsSlug = `${modSlug}-${safeSlug(cls.name)}`;
       pages.push({
         path: `${outputDir}/${clsSlug}.mdx`,
         frontmatter: {
@@ -111,7 +115,7 @@ export function transformToMDX(
 
     // Function pages (for top-level functions)
     for (const fn of mod.functions ?? []) {
-      const fnSlug = `${modSlug}-${slug(fn.name)}`;
+      const fnSlug = `${modSlug}-${safeSlug(fn.name)}`;
       pages.push({
         path: `${outputDir}/${fnSlug}.mdx`,
         frontmatter: {
@@ -204,7 +208,7 @@ function generateModuleBody(mod: ASTModule, linkRoot?: string): string {
   if (mod.classes && mod.classes.length > 0) {
     parts.push("## Classes", "");
     for (const cls of mod.classes) {
-      const target = `${slug(mod.name)}-${slug(cls.name)}`;
+      const target = `${safeSlug(mod.name)}-${safeSlug(cls.name)}`;
       parts.push(
         `- [${cls.name}](${linkRoot ? `${linkRoot}/${target}` : `../${target}`}) ${
           cls.docstring ? escapeMDXText(cls.docstring.split("\n")[0] ?? "") : ""
@@ -217,7 +221,7 @@ function generateModuleBody(mod: ASTModule, linkRoot?: string): string {
   if (mod.functions && mod.functions.length > 0) {
     parts.push("## Functions", "");
     for (const fn of mod.functions) {
-      const target = `${slug(mod.name)}-${slug(fn.name)}`;
+      const target = `${safeSlug(mod.name)}-${safeSlug(fn.name)}`;
       parts.push(
         `- [${fn.name}](${linkRoot ? `${linkRoot}/${target}` : `../${target}`})\n  ${
           fn.docstring ? escapeMDXText(fn.docstring.split("\n")[0] ?? "") : ""
