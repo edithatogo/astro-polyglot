@@ -62,11 +62,14 @@ function escapeMDXText(value: string): string {
  */
 export function transformToMDX(
   modules: ASTModule[],
-  options: { outputDir: string; language?: string; pagination?: boolean },
+  options: { outputDir: string; language?: string; pagination?: boolean; basePath?: string },
 ): HandlerOutput {
   const pages: HandlerPage[] = [];
   const sidebarItems: { label: string; link: string }[] = [];
   const { outputDir, language } = options;
+  const linkRoot = options.basePath
+    ? `/${options.basePath.replace(/^\/+|\/+$/g, "")}/${outputDir.replace(/^\/+|\/+$/g, "")}`
+    : undefined;
 
   for (const mod of modules) {
     const modSlug = slug(mod.name);
@@ -84,7 +87,7 @@ export function transformToMDX(
         ...(language ? { language } : {}),
         source: mod.name,
       },
-      body: generateModuleBody(mod),
+      body: generateModuleBody(mod, linkRoot),
     });
 
     sidebarItems.push({ label: mod.name, link: modLink });
@@ -191,7 +194,7 @@ function renderYAMLValue(value: unknown, indent = 0): string {
   return String(value);
 }
 
-function generateModuleBody(mod: ASTModule): string {
+function generateModuleBody(mod: ASTModule, linkRoot?: string): string {
   const parts: string[] = [];
 
   if (mod.docstring) {
@@ -201,8 +204,9 @@ function generateModuleBody(mod: ASTModule): string {
   if (mod.classes && mod.classes.length > 0) {
     parts.push("## Classes", "");
     for (const cls of mod.classes) {
+      const target = `${slug(mod.name)}-${slug(cls.name)}`;
       parts.push(
-        `- [${cls.name}](../${slug(mod.name)}-${slug(cls.name)}) ${
+        `- [${cls.name}](${linkRoot ? `${linkRoot}/${target}` : `../${target}`}) ${
           cls.docstring ? escapeMDXText(cls.docstring.split("\n")[0] ?? "") : ""
         }`,
       );
@@ -213,8 +217,9 @@ function generateModuleBody(mod: ASTModule): string {
   if (mod.functions && mod.functions.length > 0) {
     parts.push("## Functions", "");
     for (const fn of mod.functions) {
+      const target = `${slug(mod.name)}-${slug(fn.name)}`;
       parts.push(
-        `- [${fn.name}](../${slug(mod.name)}-${slug(fn.name)})\n  ${
+        `- [${fn.name}](${linkRoot ? `${linkRoot}/${target}` : `../${target}`})\n  ${
           fn.docstring ? escapeMDXText(fn.docstring.split("\n")[0] ?? "") : ""
         }`,
       );

@@ -112,6 +112,16 @@ describe("transformToMDX()", () => {
     expect(output.pages.some((p) => p.path.startsWith("api/py/mymodule-hello"))).toBe(true);
   });
 
+  it("uses a deployed site base for generated member links", () => {
+    const output = transformToMDX([{ name: "mymodule", functions: [{ name: "hello" }] }], {
+      outputDir: "api/py",
+      language: "python",
+      basePath: "/project/",
+    });
+    const modulePage = output.pages.find((p) => p.path === "api/py/mymodule.mdx");
+    expect(modulePage!.body).toContain("(/project/api/py/mymodule-hello)");
+  });
+
   it("capitalizes sidebar label from language", () => {
     const m = [{ name: "mod", docstring: "A module." }];
     const py = transformToMDX(m, { outputDir: "api/py", language: "python" });

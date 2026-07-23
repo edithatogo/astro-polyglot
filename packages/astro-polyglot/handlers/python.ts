@@ -34,6 +34,7 @@ export const pythonHandler: Handler = {
     const output = transformToMDX(modules, {
       outputDir: opts.output,
       language: "python",
+      ...(opts.basePath !== undefined ? { basePath: opts.basePath } : {}),
       ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
