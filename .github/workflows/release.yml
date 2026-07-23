@@ -22,13 +22,13 @@ jobs:
       id-token: write # needed for provenance
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
@@ -55,6 +55,6 @@ jobs:
       # Attach build provenance when a new version is published
       - name: Attest Build Provenance
         if: steps.changesets.outputs.published == 'true'
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@0f67c3f4856b2e3261c31976d6725780e5e4c373
         with:
           subject-path: 'packages/astro-polyglot/dist/**'
