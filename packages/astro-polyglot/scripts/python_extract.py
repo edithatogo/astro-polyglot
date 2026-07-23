@@ -38,7 +38,13 @@ def extract_module(griffe_mod: Module) -> dict[str, Any]:
         if member.name.startswith("_"):
             continue
         if isinstance(member, Class):
-            result["classes"].append(extract_class(member))
+            extracted_class = extract_class(member)
+            if (
+                extracted_class["docstring"]
+                or extracted_class["methods"]
+                or extracted_class["properties"]
+            ):
+                result["classes"].append(extracted_class)
         elif isinstance(member, Function):
             result["functions"].append(extract_function(member))
 
