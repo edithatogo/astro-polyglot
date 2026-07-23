@@ -202,7 +202,7 @@ function generateModuleBody(mod: ASTModule): string {
     parts.push("## Classes", "");
     for (const cls of mod.classes) {
       parts.push(
-        `- [${cls.name}](${slug(mod.name)}.${slug(cls.name)}/) ${
+        `- [${cls.name}](../${slug(mod.name)}.${slug(cls.name)}/) ${
           cls.docstring ? escapeMDXText(cls.docstring.split("\n")[0] ?? "") : ""
         }`,
       );
@@ -214,7 +214,7 @@ function generateModuleBody(mod: ASTModule): string {
     parts.push("## Functions", "");
     for (const fn of mod.functions) {
       parts.push(
-        `- [${fn.name}](${slug(mod.name)}.${slug(fn.name)}/)\n  ${
+        `- [${fn.name}](../${slug(mod.name)}.${slug(fn.name)}/)\n  ${
           fn.docstring ? escapeMDXText(fn.docstring.split("\n")[0] ?? "") : ""
         }`,
       );
