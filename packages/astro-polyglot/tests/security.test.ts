@@ -166,7 +166,7 @@ describe("prototype pollution prevention", () => {
     ];
     const output = transformToMDX(modules, { outputDir: "api/py" });
     expect(output.pages).toHaveLength(2);
-    const clsPage = output.pages.find((p) => p.path.startsWith("api/py/mod.pollutedclass"))!;
+    const clsPage = output.pages.find((p) => p.path.startsWith("api/py/mod-pollutedclass"))!;
     expect(clsPage.body).toContain("__proto__");
     expect(clsPage.body).toContain("prototype");
   });
