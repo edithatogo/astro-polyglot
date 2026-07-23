@@ -26,9 +26,9 @@ describe("large input: module with 1000+ classes", () => {
     expect(output.sidebar.items).toHaveLength(1); // only one module sidebar item
 
     // Verify first, middle, and last class pages exist
-    expect(output.pages.some((p) => p.path === "api/py/huge_module.class0.mdx")).toBe(true);
-    expect(output.pages.some((p) => p.path === "api/py/huge_module.class500.mdx")).toBe(true);
-    expect(output.pages.some((p) => p.path === "api/py/huge_module.class999.mdx")).toBe(true);
+    expect(output.pages.some((p) => p.path === "api/py/huge_module-class0.mdx")).toBe(true);
+    expect(output.pages.some((p) => p.path === "api/py/huge_module-class500.mdx")).toBe(true);
+    expect(output.pages.some((p) => p.path === "api/py/huge_module-class999.mdx")).toBe(true);
   });
 
   it("handles a module with 1000 functions", () => {
@@ -90,7 +90,7 @@ describe("special characters in names", () => {
       },
     ];
     const output = transformToMDX(modules, { outputDir: "api/py" });
-    const clsPage = output.pages.find((p) => p.path.startsWith("api/py/emoji."));
+    const clsPage = output.pages.find((p) => p.path.startsWith("api/py/emoji-"));
     expect(clsPage).toBeDefined();
   });
 
@@ -164,7 +164,7 @@ describe("extremely long docstrings (10K+ chars)", () => {
     expect(modPage.frontmatter.description).toHaveLength(10_000);
     expect(modPage.body).toContain(longDoc);
 
-    const clsPage = output.pages.find((p) => p.path.startsWith("api/py/long_doc_mod.longdocclass"))!;
+    const clsPage = output.pages.find((p) => p.path.startsWith("api/py/long_doc_mod-longdocclass"))!;
     expect(clsPage.frontmatter.description).toHaveLength(10_000);
   });
 
@@ -213,7 +213,7 @@ describe("duplicate class names within a module", () => {
     const output = transformToMDX(modules, { outputDir: "api/py" });
     // Both classes should generate pages, even with same name
     expect(output.pages).toHaveLength(3); // module + 2 classes
-    const classPages = output.pages.filter((p) => p.path.startsWith("api/py/dup_mod.duplicate"));
+    const classPages = output.pages.filter((p) => p.path.startsWith("api/py/dup_mod-duplicate"));
     expect(classPages).toHaveLength(2);
   });
 
@@ -287,7 +287,7 @@ describe("circular references in AST data", () => {
     ];
     const output = transformToMDX(modules, { outputDir: "api/py" });
     expect(output.pages).toHaveLength(2);
-    const clsPage = output.pages.find((p) => p.path.startsWith("api/py/circular.node"))!;
+    const clsPage = output.pages.find((p) => p.path.startsWith("api/py/circular-node"))!;
     expect(clsPage.body).toContain("Node");
     expect(clsPage.body).toContain("getParent");
     expect(clsPage.body).toContain("getChildren");
@@ -321,7 +321,7 @@ describe("missing, undefined, and null fields", () => {
     ];
     const output = transformToMDX(modules, { outputDir: "api/py" });
     expect(output.pages).toHaveLength(2);
-    const clsPage = output.pages.find((p) => p.path.startsWith("api/py/bare.emptyclass"))!;
+    const clsPage = output.pages.find((p) => p.path.startsWith("api/py/bare-emptyclass"))!;
     expect(clsPage.frontmatter.title).toBe("bare.EmptyClass");
   });
 
@@ -334,7 +334,7 @@ describe("missing, undefined, and null fields", () => {
     ];
     const output = transformToMDX(modules, { outputDir: "api/py" });
     expect(output.pages).toHaveLength(2);
-    const fnPage = output.pages.find((p) => p.path.startsWith("api/py/simple.dosomething"))!;
+    const fnPage = output.pages.find((p) => p.path.startsWith("api/py/simple-dosomething"))!;
     expect(fnPage.frontmatter.title).toBe("simple.doSomething");
   });
 
