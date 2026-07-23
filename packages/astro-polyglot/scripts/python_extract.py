@@ -27,7 +27,7 @@ except ImportError:
 def extract_module(griffe_mod: Module) -> dict[str, Any]:
     """Extract a griffe Module into our ASTModule JSON schema."""
     result: dict[str, Any] = {
-        "name": griffe_mod.name,
+        "name": griffe_mod.path,
         "docstring": griffe_mod.docstring.value if griffe_mod.docstring else None,
         "classes": [],
         "functions": [],
@@ -41,6 +41,15 @@ def extract_module(griffe_mod: Module) -> dict[str, Any]:
             result["functions"].append(extract_function(member))
 
     return result
+
+
+def extract_module_tree(griffe_mod: Module) -> list[dict[str, Any]]:
+    """Flatten a package into independently navigable module records."""
+    modules = [extract_module(griffe_mod)]
+    for member in griffe_mod.members.values():
+        if isinstance(member, Module) and not member.name.startswith("_"):
+            modules.extend(extract_module_tree(member))
+    return modules
 
 
 def extract_class(griffe_cls: Class) -> dict[str, Any]:
@@ -113,7 +122,7 @@ def main() -> None:
     for entry_point in args.entry_points:
         try:
             griffe_mod = load(entry_point)
-            modules.append(extract_module(griffe_mod))
+            modules.extend(extract_module_tree(griffe_mod))
         except Exception as e:
             errors.append({"entry_point": entry_point, "error": str(e)})
 
