@@ -1,8 +1,19 @@
 import { randomBytes } from "node:crypto";
-import type { StarlightPlugin } from "@astrojs/starlight/types";
 import type { HandlerAggregateOutput } from "./core/handler";
 import { getSidebarGroupPlaceholder, type SidebarGroup } from "./core/plugin";
-import { type PolyglotConfig, resolveHandlers, runHandlers } from "./core/router";
+import { type Logger, type PolyglotConfig, resolveHandlers, runHandlers } from "./core/router";
+
+interface StarlightPlugin {
+  name: string;
+  hooks: {
+    "config:setup": (context: {
+      command: string;
+      config: { sidebar: unknown };
+      logger: Logger;
+      updateConfig: (config: { sidebar: unknown }) => void;
+    }) => Promise<void> | void;
+  };
+}
 
 // ─── Canonical type re-exports ───────────────────────────────────────
 export type {
