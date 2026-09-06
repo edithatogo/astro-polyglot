@@ -2,6 +2,9 @@
 
 - Use Astro 7.3.1 to repair the 7.3.0 internal logger export regression in
   documentation builds.
+- Cancel superseded PR assurance runs, bound local tox parallelism and native
+  numerical threads, and reuse unchanged local validation evidence to avoid
+  unnecessary full-suite reruns. Required hosted checks remain unchanged.
 
 - Prepare a fail-closed pre-closeout backlog checkpoint that binds the completed
   EasyBuild and cross-venue merges while retaining native Spack, upstream HPC,
@@ -20,6 +23,11 @@
   is published; pyOpenSci, rOpenSci, and JOSS submissions remain unperformed.
 
 ## Unreleased
+
+- Make the maintainer the sole human repository decision-maker, with separated
+  agent assessments and explicit historical H8 validation boundaries. Advance
+  venue, scientific, security and registry evidence; correct the bounded tox
+  command and remove redundant test imports without changing runtime behavior.
 
 - Repair the bounded Ruff 0.16 dependency-preview findings across repository
   scripts while preserving runtime behavior and the current dependency and

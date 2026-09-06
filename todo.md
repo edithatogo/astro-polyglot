@@ -4,6 +4,14 @@ This document lists the actionable tasks for `voiage` development. Agents should
 
 ## To Do
 
+*   [x] Advance the fourteen open issue deliverables with source-bound agent
+    review, current venue inputs, upstream Julia delivery, guarded HPC retry
+    and security/badge evidence in `docs/release/issue-deliverables-20260906.md`.
+    Remaining source, native, maintainer and destination outcomes stay open.
+
+*   [x] Reduce repeated verification through superseded-PR cancellation, bounded
+    tox parallelism, native thread limits and reusable local validation evidence.
+
 *   [x] Bind the Spack Polars runtime source to its exact verified sdist URL.
     *   Added regression coverage for the `_32` filename suffix after a native
         source build exposed Spack's ambiguous derived PyPI URL.

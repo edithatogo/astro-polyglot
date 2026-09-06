@@ -9,12 +9,19 @@ that protect changes, dependencies, and published artifacts.
 
 ## Local gates
 
-Run the complete gate before opening or updating a pull request:
+Run affected checks during iteration and the complete gate once for the final candidate:
 
 ```sh
-uv run python scripts/repo_harness.py
-tox
+tox run-parallel -p 2
 ```
+
+The harness is included in tox; a second standalone harness run is unnecessary.
+Record the tested tree, environment and result. Reuse successful local evidence
+when these inputs remain unchanged. A new runtime, dependency, shared-fixture or
+test-infrastructure change requires broader validation. Hosted required checks
+remain bound to the current PR revision. Batch edits before pushing, rebase
+locally with signed commits, and inspect the actual failed gate before changing
+a branch; repeated pushes restart hosted validation.
 
 The `harness` tox environment checks that workflows declare explicit
 permissions, external actions are pinned to immutable commits, required
@@ -35,6 +42,14 @@ do not manually change files inside that cache.
 
 For dependency-only changes, also run `uvx --from pip-audit pip-audit --local
 --progress-spinner off` and `pnpm audit --prod` from `docs/astro-site`.
+
+Before starting a local gate in a shared checkout, check whether another task
+already owns a running tox process and its result log. Coordinate reuse of that
+run instead of launching a second process against the same `.tox` directory.
+Use the same tox executable and interpreter for follow-up environments: mixing
+global and repository-managed tox processes can recreate each other's caches.
+If an independent run is necessary, give it a separate work directory. Do not
+stop another task's process or treat its pending result as a pass.
 
 ## Dependency and experimental-feature policy
 
