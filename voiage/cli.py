@@ -13,6 +13,7 @@ It uses Typer for command-line argument parsing.
 
 from collections.abc import Callable, Iterable
 import csv
+import importlib
 import io
 import json
 import logging
@@ -246,6 +247,43 @@ app = typer.Typer(
     help="voiage: A Command-Line Interface for Value of Information Analysis."
 )
 app.add_typer(ingestion_app, name="ingest")
+
+
+def _module_available(name: str) -> bool:
+    """Return whether an optional module can be imported successfully."""
+    try:
+        importlib.import_module(name)
+    except (ImportError, OSError, RuntimeError):
+        return False
+    return True
+
+
+@app.command(name="capabilities")
+def capabilities(
+    json_output: bool = typer.Option(
+        False, "--json", help="Emit machine-readable JSON."
+    ),
+) -> None:
+    """Report installed capabilities without evaluating a model."""
+    from voiage import __version__
+
+    report = {
+        "schema_version": "1.0.0",
+        "package_version": __version__,
+        "backend": "rust-backed-cpu",
+        "optional_modules": {
+            name: _module_available(name)
+            for name in ("jax", "torch", "polars", "pyarrow")
+        },
+        "methods": ["evpi", "evppi", "evsi", "enbs", "ceaf", "dominance"],
+        "dry_run": True,
+    }
+    if json_output:
+        typer.echo(json.dumps(report, sort_keys=True))
+    else:
+        typer.echo(f"voiage {report['package_version']} ({report['backend']})")
+        typer.echo("methods: " + ", ".join(report["methods"]))
+
 
 OutputFormat = Literal["text", "json", "csv"]
 
