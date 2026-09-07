@@ -6,6 +6,8 @@ use std::collections::BTreeMap;
 
 mod contracts;
 mod domain_mapping;
+#[cfg(feature = "otel")]
+pub mod otel_export;
 pub mod telemetry;
 
 pub use contracts::{
