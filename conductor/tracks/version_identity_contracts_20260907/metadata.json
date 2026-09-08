@@ -3,7 +3,7 @@
   "type": "feature",
   "status": "new",
   "created_at": "2026-09-07T01:59:07Z",
-  "updated_at": "2026-09-08T00:00:00Z",
+  "updated_at": "2026-09-08T15:00:00Z",
   "description": "Version identities and compatibility policy",
   "github_cross_reference": {
     "issue": "https://github.com/edithatogo/voiage/issues/1112"
@@ -13,19 +13,25 @@
     "execution_packet_guard_20260907"
   ],
   "authorization": {
-    "scope": "Detailed track planning; implementation remains pending",
-    "source": "Owner request to create comprehensive granular tracks and sequencing"
+    "scope": "Implementation and acceptance reconciliation after merged PR #1117",
+    "source": "Owner-authorized ordered track implementation"
   },
   "gates": [
     {
       "id": "prerequisites",
       "kind": "repository",
-      "status": "satisfied",
-      "evidence": "PR #1117 merged at 95147116ba0102503c189a331bb3f55e0c2822a9; required hosted checks passed."
+      "status": "pending",
+      "evidence": "Execution packet guard implementation is merged in PR #1141, but final local acceptance CLOSE.1/CLOSE.2 remains open; retain prerequisite pending."
+    },
+    {
+      "id": "implementation",
+      "kind": "repository",
+      "status": "pending",
+      "evidence": "PR #1117 implementation is merged and hosted checks passed; the required final local/native gate receipt is not present in this track."
     }
   ],
   "implementation_preparation": {
     "packet": "implementation-packet.json",
-    "state": "completed"
+    "state": "waiting_for_prerequisites"
   }
 }
