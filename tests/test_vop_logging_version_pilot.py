@@ -2,6 +2,9 @@
 
 import json
 from pathlib import Path
+import shutil
+import subprocess
+import sys
 from unittest.mock import Mock
 
 from pydantic import ValidationError
@@ -151,3 +154,130 @@ def test_ac2_negative_cases_fail_before_model_evaluation(
     with pytest.raises(expected_error, match=diagnostic):
         evaluate(pilot)
     evaluator.assert_not_called()
+
+
+@pytest.mark.integration
+def test_ac3_consumer_replays_from_installed_artifact_outside_source_tree(
+    tmp_path: Path,
+) -> None:
+    """Validate the pilot through a wheel-installed consumer subprocess."""
+    uv = shutil.which("uv")
+    assert uv is not None, "the installed-artifact consumer requires uv"
+    distribution = tmp_path / "dist"
+    subprocess.run(
+        [uv, "build", "--wheel", "--out-dir", str(distribution)],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+        timeout=600,
+    )
+    environment = tmp_path / "consumer-venv"
+    subprocess.run(
+        [uv, "venv", "--python", sys.executable, str(environment)],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+        text=True,
+        timeout=600,
+    )
+    interpreter = environment / (
+        "Scripts/python.exe" if sys.platform == "win32" else "bin/python"
+    )
+    wheel = next(distribution.glob("*.whl"), None)
+    assert wheel is not None, "wheel build produced no artifact"
+    subprocess.run(
+        [
+            uv,
+            "pip",
+            "install",
+            "--python",
+            str(interpreter),
+            f"{wheel}[ecosystem]",
+        ],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+        text=True,
+        timeout=600,
+    )
+    consumer_dir = tmp_path / "consumer"
+    consumer_dir.mkdir()
+    (consumer_dir / "pilot.json").write_text(PILOT.read_text(encoding="utf-8"))
+    probe = """
+import json
+from importlib.util import find_spec
+from pathlib import Path
+import sys
+
+import numpy as np
+import voiage
+from voiage.logging import (
+    AnalysisLogContext,
+    LoggingSettings,
+    TraceContext,
+    analysis_log_context,
+    configure_logging,
+    validate_vop_pilot_contract,
+)
+from voiage.methods.basic import evpi
+
+pilot = json.loads(Path("pilot.json").read_text())
+validate_vop_pilot_contract(pilot)
+module_path = Path(find_spec("voiage").origin).resolve()
+assert module_path.is_relative_to(Path(sys.prefix).resolve())
+assert not any(Path(entry or ".").resolve() == Path.cwd() for entry in sys.path)
+reference = evpi(np.asarray(((0.0, 10.0), (10.0, 0.0))))
+assert reference == 5.0
+log_path = Path("consumer.jsonl")
+logger = configure_logging(LoggingSettings(
+    console=False,
+    json_output=True,
+    level="INFO",
+    log_file=log_path,
+))
+with analysis_log_context(AnalysisLogContext(
+    run_id=pilot["correlation"]["run_id"],
+    trace=TraceContext(trace_id=pilot["correlation"]["trace_id"]),
+    analysis_id=pilot["correlation"]["analysis_id"],
+    backend_requested="python",
+    backend_selected="python",
+    fallback_code="none",
+    numerical_policy_id="0" * 64,
+)):
+    logger.info("consumer replay")
+for handler in logger.handlers:
+    handler.flush()
+logged = json.loads(log_path.read_text().splitlines()[-1])
+assert logged["run_id"] == pilot["correlation"]["run_id"]
+assert logged["analysis_id"] == pilot["correlation"]["analysis_id"]
+assert logged["trace_id"] == pilot["correlation"]["trace_id"]
+print(json.dumps({
+    "package_version": voiage.__version__,
+    "consumer_version": pilot["consumer_version"],
+    "run_id": pilot["correlation"]["run_id"],
+    "analysis_id": pilot["correlation"]["analysis_id"],
+    "trace_id": pilot["correlation"]["trace_id"],
+    "voi": reference,
+}))
+"""
+    result = subprocess.run(
+        [str(interpreter), "-I", "-c", probe],
+        cwd=consumer_dir,
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=120,
+    )
+    assert result.returncode == 0, (
+        "installed consumer probe failed: "
+        f"stdout={result.stdout!r} stderr={result.stderr!r}"
+    )
+    assert json.loads(result.stdout) == {
+        "package_version": "2.2.0",
+        "consumer_version": "2.2.0",
+        "run_id": "pilot-synthetic-run-001",
+        "analysis_id": "pilot-synthetic-analysis-001",
+        "trace_id": "11111111111111111111111111111111",
+        "voi": 5.0,
+    }
