@@ -2,10 +2,13 @@
 
 import json
 from pathlib import Path
+from unittest.mock import Mock
 
+from pydantic import ValidationError
 import pytest
 
 from voiage.logging import validate_vop_pilot_contract
+from voiage.versioning import VersionSyncError
 
 ROOT = Path(__file__).resolve().parents[1]
 PILOT = ROOT / "specs/integration/vop-voiage/pilot-logging-version.json"
@@ -85,9 +88,6 @@ def test_two_provider_apis_produce_the_same_semantic_voi_result() -> None:
             }
         },
         {"correlation": {"run_id": "", "analysis_id": "a", "trace_id": "bad"}},
-        {"consumer_version": "unknown"},
-        {"unit": "usd_per_qaly"},
-        {"weight_field": "wrong_weight"},
     ],
 )
 def test_pilot_rejects_contract_mutations(mutation: dict[str, object]) -> None:
@@ -113,3 +113,41 @@ def test_production_validator_rejects_missing_identity_and_correlation() -> None
     }
     with pytest.raises(ValueError):
         validate_vop_pilot_contract(candidate)
+
+
+@pytest.mark.parametrize(
+    ("mutation", "expected_error", "diagnostic"),
+    [
+        (
+            {"unit": "usd_per_qaly"},
+            ValueError,
+            "pilot units or weights are incompatible",
+        ),
+        (
+            {"weight_field": "wrong_weight"},
+            ValueError,
+            "pilot units or weights are incompatible",
+        ),
+        ({"consumer_version": "unknown"}, VersionSyncError, "unsupported canonical"),
+        (
+            {"correlation": {"run_id": "", "analysis_id": "a", "trace_id": "bad"}},
+            ValidationError,
+            "trace_id must be 32 lowercase non-zero hex characters",
+        ),
+    ],
+)
+def test_ac2_negative_cases_fail_before_model_evaluation(
+    mutation: dict[str, object], expected_error: type[Exception], diagnostic: str
+) -> None:
+    """Reject each AC2 mutation before the downstream evaluator is entered."""
+    pilot = json.loads(PILOT.read_text())
+    pilot.update(mutation)
+    evaluator = Mock(name="model_evaluator")
+
+    def evaluate(candidate: dict[str, object]) -> None:
+        validate_vop_pilot_contract(candidate)
+        evaluator(candidate)
+
+    with pytest.raises(expected_error, match=diagnostic):
+        evaluate(pilot)
+    evaluator.assert_not_called()
