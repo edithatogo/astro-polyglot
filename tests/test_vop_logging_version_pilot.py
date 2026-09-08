@@ -2,10 +2,13 @@
 
 import json
 from pathlib import Path
+from unittest.mock import Mock
 
 import pytest
+from pydantic import ValidationError
 
 from voiage.logging import validate_vop_pilot_contract
+from voiage.versioning import VersionSyncError
 
 ROOT = Path(__file__).resolve().parents[1]
 PILOT = ROOT / "specs/integration/vop-voiage/pilot-logging-version.json"
@@ -113,30 +116,38 @@ def test_production_validator_rejects_missing_identity_and_correlation() -> None
 
 
 @pytest.mark.parametrize(
-    ("mutation", "label"),
+    ("mutation", "expected_error", "diagnostic"),
     [
-        ({"unit": "usd_per_qaly"}, "wrong unit"),
-        ({"weight_field": "wrong_weight"}, "wrong weight"),
-        ({"consumer_version": "unknown"}, "unknown version"),
+        (
+            {"unit": "usd_per_qaly"},
+            ValueError,
+            "pilot units or weights are incompatible",
+        ),
+        (
+            {"weight_field": "wrong_weight"},
+            ValueError,
+            "pilot units or weights are incompatible",
+        ),
+        ({"consumer_version": "unknown"}, VersionSyncError, "unsupported canonical"),
         (
             {"correlation": {"run_id": "", "analysis_id": "a", "trace_id": "bad"}},
-            "malformed correlation",
+            ValidationError,
+            "trace_id must be 32 lowercase non-zero hex characters",
         ),
     ],
 )
 def test_ac2_negative_cases_fail_before_model_evaluation(
-    mutation: dict[str, object], label: str
+    mutation: dict[str, object], expected_error: type[Exception], diagnostic: str
 ) -> None:
     """Reject each AC2 mutation before the downstream evaluator is entered."""
     pilot = json.loads(PILOT.read_text())
     pilot.update(mutation)
-    evaluated = False
+    evaluator = Mock(name="model_evaluator")
 
     def evaluate(candidate: dict[str, object]) -> None:
-        nonlocal evaluated
         validate_vop_pilot_contract(candidate)
-        evaluated = True
+        evaluator(candidate)
 
-    with pytest.raises((ValueError, TypeError, RuntimeError), match=".*"):
+    with pytest.raises(expected_error, match=diagnostic):
         evaluate(pilot)
-    assert evaluated is False, label
+    evaluator.assert_not_called()
