@@ -10,9 +10,9 @@ The implementation is present in merged PR #1120 (`348db4d3e51a82b6fc6a252ef4bda
 
 ## Phase 2: Negative
 
-- [ ] T2.1 — Freeze exact input hashes, at most five implementation paths, expected red/green result and command for AC2; split if scope exceeds one behavioral change.
-- [ ] T2.2 — Create wrong-unit, wrong-weight, unknown-version and malformed-correlation cases. (AC2).
-- [ ] T2.3 — Validate: Invalid inputs are rejected before model evaluation with stable diagnostics. Record source, environment, command, exit status, test count and artifact digest; review diff and stop on unresolved failure (AC2).
+- [x] T2.1 — Freeze exact input hashes, at most five implementation paths, expected red/green result and command for AC2; split if scope exceeds one behavioral change.
+- [x] T2.2 — Create wrong-unit, wrong-weight, unknown-version and malformed-correlation cases. (AC2).
+- [x] T2.3 — Validate: Invalid inputs are rejected before model evaluation with stable diagnostics. Record source, environment, command, exit status, test count and artifact digest; review diff and stop on unresolved failure (AC2).
 
 ## Phase 3: Consumer
 

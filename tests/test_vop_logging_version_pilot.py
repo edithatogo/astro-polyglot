@@ -85,9 +85,6 @@ def test_two_provider_apis_produce_the_same_semantic_voi_result() -> None:
             }
         },
         {"correlation": {"run_id": "", "analysis_id": "a", "trace_id": "bad"}},
-        {"consumer_version": "unknown"},
-        {"unit": "usd_per_qaly"},
-        {"weight_field": "wrong_weight"},
     ],
 )
 def test_pilot_rejects_contract_mutations(mutation: dict[str, object]) -> None:
@@ -113,3 +110,33 @@ def test_production_validator_rejects_missing_identity_and_correlation() -> None
     }
     with pytest.raises(ValueError):
         validate_vop_pilot_contract(candidate)
+
+
+@pytest.mark.parametrize(
+    ("mutation", "label"),
+    [
+        ({"unit": "usd_per_qaly"}, "wrong unit"),
+        ({"weight_field": "wrong_weight"}, "wrong weight"),
+        ({"consumer_version": "unknown"}, "unknown version"),
+        (
+            {"correlation": {"run_id": "", "analysis_id": "a", "trace_id": "bad"}},
+            "malformed correlation",
+        ),
+    ],
+)
+def test_ac2_negative_cases_fail_before_model_evaluation(
+    mutation: dict[str, object], label: str
+) -> None:
+    """Reject each AC2 mutation before the downstream evaluator is entered."""
+    pilot = json.loads(PILOT.read_text())
+    pilot.update(mutation)
+    evaluated = False
+
+    def evaluate(candidate: dict[str, object]) -> None:
+        nonlocal evaluated
+        validate_vop_pilot_contract(candidate)
+        evaluated = True
+
+    with pytest.raises((ValueError, TypeError, RuntimeError), match=".*"):
+        evaluate(pilot)
+    assert evaluated is False, label
