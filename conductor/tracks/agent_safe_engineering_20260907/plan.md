@@ -54,8 +54,8 @@ Prerequisites: G01.
 
 Prerequisites: G01.
 
-- [ ] G06.1 — Read the packet inputs; verify the observed gap against HEAD, identify one bounded change and freeze the exact files, baseline hashes, acceptance fixture and toolchain. Record existing behavior and intended failure (G06-AC).
-- [ ] G06.2 — Write and run the negative/analytic witness first; implement the frozen slice only after prerequisites and integrator review are recorded. Run `cargo test --manifest-path rust/Cargo.toml --locked -p voiage-domain -p voiage-diagnostics -p voiage-numerics` plus affected checks (G06-AC).
+- [x] G06.1 — Read the packet inputs; verify the observed gap against HEAD, identify one bounded change and freeze the exact files, baseline hashes, acceptance fixture and toolchain. Record existing behavior and intended failure (G06-AC).
+- [x] G06.2 — Write and run the negative/analytic witness first; implement the frozen slice only after prerequisites and integrator review are recorded. Run `cargo test --manifest-path rust/Cargo.toml --locked -p voiage-domain -p voiage-diagnostics -p voiage-numerics` plus affected checks (G06-AC).
 - [ ] G06.3 — Review the diff against the packet; run required final gates, bind evidence to source and environment, and update plan/metadata only for proven completion (G06-AC).
 
 ## G07: Capability discovery and reproducible user reports

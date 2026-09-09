@@ -2,7 +2,7 @@
 
 use serde::{Deserialize, Deserializer, Serialize};
 use std::fmt;
-use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::Arc;
 
 /// Immutable identities that must match before a checkpoint can be resumed.
@@ -65,6 +65,89 @@ pub struct ExecutionBudget {
     /// Maximum model evaluations permitted for the complete execution.
     pub max_evaluations: u64,
     remaining: Arc<AtomicU64>,
+}
+
+/// Cooperative cancellation flag checked at batch boundaries.
+#[derive(Clone, Debug, Default)]
+pub struct CancellationToken {
+    cancelled: Arc<AtomicBool>,
+}
+
+impl CancellationToken {
+    /// Create a token in the non-cancelled state.
+    #[must_use]
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Request cancellation; callers observe it before admitting the next batch.
+    pub fn cancel(&self) {
+        self.cancelled.store(true, Ordering::Release);
+    }
+
+    /// Whether cancellation has been requested.
+    #[must_use]
+    pub fn is_cancelled(&self) -> bool {
+        self.cancelled.load(Ordering::Acquire)
+    }
+
+    /// Reserve a batch only when cancellation has not been requested.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`CheckpointError::Cancelled`] when cancellation was requested
+    /// before the batch could be admitted.
+    pub fn reserve_batch(
+        &self,
+        budget: &ExecutionBudget,
+        batch_size: u64,
+    ) -> Result<bool, CheckpointError> {
+        if self.is_cancelled() {
+            return Err(CheckpointError::Cancelled);
+        }
+        Ok(budget.try_reserve(batch_size))
+    }
+}
+
+/// Explicit lifecycle state for a bounded VOI computation.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum ExecutionState {
+    /// Work is still allowed to consume budget.
+    Running,
+    /// The computation completed with a valid result.
+    Complete,
+    /// A valid checkpoint exists, but the computation did not finish.
+    Partial,
+    /// Cooperative cancellation stopped work at a batch boundary.
+    Cancelled,
+    /// The computation failed and cannot be resumed from this state.
+    Failed,
+}
+
+impl ExecutionState {
+    /// Whether this state cannot consume another batch without an explicit resume.
+    #[must_use]
+    pub const fn is_terminal(self) -> bool {
+        !matches!(self, Self::Running)
+    }
+
+    /// Transition to another state, rejecting completion from a partial/cancelled state.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`CheckpointError::InvalidStateTransition`] for an unsupported transition.
+    pub fn transition(self, next: Self) -> Result<Self, CheckpointError> {
+        let allowed = matches!(
+            (self, next),
+            (
+                Self::Running,
+                Self::Complete | Self::Partial | Self::Cancelled | Self::Failed
+            ) | (Self::Partial | Self::Cancelled, Self::Running)
+        );
+        allowed
+            .then_some(next)
+            .ok_or(CheckpointError::InvalidStateTransition)
+    }
 }
 
 impl ExecutionBudget {
@@ -203,6 +286,10 @@ pub enum CheckpointError {
     EmptyPayloadDigest,
     /// Resume identities do not match the checkpoint.
     IdentityMismatch,
+    /// The requested lifecycle transition is not permitted.
+    InvalidStateTransition,
+    /// Cooperative cancellation was observed at a batch boundary.
+    Cancelled,
 }
 
 impl fmt::Display for CheckpointError {
@@ -211,6 +298,8 @@ impl fmt::Display for CheckpointError {
             Self::EmptyIdentity => "checkpoint identity components must not be empty",
             Self::EmptyPayloadDigest => "checkpoint payload digest must not be empty",
             Self::IdentityMismatch => "checkpoint identity does not match the requested resume",
+            Self::InvalidStateTransition => "execution state transition is not permitted",
+            Self::Cancelled => "execution was cancelled before batch admission",
         })
     }
 }
@@ -223,6 +312,39 @@ mod tests {
 
     fn identity() -> CheckpointIdentity {
         CheckpointIdentity::new("model-v1", "seed-7", "evsi-v2").unwrap()
+    }
+
+    #[test]
+    fn lifecycle_rejects_completion_after_cancellation_until_resume() {
+        let cancelled = ExecutionState::Running
+            .transition(ExecutionState::Cancelled)
+            .expect("cancellation is valid");
+        assert!(cancelled.is_terminal());
+        assert_eq!(
+            cancelled.transition(ExecutionState::Complete),
+            Err(CheckpointError::InvalidStateTransition)
+        );
+        let resumed = cancelled
+            .transition(ExecutionState::Running)
+            .expect("cancelled work can resume");
+        assert_eq!(
+            resumed.transition(ExecutionState::Complete),
+            Ok(ExecutionState::Complete)
+        );
+    }
+
+    #[test]
+    fn cancellation_is_checked_before_batch_admission() {
+        let budget = ExecutionBudget::new(4);
+        let token = CancellationToken::new();
+        assert!(token.reserve_batch(&budget, 2).unwrap());
+        assert_eq!(budget.remaining(), 2);
+        token.cancel();
+        assert_eq!(
+            token.reserve_batch(&budget, 1),
+            Err(CheckpointError::Cancelled)
+        );
+        assert_eq!(budget.remaining(), 2);
     }
 
     #[test]
