@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "owner": "voiage Rust diagnostics",
+  "states": ["running", "complete", "partial", "cancelled", "failed"],
+  "allowed_transitions": [
+    ["running", "complete"],
+    ["running", "partial"],
+    ["running", "cancelled"],
+    ["running", "failed"],
+    ["partial", "running"],
+    ["cancelled", "running"]
+  ],
+  "invariants": [
+    "budget zero performs zero evaluations",
+    "cancelled and partial states cannot become complete without resuming",
+    "failed states are terminal",
+    "resume identity includes model input, RNG, algorithm and payload digest"
+  ]
+}
