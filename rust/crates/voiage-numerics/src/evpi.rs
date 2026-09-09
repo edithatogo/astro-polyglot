@@ -84,4 +84,17 @@ mod tests {
             "actual={actual:?} expected={expected:?}"
         );
     }
+
+    #[test]
+    fn large_magnitude_translation_preserves_the_analytic_reference() {
+        let base = matrix(vec![vec![1.0e300, 1.1e300], vec![1.2e300, 1.05e300]]);
+        let shifted = matrix(vec![
+            vec![1.000_000_000_1e300, 1.100_000_000_1e300],
+            vec![1.200_000_000_1e300, 1.050_000_000_1e300],
+        ]);
+        let baseline = evpi(&base).expect("finite large-magnitude result");
+        let translated = evpi(&shifted).expect("translated large-magnitude result");
+        assert!(baseline.is_finite() && baseline > 0.0);
+        assert!((translated - baseline).abs() / baseline < 1.0e-10);
+    }
 }
