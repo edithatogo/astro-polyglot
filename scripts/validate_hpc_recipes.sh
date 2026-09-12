@@ -32,6 +32,8 @@ printf 'repo:\n  namespace: voiage_hpc\n' > "$spack_repo/repo.yaml"
 cp "$repo_root/packaging/spack/package.py" "$spack_repo/packages/py-voiage/package.py"
 export SPACK_USER_CONFIG_PATH="$work_dir/spack-config"
 export SPACK_USER_CACHE_PATH="$work_dir/spack-cache"
+mkdir -p "$SPACK_USER_CONFIG_PATH" "$SPACK_USER_CACHE_PATH"
+cp "$repo_root/packaging/spack-overlay/concretizer.yaml" "$SPACK_USER_CONFIG_PATH/concretizer.yaml"
 spack repo add --scope user "$repo_root/packaging/spack-overlay"
 spack repo add --scope user "$spack_repo"
 if [[ -n "${HPC_SPACK_CATALOG_COMMIT:-}" ]]; then
@@ -48,12 +50,12 @@ for path in Path(sys.argv[1]).iterdir():
         print(f"Spack catalogue: {path} revision={result.stdout.strip()}")
 PYTHON
 spack spec py-voiage@2.2.0
+[[ "$mode" == --spec ]] && exit 0
 for toolchain in 2023a 2024a; do
   recipe="$repo_root/packaging/easybuild/voiage-2.2.0-foss-$toolchain.eb"
   eb --check-style "$recipe"
   eb --dry-run --robot "$recipe"
 done
-[[ "$mode" == --spec ]] && exit 0
 
 # Explicit opt-in: source builds may download dependencies and take hours.
 spack install --test=root py-voiage@2.2.0
