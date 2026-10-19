@@ -55,6 +55,6 @@ jobs:
       # Attach build provenance when a new version is published
       - name: Attest Build Provenance
         if: steps.changesets.outputs.published == 'true'
-        uses: actions/attest-build-provenance@v2
+        uses: actions/attest-build-provenance@v4
         with:
           subject-path: 'packages/astro-polyglot/dist/**'
