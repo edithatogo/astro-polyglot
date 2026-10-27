@@ -14,5 +14,5 @@ catalog:
   "@types/node": "^22.19.15"
   "size-limit": "^11.0.0"
   "@changesets/cli": "^2.27.0"
-  "@faker-js/faker": "^9.6.0"
+  "@faker-js/faker": "^10.0.0"
   "@biomejs/biome": "^2.5.0"
