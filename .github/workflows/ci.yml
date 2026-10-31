@@ -106,7 +106,6 @@ jobs:
       - name: Verify package exports
         run: node -e "const p = require('fs').readFileSync('packages/astro-polyglot/package.json','utf8'); const json = JSON.parse(p); console.log('Main:', json.main, '| Module:', json.module, '| Types:', json.types)"
       - uses: actions/upload-artifact@v4
-        if: github.ref == 'refs/heads/main'
         with:
           name: dist
           path: packages/astro-polyglot/dist/
