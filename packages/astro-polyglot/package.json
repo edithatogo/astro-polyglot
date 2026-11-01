@@ -40,7 +40,7 @@
     "generate:conformance": "node scripts/generate-conformance.mjs",
     "register:handler": "node scripts/register-handler.mjs",
     "badges:maturity": "node scripts/generate-maturity-badges.mjs",
-    "size": "size-limit",
+    "size": "size-limit --config ../../size-limit.json",
     "prepublish": "pnpm build",
     "release": "changeset publish"
   },

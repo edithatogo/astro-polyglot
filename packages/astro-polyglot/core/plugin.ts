@@ -82,6 +82,8 @@ export interface BaseHandlerOptions extends HandlerOptions {
   output: string;
   /** Whether pagination links should be included */
   pagination?: boolean;
+  /** Optional deployed site base, e.g. "/project", for generated internal links. */
+  basePath?: string;
   /** Whether to watch for changes */
   watch?: boolean;
 }

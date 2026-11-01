@@ -22,7 +22,8 @@
     "docs:preview": "pnpm --filter astro-polyglot-docs preview"
   },
   "devDependencies": {
-    "typescript": "catalog:",
-    "@biomejs/biome": "catalog:"
+    "@biomejs/biome": "catalog:",
+    "@size-limit/file": "^11.2.0",
+    "typescript": "catalog:"
   }
 }

@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { type ASTModule, transformToMDX } from "../core/mdx-generator";
@@ -34,6 +34,7 @@ export const pythonHandler: Handler = {
     const output = transformToMDX(modules, {
       outputDir: opts.output,
       language: "python",
+      ...(opts.basePath !== undefined ? { basePath: opts.basePath } : {}),
       ...(opts.pagination !== undefined ? { pagination: opts.pagination } : {}),
     });
 
@@ -65,8 +66,7 @@ function extractWithGriffe(
     throw new Error(`Python extraction script not found at ${scriptPath}`);
   }
 
-  const args = [pythonExecutable, scriptPath, "--entry-points", ...entryPoints];
-  const result = execSync(args.join(" "), {
+  const result = execFileSync(pythonExecutable, [scriptPath, "--entry-points", ...entryPoints], {
     encoding: "utf-8",
     maxBuffer: 10 * 1024 * 1024, // 10MB
     timeout: 60_000,

@@ -94,6 +94,8 @@ export interface HandlerConfig {
  * Maps languages to their handler options.
  */
 export interface PolyglotConfig {
+  /** Content directory receiving generated MDX, relative to the Astro root. */
+  contentDir?: string;
   python?: HandlerConfig;
   typescript?: HandlerConfig;
   rust?: HandlerConfig;
@@ -161,7 +163,7 @@ export interface PolyglotConfig {
   failFast?: boolean;
   /** Maximum number of handlers to execute concurrently (default: 4) */
   concurrency?: number;
-  [key: string]: HandlerConfig | boolean | number | undefined;
+  [key: string]: HandlerConfig | boolean | number | string | undefined;
 }
 
 export interface ResolvedHandler {

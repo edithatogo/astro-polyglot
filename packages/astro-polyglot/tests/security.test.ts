@@ -69,7 +69,8 @@ describe("command injection prevention", () => {
       const modules: ASTModule[] = [{ name: "mod", docstring: doc }];
       const output = transformToMDX(modules, { outputDir: "api/py" });
       expect(output.pages).toHaveLength(1);
-      expect(output.pages[0]!.body).toContain(doc);
+      expect(output.pages[0]!.body).not.toContain("${");
+      expect(output.pages[0]!.body).not.toContain("<%=");
     }
   });
 
@@ -165,7 +166,7 @@ describe("prototype pollution prevention", () => {
     ];
     const output = transformToMDX(modules, { outputDir: "api/py" });
     expect(output.pages).toHaveLength(2);
-    const clsPage = output.pages.find((p) => p.path.startsWith("api/py/mod.pollutedclass"))!;
+    const clsPage = output.pages.find((p) => p.path.startsWith("api/py/mod-pollutedclass"))!;
     expect(clsPage.body).toContain("__proto__");
     expect(clsPage.body).toContain("prototype");
   });
@@ -219,6 +220,29 @@ describe("writeMDXPages path safety", () => {
         expect(filePath.startsWith(tempDir)).toBe(true);
         expect(filePath).not.toContain("..");
       }
+    } finally {
+      await fs.rm(tempDir, { recursive: true, force: true });
+    }
+  });
+
+  it("rejects page paths that escape docsDir", async () => {
+    const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "astro-polyglot-sec-"));
+    try {
+      await expect(
+        writeMDXPages(
+          {
+            pages: [
+              {
+                path: "../outside.mdx",
+                frontmatter: { title: "Unsafe" },
+                body: "unsafe",
+              },
+            ],
+            sidebar: { label: "Unsafe", items: [] },
+          },
+          tempDir,
+        ),
+      ).rejects.toThrow("escapes the documentation directory");
     } finally {
       await fs.rm(tempDir, { recursive: true, force: true });
     }

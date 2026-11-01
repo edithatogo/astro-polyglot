@@ -61,7 +61,9 @@ describe("transformToMDX()", () => {
     ];
     const output = transformToMDX(modules, { outputDir: "api/python", language: "python" });
     expect(output.pages).toHaveLength(2);
-    const cp = output.pages.find((p) => p.path.startsWith("api/python/mymodule.myclass"));
+    const modulePage = output.pages.find((p) => p.path === "api/python/mymodule.mdx");
+    expect(modulePage!.body).toContain("(../mymodule-myclass)");
+    const cp = output.pages.find((p) => p.path.startsWith("api/python/mymodule-myclass"));
     expect(cp).toBeDefined();
     expect(cp!.frontmatter.title).toBe("mymodule.MyClass");
     expect(cp!.frontmatter.description).toBe("A sample class.");
@@ -87,7 +89,9 @@ describe("transformToMDX()", () => {
     ];
     const output = transformToMDX(modules, { outputDir: "api/ts", language: "typescript" });
     expect(output.pages).toHaveLength(2);
-    const fp = output.pages.find((p) => p.path.startsWith("api/ts/utils.dostuff"));
+    const modulePage = output.pages.find((p) => p.path === "api/ts/utils.mdx");
+    expect(modulePage!.body).toContain("(../utils-dostuff)");
+    const fp = output.pages.find((p) => p.path.startsWith("api/ts/utils-dostuff"));
     expect(fp).toBeDefined();
     expect(fp!.frontmatter.title).toBe("utils.doStuff");
     expect(fp!.frontmatter.description).toBe("Does stuff.");
@@ -104,8 +108,18 @@ describe("transformToMDX()", () => {
     const output = transformToMDX(modules, { outputDir: "api/py", language: "python" });
     expect(output.pages).toHaveLength(3);
     expect(output.pages.some((p) => p.path === "api/py/mymodule.mdx")).toBe(true);
-    expect(output.pages.some((p) => p.path.startsWith("api/py/mymodule.myclass"))).toBe(true);
-    expect(output.pages.some((p) => p.path.startsWith("api/py/mymodule.hello"))).toBe(true);
+    expect(output.pages.some((p) => p.path.startsWith("api/py/mymodule-myclass"))).toBe(true);
+    expect(output.pages.some((p) => p.path.startsWith("api/py/mymodule-hello"))).toBe(true);
+  });
+
+  it("uses a deployed site base for generated member links", () => {
+    const output = transformToMDX([{ name: "mymodule", functions: [{ name: "hello" }] }], {
+      outputDir: "api/py",
+      language: "python",
+      basePath: "/project/",
+    });
+    const modulePage = output.pages.find((p) => p.path === "api/py/mymodule.mdx");
+    expect(modulePage!.body).toContain("(/project/api/py/mymodule-hello)");
   });
 
   it("capitalizes sidebar label from language", () => {
