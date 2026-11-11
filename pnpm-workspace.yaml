@@ -8,7 +8,7 @@ allowBuilds:
   sharp: true
 
 catalog:
-  typescript: "^5.9.3"
+  typescript: "^7.0.0"
   vitest: "^4.0.18"
   tsup: "^8.3.0"
   fast-check: "^4.8.0"
