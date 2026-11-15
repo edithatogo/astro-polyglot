@@ -55,6 +55,7 @@
     "@stryker-mutator/core": "catalog:",
     "@stryker-mutator/vitest-runner": "catalog:",
     "@types/node": "catalog:",
+    "@vitest/coverage-v8": "4.1.12",
     "fast-check": "catalog:",
     "size-limit": "catalog:",
     "tsup": "catalog:",
@@ -78,7 +79,7 @@
   "engines": {
     "node": ">=22.12.0"
   },
-  "packageManager": "pnpm@10.32.1",
+  "packageManager": "pnpm@12.18.0",
   "publishConfig": {
     "access": "public",
     "provenance": true

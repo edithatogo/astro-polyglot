@@ -7,6 +7,10 @@ allowBuilds:
   esbuild: true
   sharp: true
 
+# Keep all PostCSS consumers on the existing security-fixed release.
+overrides:
+  postcss: "8.5.32"
+
 catalog:
   typescript: "^5.9.3"
   vitest: "^4.0.18"
