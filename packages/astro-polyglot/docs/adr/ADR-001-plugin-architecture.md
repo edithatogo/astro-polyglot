@@ -15,6 +15,7 @@ Use Starlight's plugin API (`config:setup` hook) as the primary integration poin
 The plugin architecture is handler-based: each language has a dedicated handler module implementing the `Handler` interface. The plugin resolves user configuration, dispatches to the appropriate handlers, and merges sidebar output into Starlight's navigation.
 
 Key architectural decisions:
+
 - Handlers are imported at build time rather than discovered at runtime
 - All handlers use a shared MDX generation pipeline (`transformToMDX`)
 - Sidebar merging uses a symbol-keyed placeholder pattern

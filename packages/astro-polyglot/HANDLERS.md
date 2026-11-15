@@ -2,26 +2,26 @@
 
 Current language handler ownership assignments.
 
-| Language | Handler File | Maturity | Owner | Contact |
-|----------|-------------|----------|-------|---------|
-| Python | `handlers/python.ts` | Stable | Core Team | |
-| TypeScript | `handlers/typescript.ts` | Stable | Core Team | |
-| Rust | `handlers/rust.ts` | Stable | Core Team | |
-| Go | `handlers/go.ts` | Stable | Core Team | |
-| C# | `handlers/csharp.ts` | Stable | Core Team | |
-| Java | `handlers/java.ts` | Stable | Core Team | |
-| Kotlin | `handlers/kotlin.ts` | Stable | Core Team | |
-| R | `handlers/r.ts` | Stable | Core Team | |
-| C++ | `handlers/cpp.ts` | Beta | Core Team | |
-| Swift | `handlers/swift.ts` | Beta | Core Team | |
-| Julia | `handlers/julia.ts` | Beta | Core Team | |
-| Scala | `handlers/scala.ts` | Beta | Core Team | |
-| Ruby | `handlers/ruby.ts` | Beta | Core Team | |
-| Dart | `handlers/dart.ts` | Beta | Core Team | |
-| PHP | `handlers/php.ts` | Beta | Core Team | |
-| Elixir | `handlers/elixir.ts` | Beta | Core Team | |
-| Stata | `handlers/stata.ts` | Experimental | Core Team | |
-| SAS | `handlers/sas.ts` | Experimental | Core Team | |
+| Language   | Handler File             | Maturity     | Owner     | Contact |
+| ---------- | ------------------------ | ------------ | --------- | ------- |
+| Python     | `handlers/python.ts`     | Stable       | Core Team |         |
+| TypeScript | `handlers/typescript.ts` | Stable       | Core Team |         |
+| Rust       | `handlers/rust.ts`       | Stable       | Core Team |         |
+| Go         | `handlers/go.ts`         | Stable       | Core Team |         |
+| C#         | `handlers/csharp.ts`     | Stable       | Core Team |         |
+| Java       | `handlers/java.ts`       | Stable       | Core Team |         |
+| Kotlin     | `handlers/kotlin.ts`     | Stable       | Core Team |         |
+| R          | `handlers/r.ts`          | Stable       | Core Team |         |
+| C++        | `handlers/cpp.ts`        | Beta         | Core Team |         |
+| Swift      | `handlers/swift.ts`      | Beta         | Core Team |         |
+| Julia      | `handlers/julia.ts`      | Beta         | Core Team |         |
+| Scala      | `handlers/scala.ts`      | Beta         | Core Team |         |
+| Ruby       | `handlers/ruby.ts`       | Beta         | Core Team |         |
+| Dart       | `handlers/dart.ts`       | Beta         | Core Team |         |
+| PHP        | `handlers/php.ts`        | Beta         | Core Team |         |
+| Elixir     | `handlers/elixir.ts`     | Beta         | Core Team |         |
+| Stata      | `handlers/stata.ts`      | Experimental | Core Team |         |
+| SAS        | `handlers/sas.ts`        | Experimental | Core Team |         |
 
 ## Adding a New Handler
 
