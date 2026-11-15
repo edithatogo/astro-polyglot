@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
-      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm install --frozen-lockfile
       - run: pnpm -r format:check
       - run: pnpm -r lint
 
@@ -40,7 +40,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
-      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm install --frozen-lockfile
       - run: pnpm -r typecheck
 
   conformance:
@@ -54,7 +54,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
-      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm install --frozen-lockfile
       - name: Run conformance tests
         run: pnpm --filter astro-polyglot test:conformance
       - name: Check conformance results
@@ -72,23 +72,26 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
-      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm install --frozen-lockfile
       - name: Run tests with coverage
-        run: pnpm --filter astro-polyglot test -- --coverage
+        run: pnpm --filter astro-polyglot run test:coverage
       - name: Check coverage thresholds
         run: |
-          # Ensure coverage report exists and meets minimum threshold
-          if [ -f coverage/coverage-summary.json ]; then
-            LINES=$(node -p "require('./coverage/coverage-summary.json').total.lines.pct")
-            echo "Line coverage: $LINES%"
-            if (( $(echo "$LINES < 90" | bc -l) )); then
-              echo "❌ Line coverage ($LINES%) is below 90% threshold"
-              exit 1
-            fi
-            echo "✅ Line coverage ($LINES%) meets 90% threshold"
-          else
-            echo "⚠️  Coverage summary not found — skipping threshold check"
-          fi
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+
+          const reportPath = 'packages/astro-polyglot/coverage/coverage-summary.json';
+          const summary = JSON.parse(readFileSync(reportPath, 'utf8'));
+          const lineCoverage = summary?.total?.lines?.pct;
+
+          if (typeof lineCoverage !== 'number' || !Number.isFinite(lineCoverage) || lineCoverage > 100) {
+            throw new Error(`Missing or invalid line coverage in ${reportPath}`);
+          }
+          if (lineCoverage < 90) {
+            throw new Error(`Line coverage (${lineCoverage}%) is below the 90% threshold`);
+          }
+          console.log(`Line coverage (${lineCoverage}%) meets the 90% threshold`);
+          NODE
 
   build:
     name: Build
@@ -101,7 +104,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
-      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - name: Verify package exports
         run: node -e "const p = require('fs').readFileSync('packages/astro-polyglot/package.json','utf8'); const json = JSON.parse(p); console.log('Main:', json.main, '| Module:', json.module, '| Types:', json.types)"
@@ -122,7 +125,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
-      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm install --frozen-lockfile
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           name: dist
@@ -140,7 +143,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
-      - run: pnpm install --no-frozen-lockfile
+      - run: pnpm install --frozen-lockfile
       - name: Run benchmarks
         run: pnpm --filter astro-polyglot test:bench
       - name: Report benchmark results

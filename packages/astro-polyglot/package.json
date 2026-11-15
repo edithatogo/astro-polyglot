@@ -55,6 +55,7 @@
     "@stryker-mutator/core": "catalog:",
     "@stryker-mutator/vitest-runner": "catalog:",
     "@types/node": "catalog:",
+    "@vitest/coverage-v8": "4.1.12",
     "fast-check": "catalog:",
     "size-limit": "catalog:",
     "tsup": "catalog:",
