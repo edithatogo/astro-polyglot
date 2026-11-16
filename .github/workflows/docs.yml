@@ -16,6 +16,9 @@ concurrency:
 env:
   NODE_VERSION: 22
 
+permissions:
+  contents: read
+
 jobs:
   build-and-deploy:
     name: Build & Deploy Starlight Site
@@ -29,6 +32,11 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
 
       - uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320
