@@ -34,3 +34,12 @@ Create `RustHandler` class in `src/handlers/rust.ts`. The `generate(options)` me
 
 - core_mdx_generator_20260513 (provides MDXOutput types)
 - core_router_plugin_20260513 (provides Handler interface, subprocess utility)
+
+## Serde applicability — 18 November 2026
+
+`packages/astro-polyglot/scripts/rust_extract/Cargo.toml` already uses `serde` derive and `serde_json` for the Rust extractor's structured output to the Astro/TypeScript side. This is an appropriate language boundary; `serde_json` is the necessary JSON codec, and Serde does not replace `rustdoc` JSON input, syntax analysis or TypeScript frontend rendering. **No Rust migration of non-Rust packages is proposed.**
+
+- [ ] Verify live Rust extractor DTO coverage against representative modern `rustdoc` JSON (nested generics, traits, impls, attributes, macros, Unicode, comments), forward-compatible unknown fields and schema versions.
+- [ ] Preserve exact identifier links, source spans, docstrings and escaped MDX examples through Rust JSON→TypeScript/MDX; add malformed, huge, duplicate-key and deterministic-output fixtures.
+- [ ] Search for genuinely duplicated custom JSON formatting only inside the existing Rust helper; consolidate with typed Serde only after independent snapshot and size/performance comparisons.
+- [ ] Avoid adding Serde to Astro/TypeScript render packages or substituting it for the documentation generator. Keep nightly rustdoc compatibility, CI/docs build and existing active track ownership as the acceptance gates.
